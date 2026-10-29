@@ -1,6 +1,6 @@
 ---
 import Tag from './Tag.astro';
-import { recipeUrl, metaLine, type Recipe } from '../site';
+import { recipeUrl, metaLine, smallImage, type Recipe } from '../site';
 import { getLang, t } from '../i18n';
 const lang = getLang(Astro.url);
 const u = t(lang);
@@ -13,7 +13,7 @@ const tapes = ['var(--mustard)', 'var(--tape-sage)', 'var(--dusty-blue)', 'var(-
 <a class="card" href={recipeUrl(recipe, lang)} style={`--tilt:${tilts[index % 4]}deg`}>
   <span class="tape" style={`background:${tapes[index % 4]}`}></span>
   <span class="img">
-    {d.image ? <img src={d.image} alt={u.illus(d.title)} loading="lazy" /> : <span class="ph">{u.artTodo}</span>}
+    {d.image ? <img src={smallImage(d.image)} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="240px" alt={u.illus(d.title)} loading="lazy" decoding="async" /> : <span class="ph">{u.artTodo}</span>}
   </span>
   <Tag category={d.category} />
   <span class="title display">{d.title}</span>
