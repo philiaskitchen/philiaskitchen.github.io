@@ -49,7 +49,5 @@ steps:
 tips:
   - You can chill the batter overnight and bake it the next day.
   - They are crispest straight from the oven, and turn softer — and still delicious — the next day.
-fails:
-  - When I baked the batter without chilling it, they didn't rise at all.
-  - I didn't grease the tin properly, the madeleines stuck, and the shell pattern on the back tore.
+fails: []
 ---

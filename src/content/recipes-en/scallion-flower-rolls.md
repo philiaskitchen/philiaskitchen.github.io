@@ -1,6 +1,6 @@
 ---
 title: Spring Onion Flower Rolls
-intro: Layers of dough and spring onion, twisted and knotted into a flower. That savoury spring onion oil flavour was my most common breakfast growing up.
+intro: Layers of dough and spring onion, twisted and knotted into a flower. That savoury spring onion oil flavour makes it a classic Taiwanese breakfast.
 prepTime: 30 min
 waitLabel: Prove
 waitTime: 30 min
@@ -50,7 +50,5 @@ steps:
 tips:
   - Dry the spring onion thoroughly after washing, or it will make the dough wet when you roll it up.
   - Sprinkling the salt on top of the oil helps it stick, so it doesn't fall off when you roll.
-fails:
-  - I rolled the dough too thin, it tore when I twisted it, and the spring onion went everywhere.
-  - I didn't pinch the ends together firmly, and the rolls came undone in the steamer.
+fails: []
 ---
