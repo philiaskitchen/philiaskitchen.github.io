@@ -33,7 +33,7 @@ const ld = {
   <section class="wrap hero">
     <div class="copy">
       <Tag category={d.category} />
-      <h1 class="display">{d.title}</h1>
+      <h1 class:list={['display', { long: d.title.length > 6 }]}>{d.title}</h1>
       {d.titleFr && <div class="fr sub">{d.titleFr}</div>}
       <p class="muted intro">{d.intro}</p>
       {d.sample && <div class="sample-note">這是範例食譜，之後會換成我實際做的配方。</div>}
@@ -74,10 +74,11 @@ const ld = {
   </section>
 
   <div class="band lower">
-    {(d.tips.length > 0 || d.fails.length > 0) && (
+    {(d.tips.length > 0 || d.fails.length > 0 || d.storage.length > 0) && (
       <section class="wrap notes">
         {d.tips.length > 0 && <Note title="Philia 的小提醒" items={d.tips} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={-1} />}
         {d.fails.length > 0 && <Note title="我失敗過的地方" items={d.fails} tape="var(--tape-rose)" tilt={0.8} />}
+        {d.storage.length > 0 && <Note title="保存與加熱" items={d.storage} tape="var(--dusty-blue)" tilt={-0.6} />}
       </section>
     )}
     {others.length > 0 && (
@@ -134,9 +135,11 @@ const ld = {
   .crumbs a:hover { color: var(--terracotta-ink); }
   .hero { display: grid; grid-template-columns: 1fr 1.05fr; gap: 30px; align-items: center; padding-top: 14px; padding-bottom: 20px; }
   h1 { font-size: 64px; line-height: 1.15; margin-top: 4px; }
+  h1.long { font-size: 50px; }
   .sub { color: var(--olive-ink); font-size: 22px; }
   .intro { font-size: 17px; line-height: 1.95; margin-top: 14px; max-width: 470px; }
-  .meta { display: inline-flex; flex-wrap: wrap; margin: 20px 0 0; padding: 12px 6px; }
+  .meta { display: inline-grid; grid-auto-flow: column; margin: 20px 0 0; padding: 12px 6px; }
+  dd { white-space: nowrap; }
   .meta div { text-align: center; padding: 0 16px; border-left: 1px solid rgba(74, 69, 54, .35); }
   .meta div:first-child { border-left: 0; }
   dt { font-size: 13px; color: var(--olive-ink); }
@@ -173,7 +176,7 @@ const ld = {
   .num { position: relative; flex: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--terracotta);
     background: url(/images/ui/step-circle.svg) no-repeat center / 100% 100%; }
   .steps .st { display: block; font-size: 24px; line-height: 1.35; }
-  .steps .sp { display: block; margin-top: 4px; line-height: 1.9; }
+  .steps .sp { display: block; white-space: pre-line; margin-top: 4px; line-height: 1.9; }
   .timer { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--olive-ink); border: 1.5px solid var(--olive); border-radius: 3px; padding: 2px 10px; }
   .lower { padding: 44px 0 50px; }
   .cookmode { position: fixed; z-index: 40; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
@@ -201,7 +204,7 @@ const ld = {
   @media (max-width: 860px) {
     .hero, .body { grid-template-columns: 1fr; }
     .art { order: -1; }
-    h1 { font-size: 44px; }
+    h1, h1.long { font-size: 44px; }
     .ingredients { transform: none; }
     .notes { flex-direction: column; }
     .meta div { padding: 0 12px; }
@@ -211,9 +214,11 @@ const ld = {
     .hero { gap: 6px; padding-top: 6px; }
     .art { max-width: 210px; max-height: 170px; width: auto; }
     h1 { font-size: 38px; }
+    h1.long { font-size: 32px; }
     .intro { font-size: 16px; line-height: 1.8; margin-top: 8px; }
-    .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(58px, 1fr)); width: 100%; margin-top: 14px; padding: 10px 2px; }
+    .meta { display: grid; grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); row-gap: 12px; width: 100%; margin-top: 14px; padding: 12px 2px; }
     .meta div { padding: 0 4px; }
+    .meta div:nth-child(3n+1) { border-left: 0; }
     dt { font-size: 12px; }
     dd { font-size: 16px; white-space: nowrap; }
     .cookmode { padding: 8px 14px 8px 10px; }
