@@ -1,6 +1,6 @@
 # Philia的廚房料理
 
-台式點心與法式甜點的個人食譜網站。網址：https://philiaskitchen.github.io
+台式點心與法式甜點的個人食譜網站。網址：https://philiaskitchen.com
 
 ## 怎麼新增一道食譜
 
