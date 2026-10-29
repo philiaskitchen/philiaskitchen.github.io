@@ -26,6 +26,7 @@ content:
             - { value: taiwanese, label: 台式點心 }
             - { value: french, label: 法式甜點 }
             - { value: bread, label: 麵包 }
+            - { value: sweets, label: 其他甜點 }
       - { name: intro, label: 介紹（一兩句話）, type: text }
       - { name: image, label: 去背插圖, type: image }
       - { name: date, label: 發佈日期, type: date, required: true }
