@@ -6,7 +6,7 @@ category: taiwanese
 intro: 一層麵皮一層蔥花，扭一扭打個結就是花捲。鹹香的蔥油味，是台灣很常見的早餐。
 image: /images/recipes/scallion-flower-rolls.webp
 date: 2026-10-27
-featured: true
+featured: false
 sample: false
 prepTime: 30 分鐘
 waitLabel: 發酵
