@@ -1,0 +1,138 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tag from '../../components/Tag.astro';
+import Note from '../../components/Note.astro';
+import RecipeCard from '../../components/RecipeCard.astro';
+import ScallopButton from '../../components/ScallopButton.astro';
+import { allRecipes, CATEGORIES, categoryUrl, isoDuration, type Recipe } from '../../site';
+
+export async function getStaticPaths() {
+  const list = await allRecipes();
+  return list.map((r) => ({ params: { slug: r.id }, props: { recipe: r } }));
+}
+const { recipe } = Astro.props as { recipe: Recipe };
+const d = recipe.data;
+const cat = CATEGORIES[d.category];
+const others = (await allRecipes()).filter((r) => r.id !== recipe.id).slice(0, 3);
+const stars = '★'.repeat(Number(d.difficulty)) + '☆'.repeat(3 - Number(d.difficulty));
+const meta = [
+  ['準備', d.prepTime], [d.waitLabel, d.waitTime], [d.cookLabel, d.cookTime], ['份量', d.servings], ['難易度', stars],
+].filter(([k, v]) => k && v);
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Recipe', name: d.title, description: d.intro,
+  image: d.image ? [new URL(d.image, Astro.site).href] : undefined,
+  author: { '@type': 'Person', name: 'Philia' }, datePublished: d.date.toISOString().slice(0, 10),
+  recipeCategory: cat.name, recipeYield: d.servings, prepTime: isoDuration(d.prepTime), totalTime: isoDuration(d.totalTime),
+  recipeIngredient: d.ingredients.flatMap((g) => g.items.map((i) => `${i.name} ${i.amount}`.trim())),
+  recipeInstructions: d.steps.map((s) => ({ '@type': 'HowToStep', name: s.title, text: s.text })),
+};
+---
+<Base title={d.title} description={d.intro} active={d.category} image={d.image}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <div class="wrap crumbs soft"><a href="/">首頁</a> ／ <a href={categoryUrl(d.category)}>{cat.name}</a> ／ {d.title}</div>
+  <section class="wrap hero">
+    <div class="copy">
+      <Tag category={d.category} />
+      <h1 class="display">{d.title}</h1>
+      {d.titleFr && <div class="fr sub">{d.titleFr}</div>}
+      <p class="muted intro">{d.intro}</p>
+      {d.sample && <div class="sample-note">這是範例食譜，之後會換成我實際做的配方。</div>}
+      <dl class="meta paper">
+        {meta.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <div class="actions"><ScallopButton href="#steps" label="開始做吧" width={170} /></div>
+    </div>
+    {d.image && <img class="art" src={d.image} alt={`${d.title}插圖`} width="1100" height="720" />}
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+
+  <section class="wrap body">
+    <div class="ingredients paper">
+      <span class="tape" style="background:var(--mustard)"></span>
+      <div class="head"><h2 class="display">材料</h2><span class="fr">Ingrédients</span></div>
+      {d.servings && <div class="serv">份量 <strong>{d.servings}</strong></div>}
+      {d.ingredients.map((g) => (
+        <div class="group">
+          {g.group && <div class="gname">{g.group}</div>}
+          <ul>{g.items.map((i) => (
+            <li><label><input type="checkbox" /><span class="box" aria-hidden="true"></span><span class="name">{i.name}</span><span class="amt">{i.amount}</span></label></li>
+          ))}</ul>
+        </div>
+      ))}
+    </div>
+    <div class="steps" id="steps">
+      <div class="section-title"><h2>步驟</h2><span class="fr">Étapes</span></div>
+      <ol>{d.steps.map((s, i) => (
+        <li>
+          <span class="num display">{i + 1}</span>
+          <div><h3 class="display">{s.title}</h3><p class="muted">{s.text}</p>{s.timer && <span class="timer">⏱ {s.timer}</span>}</div>
+        </li>
+      ))}</ol>
+    </div>
+  </section>
+
+  <div class="band lower">
+    {(d.tips.length > 0 || d.fails.length > 0) && (
+      <section class="wrap notes">
+        {d.tips.length > 0 && <Note title="Philia 的小提醒" items={d.tips} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={-1} />}
+        {d.fails.length > 0 && <Note title="我失敗過的地方" items={d.fails} tape="var(--tape-rose)" tilt={0.8} />}
+      </section>
+    )}
+    {others.length > 0 && (
+      <section class="wrap more">
+        <div class="section-title"><h2>你可能也會喜歡</h2><span class="fr">à essayer aussi</span></div>
+        <div class="card-grid">{others.map((r, i) => <RecipeCard recipe={r} index={i + 1} />)}</div>
+      </section>
+    )}
+  </div>
+</Base>
+<style>
+  .crumbs { font-size: 13px; padding-top: 6px; }
+  .crumbs a:hover { color: var(--terracotta-ink); }
+  .hero { display: grid; grid-template-columns: 1fr 1.05fr; gap: 30px; align-items: center; padding-top: 14px; padding-bottom: 20px; }
+  h1 { font-size: 64px; line-height: 1.15; margin-top: 4px; }
+  .sub { color: var(--olive-ink); font-size: 22px; }
+  .intro { font-size: 17px; line-height: 1.95; margin-top: 14px; max-width: 470px; }
+  .meta { display: inline-flex; flex-wrap: wrap; margin: 20px 0 0; padding: 12px 6px; }
+  .meta div { text-align: center; padding: 0 16px; border-left: 1px solid rgba(74, 69, 54, .35); }
+  .meta div:first-child { border-left: 0; }
+  dt { font-size: 13px; color: var(--olive-ink); }
+  dd { margin: 2px 0 0; font-size: 20px; }
+  .actions { margin-top: 18px; }
+  .art { justify-self: center; width: 100%; max-width: 600px; }
+  .body { display: grid; grid-template-columns: 360px 1fr; gap: 56px; align-items: start; padding-top: 34px; padding-bottom: 50px; }
+  .ingredients { position: relative; padding: 30px 28px 24px; transform: rotate(-0.8deg); }
+  .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .head h2 { font-size: 32px; }
+  .head .fr { color: var(--terracotta-ink); font-size: 18px; }
+  .serv { font-size: 14px; color: var(--olive-ink); margin: 6px 0 4px; }
+  .serv strong { font-weight: 400; color: var(--ink); font-size: 17px; margin-left: 6px; }
+  .gname { font-size: 14px; color: var(--terracotta-ink); margin-top: 12px; }
+  .group ul { list-style: none; margin: 0; padding: 0; }
+  .group label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dashed var(--line-dashed); cursor: pointer; }
+  .group input { position: absolute; opacity: 0; }
+  .box { flex: none; width: 20px; height: 20px; margin-top: 4px; background: url(/images/ui/checkbox.svg) no-repeat center; position: relative; }
+  .group input:checked + .box::after { content: ""; position: absolute; left: 4px; top: -4px; width: 9px; height: 16px; border: solid var(--olive); border-width: 0 3px 3px 0; transform: rotate(40deg); }
+  .group input:checked ~ .name { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: rgba(74, 69, 54, .5); }
+  .name { flex: 1; }
+  .amt { color: var(--terracotta-ink); white-space: nowrap; }
+  .steps ol { list-style: none; margin: 10px 0 0; padding: 0; }
+  .steps li { display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px dashed #C6CDB8; }
+  .num { flex: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--terracotta);
+    background: url(/images/ui/step-circle.svg) no-repeat center / 100% 100%; }
+  .steps h3 { font-size: 24px; line-height: 1.35; }
+  .steps p { margin-top: 4px; line-height: 1.9; }
+  .timer { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--olive-ink); border: 1.5px solid var(--olive); border-radius: 3px; padding: 2px 10px; }
+  .lower { padding: 44px 0 50px; }
+  .notes { display: flex; gap: 40px; }
+  .more { margin-top: 44px; }
+  .more .card-grid { margin-top: 30px; }
+  @media (max-width: 860px) {
+    .hero, .body { grid-template-columns: 1fr; }
+    .art { order: -1; }
+    h1 { font-size: 44px; }
+    .ingredients { transform: none; }
+    .notes { flex-direction: column; }
+    .meta div { padding: 0 12px; }
+  }
+</style>
