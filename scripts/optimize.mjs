@@ -31,12 +31,24 @@ text += '，。、；：？！「」『』（）《》〈〉…—–～・·★
 const chars = [...new Set(text)].filter((c) => c.codePointAt(0) >= 32).join('');
 console.log(`[optimize] 網站用到 ${chars.length} 個不同的字`);
 
-for (const [src, out] of [
-  ['public/fonts/creamfont.woff2', 'fonts/creamfont.woff2'],
-  ['public/fonts/jf-openhuninn-2.1.woff2', 'fonts/jf-openhuninn-2.1.woff2'],
+// 凝書體只用在標題（class="display" 和區塊標題 h2），所以只挑標題裡出現的字，檔案更小。
+let titleText = '';
+for (const f of files.filter((f) => f.endsWith('.html'))) {
+  const html = await readFile(f, 'utf8');
+  const re = /<(h[1-3]|span|div|a)\b[^>]*class="[^"]*\bdisplay\b[^"]*"[^>]*>([\s\S]*?)<\/\1>|<h2\b[^>]*>([\s\S]*?)<\/h2>/g;
+  for (const m of html.matchAll(re)) titleText += (m[2] || m[3] || '').replace(/<[^>]+>/g, '');
+}
+for (let c = 32; c < 127; c++) titleText += String.fromCharCode(c);
+titleText += '，。、：！？「」（）…—–';
+const titleChars = [...new Set(titleText)].join('');
+console.log(`[optimize] 標題用到 ${titleChars.length} 個不同的字`);
+
+for (const [src, out, set] of [
+  ['public/fonts/creamfont.woff2', 'fonts/creamfont.woff2', titleChars],
+  ['public/fonts/jf-openhuninn-2.1.woff2', 'fonts/jf-openhuninn-2.1.woff2', chars],
 ]) {
   const full = await readFile(src);
-  const small = await subsetFont(full, chars, { targetFormat: 'woff2' });
+  const small = await subsetFont(full, set, { targetFormat: 'woff2' });
   await writeFile(join(DIST, out), small);
   console.log(`[optimize] ${out}: ${(full.length / 1024).toFixed(0)} KB → ${(small.length / 1024).toFixed(0)} KB`);
 }
