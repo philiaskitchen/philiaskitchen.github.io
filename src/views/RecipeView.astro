@@ -6,7 +6,7 @@ import Note from '../components/Note.astro';
 import RecipeCard from '../components/RecipeCard.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import AdSlot from '../components/AdSlot.astro';
-import { allRecipes, catName, categoryUrl, recipeUrl, isoDuration, type Recipe } from '../site';
+import { allRecipes, catName, categoryUrl, recipeUrl, isoDuration, smallImage, type Recipe } from '../site';
 import { getLang, lp, t } from '../i18n';
 
 const { recipe } = Astro.props as { recipe: Recipe };
@@ -57,7 +57,7 @@ const ld = {
       </dl>
       <div class="actions"><ScallopButton href="#cook" label={u.start} width={170} /></div>
     </div>
-    {d.image && <img class="art" src={d.image} alt={u.illus(d.title)} width="1100" height="720" />}
+    {d.image && <img class="art" src={d.image} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="(max-width: 600px) 210px, 600px" alt={u.illus(d.title)} width="1100" height="720" fetchpriority="high" />}
   </section>
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
   <AdSlot name="recipeTop" />
