@@ -1,0 +1,7 @@
+---
+// 顯示聯絡 email。HTML 裡沒有完整地址，載入後由 Base 裡的小程式組成可以點的 mailto 連結。
+import { CONTACT } from '../site';
+interface Props { show?: boolean; label?: string; class?: string }
+const { show = false, label = '寫信給我', class: cls = '' } = Astro.props;
+---
+<a class:list={['email-link', cls]} href="/privacy/#contact" data-u={CONTACT.user} data-d={CONTACT.domain} data-show={show ? '1' : undefined}>{show ? `${CONTACT.user} ＠ ${CONTACT.domain}` : label}</a>
