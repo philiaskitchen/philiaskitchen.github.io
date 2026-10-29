@@ -4,6 +4,7 @@ title: 台式肉鬆麵包
 titleFr: petits pains au porc effiloché
 category: bread
 intro: 柔軟的橄欖形麵包，抹上美乃滋、滾滿肉鬆，是台灣麵包店的經典味道。
+image: /images/recipes/pork-floss-bread.webp
 date: 2026-10-29
 featured: false
 sample: false

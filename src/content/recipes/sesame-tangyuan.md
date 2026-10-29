@@ -4,6 +4,7 @@ title: 手工芝麻湯圓
 titleFr: boules de riz gluant au sésame noir
 category: taiwanese
 intro: 冷凍過的黑芝麻餡包進糯米皮，咬開會流出來。揉糯米糰時加一小塊「粿脆」，湯圓煮了不容易破。
+image: /images/recipes/sesame-tangyuan.webp
 date: 2026-10-29
 featured: false
 sample: false
