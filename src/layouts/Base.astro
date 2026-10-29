@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { ADS } from '../site';
 interface Props { title?: string; description?: string; active?: string; home?: boolean; image?: string }
 const { title, description = '台式點心與法式甜點，一道一道記下來的家庭食譜：份量、時間、失敗過的地方都寫在裡面。', active, home = false, image = '/images/site/og.jpg' } = Astro.props;
 const fullTitle = title ? `${title}｜Philia的廚房料理` : 'Philia的廚房料理';
@@ -25,6 +26,8 @@ const ogImage = new URL(image, Astro.site);
   <meta property="og:image" content={ogImage} />
   <meta property="og:locale" content="zh_TW" />
   <meta name="theme-color" content="#DDE3D2" />
+  {ADS.client && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
+  <script is:inline>if (/[?&]ads=preview/.test(location.search)) document.documentElement.classList.add('show-ad-preview');</script>
   <slot name="head" />
 </head>
 <body>
