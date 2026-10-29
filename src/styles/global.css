@@ -1,0 +1,91 @@
+/* 「Philia的廚房料理」— 顏色、字體都照 Design System 的 tokens */
+@font-face { font-family: "Huninn"; src: url("/fonts/jf-openhuninn-2.1.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cormorant"; font-style: italic; src: url("/fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2"); font-display: swap; }
+/* 凝書體（justfont 買斷授權，可用於個人網站） */
+@font-face { font-family: "Cream"; src: url("/fonts/creamfont.woff2") format("woff2"); font-display: swap; }
+
+:root {
+  --sage: #DDE3D2;
+  --sage-band: #C9D3BC;
+  --paper: #FFFFFF;
+  --paper-cream: #FBF3D6;
+  --ink: #3E3A30;
+  --ink-muted: #5A5647;
+  --ink-soft: #6B6553;
+  --terracotta: #B5552B;
+  --terracotta-ink: #9A4420;
+  --on-terracotta: #FFF8EE;
+  --olive: #5F6E41;
+  --olive-ink: #556339;
+  --mustard: #D9A43A;
+  --dusty-blue: #9FB3C6;
+  --rule-blue: #D7E0E8;
+  --line-dashed: #D3CBB5;
+  --pencil: #4A4536;
+  --tape-sage: #A9B58A;
+  --tape-rose: #D9A9A0;
+
+  --font-display: "Cream", "Huninn", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-body: "Huninn", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-french: "Cormorant", Georgia, serif;
+
+  --shadow-paper: 2px 3px 0 rgba(62, 58, 48, 0.10);
+  --max: 1180px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--sage);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  position: relative;
+  overflow-x: hidden;
+}
+/* 紙張紋理 */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: .45;
+  mix-blend-mode: multiply;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .35 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible, summary:focus-visible, label:focus-within { outline: 2px solid var(--terracotta-ink); outline-offset: 3px; }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
+p { margin: 0; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: max(30px, env(safe-area-inset-left)); padding-right: max(30px, env(safe-area-inset-right)); }
+.display { font-family: var(--font-display); font-weight: 400; }
+.fr { font-family: var(--font-french); font-style: italic; }
+.paper { background: var(--paper); box-shadow: var(--shadow-paper); }
+.tape { position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; transform: translateX(-50%) rotate(3deg); opacity: .85;
+  clip-path: polygon(2% 0, 98% 4%, 100% 50%, 97% 100%, 3% 96%, 0 50%); }
+.band { background: var(--sage-band); }
+.divider { width: 100%; max-width: 1100px; height: 16px; margin: 0 auto; }
+.link { border-bottom: 1.5px solid var(--ink); font-size: 15px; padding-bottom: 1px; }
+.link:hover { color: var(--terracotta-ink); border-color: var(--terracotta-ink); }
+.section-title { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.section-title h2 { font-family: var(--font-display); font-size: 32px; line-height: 1.25; }
+.section-title .fr { color: var(--terracotta-ink); font-size: 19px; }
+.muted { color: var(--ink-muted); }
+.soft { color: var(--ink-soft); }
+.sample-note { display: inline-block; font-size: 13px; color: var(--ink-soft); border: 1px dashed var(--pencil); padding: 2px 10px; margin-top: 10px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+@media (max-width: 900px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; } }
+@media (max-width: 600px) {
+  .wrap { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+  .card-grid { grid-template-columns: 1fr; gap: 34px; }
+  .section-title h2 { font-size: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
