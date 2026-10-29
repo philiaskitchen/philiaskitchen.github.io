@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { ADS } from '../site';
+import EmailLink from '../components/EmailLink.astro';
 const adsLive = Boolean(ADS.client);
 ---
 <Base title="隱私權政策" description="Philia的廚房料理如何處理你的資料：不需要註冊、勾選紀錄只存在你的裝置上，以及廣告和 Cookie 的說明。">
@@ -33,6 +34,9 @@ const adsLive = Boolean(ADS.client);
         <li>想了解 Google 如何使用這些資料，請看 <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=zh-TW" target="_blank" rel="noopener">Google 如何使用合作夥伴網站或應用程式的資訊</a>。</li>
       </ul>
       <p>如果你在歐洲經濟區、英國或瑞士，網站會先詢問你是否同意使用 Cookie，你可以選擇不同意。</p>
+
+      <h2 class="display" id="contact">聯絡我</h2>
+      <p>對這份政策或網站有任何問題，歡迎寫信給我：<EmailLink show class="link" /></p>
 
       <h2 class="display">政策更新</h2>
       <p>如果這份政策有變動，我會更新這一頁和上面的「最後更新」日期。</p>
