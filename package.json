@@ -5,10 +5,14 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/optimize.mjs",
     "preview": "astro preview"
   },
   "dependencies": {
     "astro": "5.18.2"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5",
+    "subset-font": "^2.9.0"
   }
 }
