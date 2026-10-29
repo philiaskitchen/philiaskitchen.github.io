@@ -3,7 +3,7 @@ slug: scallion-flower-rolls
 title: 蔥花捲
 titleFr: petits pains à la ciboule
 category: taiwanese
-intro: 一層麵皮一層蔥花，扭一扭打個結就是花捲。鹹香的蔥油味，是我小時候最常吃的早餐。
+intro: 一層麵皮一層蔥花，扭一扭打個結就是花捲。鹹香的蔥油味，是台灣很常見的早餐。
 image: /images/recipes/scallion-flower-rolls.webp
 date: 2026-10-27
 featured: true
@@ -58,7 +58,5 @@ steps:
 tips:
   - 蔥花洗好要徹底擦乾，不然捲的時候會出水。
   - 鹽撒在油上面比較黏得住，不會一捲就掉。
-fails:
-  - 擀太薄，扭的時候麵皮破掉，蔥花全部跑出來。
-  - 扭完沒有把兩端捏緊，蒸的時候整個鬆開。
+fails: []
 ---
