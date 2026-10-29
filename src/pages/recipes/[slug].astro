@@ -14,6 +14,14 @@ const { recipe } = Astro.props as { recipe: Recipe };
 const d = recipe.data;
 const cat = CATEGORIES[d.category];
 const others = (await allRecipes()).filter((r) => r.id !== recipe.id).slice(0, 3);
+// 「發酵 40–50 分鐘」「蒸 12–15 分鐘＋悶 3–5 分鐘」→ 一段一段的計時器
+const parseTimer = (t: string) => t.split(/[＋+]/).map((seg) => {
+  const text = seg.trim();
+  const m = text.match(/^(.*?)(\d+(?:\.\d+)?)\s*(?:[–\-~～至]\s*(\d+(?:\.\d+)?))?\s*(小時|分鐘|分|秒)/);
+  if (!m) return { text, min: 0, max: 0, label: '' };
+  const unit = m[4] === '小時' ? 3600 : m[4] === '秒' ? 1 : 60;
+  return { text, label: m[1].trim(), min: Math.round(Number(m[2]) * unit), max: m[3] ? Math.round(Number(m[3]) * unit) : 0 };
+});
 const stars = '★'.repeat(Number(d.difficulty)) + '☆'.repeat(3 - Number(d.difficulty));
 const meta = [
   ['準備', d.prepTime], [d.waitLabel, d.waitTime], [d.cookLabel, d.cookTime], ['份量', d.servings], ['難易度', stars],
@@ -62,13 +70,25 @@ const ld = {
     </div>
     <div class="steps" id="steps">
       <div class="section-title"><h2>步驟</h2><span class="fr">Étapes</span></div>
-      <p class="hint soft">做完一步，點一下就會打勾。<button type="button" class="reset" hidden>全部重來</button></p>
+      <p class="hint soft">做完一步，點一下就會打勾。點綠色的時間按鈕可以開始計時。<button type="button" class="reset" hidden>全部重來</button></p>
       <ol>{d.steps.map((s, i) => (
         <li><label>
           <input type="checkbox" />
           <span class="num display" aria-hidden="true"><span class="n">{i + 1}</span></span>
-          <span class="txt"><span class="sr-only">第 {i + 1} 步：</span><span class="st display">{s.title}</span><span class="sp muted">{s.text}</span>{s.timer && <span class="timer">⏱ {s.timer}</span>}</span>
-        </label></li>
+          <span class="txt"><span class="sr-only">第 {i + 1} 步：</span><span class="st display">{s.title}</span><span class="sp muted">{s.text}</span></span>
+        </label>
+        {s.timer && (
+          <div class="timers">{parseTimer(s.timer).map((t, j) => t.min ? (
+            <span class="tgroup">
+              <button type="button" class="timer" data-id={`${i}-${j}`} data-label={t.label || s.title} data-min={t.min} data-max={t.max}>
+                <span class="ico" aria-hidden="true"></span><span class="tt">{t.text}</span><span class="cd"></span>
+              </button>
+              <button type="button" class="plus" data-for={`${i}-${j}`} hidden>＋5 分鐘</button>
+            </span>
+          ) : <span class="timer static">⏱ {t.text}</span>)}</div>
+        )}
+        <p class="tmsg" hidden></p>
+        </li>
       ))}</ol>
     </div>
   </section>
@@ -89,6 +109,7 @@ const ld = {
     )}
   </div>
 
+  <div class="timerbar" aria-live="polite"></div>
   <button type="button" class="cookmode" aria-pressed="false" hidden>
     <span class="dot" aria-hidden="true"></span>
     <span><strong>烹飪模式</strong><small class="off">點一下，螢幕就不會自動變暗</small><small class="on">開著：螢幕不會變暗</small></span>
@@ -115,6 +136,75 @@ const ld = {
     }
     // 切到別的 App 再回來時，螢幕鎖會被系統放掉，自動再開一次
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && document.body.classList.contains('cooking') && (!lock || lock.released)) request(); });
+  }
+
+  // 3. 計時器：點時間按鈕開始倒數；時間到會響、會震動（Android），畫面上也會提示。
+  //    用「結束時間」來算，就算切到別的 App、螢幕關掉再回來，剩下的時間還是對的。
+  {
+    const root = document.querySelector<HTMLElement>('#cook');
+    const bar = document.querySelector<HTMLElement>('.timerbar')!;
+    const KEY = 'pk-timers-' + (root?.dataset.recipe || '');
+    type T = { end: number; done?: boolean; extra?: boolean };
+    let state: Record<string, T> = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch {}
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+    const btns = [...document.querySelectorAll<HTMLButtonElement>('button.timer')];
+    const byId = (id: string) => btns.find((b) => b.dataset.id === id)!;
+    const fmt = (sec: number) => { sec = Math.max(0, Math.ceil(sec)); const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+      return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0'); };
+    let ctx: AudioContext | null = null;
+    const unlock = () => { try { ctx = ctx || new (window.AudioContext || (window as any).webkitAudioContext)(); ctx.resume(); } catch {} };
+    let ringing: number | null = null;
+    const beep = () => { if (!ctx) return; const t0 = ctx.currentTime;
+      for (let k = 0; k < 3; k++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.0001, t0 + k * 0.35); g.gain.exponentialRampToValueAtTime(0.4, t0 + k * 0.35 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + k * 0.35 + 0.25);
+        o.connect(g).connect(ctx.destination); o.start(t0 + k * 0.35); o.stop(t0 + k * 0.35 + 0.3); } };
+    const ring = () => { if (ringing) return; let n = 0; beep(); try { navigator.vibrate?.([400, 200, 400, 200, 400]); } catch {}
+      ringing = window.setInterval(() => { if (++n >= 15 || !Object.values(state).some((t) => t.done)) stopRing(); else beep(); }, 2000); };
+    const stopRing = () => { if (ringing) clearInterval(ringing); ringing = null; };
+    const title = document.title;
+    const render = () => {
+      const now = Date.now(); let anyDone = false; const rows: string[] = [];
+      for (const b of btns) {
+        const id = b.dataset.id!, t = state[id], li = b.closest('li')!, msg = li.querySelector<HTMLElement>('.tmsg')!;
+        const plus = li.querySelector<HTMLButtonElement>(`.plus[data-for="${id}"]`)!;
+        b.classList.toggle('running', !!t && !t.done); b.classList.toggle('done', !!t?.done);
+        const cd = b.querySelector<HTMLElement>('.cd')!;
+        if (!t) { cd.textContent = ''; b.setAttribute('aria-label', `開始計時：${b.dataset.label} ${fmt(+b.dataset.min!)}`); plus.hidden = true; if (!li.querySelector('.timer.done')) msg.hidden = true; continue; }
+        if (t.done) { anyDone = true; cd.textContent = '時間到！'; plus.hidden = false; b.setAttribute('aria-label', '時間到，點一下關掉提醒');
+          const max = +b.dataset.max!, min = +b.dataset.min!;
+          msg.hidden = false; msg.textContent = max > min && !t.extra ? `到 ${Math.round(min / 60)} 分鐘了，先看看狀態；還不夠就按「＋5 分鐘」（最多 ${Math.round(max / 60)} 分鐘）。點時間按鈕可以關掉提醒。` : `${b.dataset.label}時間到了！點時間按鈕可以關掉提醒。`;
+          rows.push(`<button type="button" data-go="${id}" class="done">${b.dataset.label} 時間到！</button>`); continue; }
+        const left = (t.end - now) / 1000;
+        cd.textContent = '剩 ' + fmt(left); plus.hidden = true; msg.hidden = true;
+        b.setAttribute('aria-label', `${b.dataset.label}剩 ${fmt(left)}，連點兩下可以取消`);
+        rows.push(`<button type="button" data-go="${id}">${b.dataset.label} ${fmt(left)}</button>`);
+      }
+      bar.innerHTML = rows.join(''); bar.classList.toggle('show', rows.length > 0);
+      document.title = anyDone ? '⏰ 時間到｜' + title : title;
+      if (!anyDone) stopRing();
+    };
+    const tick = () => { const now = Date.now(); let fired = false;
+      for (const [id, t] of Object.entries(state)) if (!t.done && t.end <= now) { t.done = true; fired = true; }
+      if (fired) { save(); ring(); } render(); };
+    let armed: string | null = null, armTimer = 0;
+    btns.forEach((b) => b.addEventListener('click', () => {
+      unlock(); const id = b.dataset.id!, t = state[id];
+      if (!t) { state[id] = { end: Date.now() + +b.dataset.min! * 1000 }; save(); tick(); return; }
+      if (t.done) { delete state[id]; save(); render(); return; }
+      // 倒數中：連點兩下才取消，避免手忙腳亂時不小心按掉
+      if (armed === id) { delete state[id]; armed = null; save(); render(); return; }
+      armed = id; clearTimeout(armTimer); b.querySelector<HTMLElement>('.cd')!.textContent = '再點一次取消';
+      armTimer = window.setTimeout(() => { armed = null; render(); }, 2500);
+    }));
+    document.querySelectorAll<HTMLButtonElement>('.plus').forEach((p) => p.addEventListener('click', () => {
+      unlock(); const id = p.dataset.for!; state[id] = { end: Date.now() + 5 * 60 * 1000, extra: true }; save(); tick(); }));
+    bar.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]'); if (!go) return;
+      byId(go.dataset.go!).closest('li')!.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+    // 重新整理後，已經過了的計時直接顯示「時間到」
+    for (const t of Object.values(state)) if (!t.done && t.end <= Date.now()) t.done = true;
+    render(); setInterval(tick, 1000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
   }
 
   // 2. 材料和步驟的勾選會記住（重新整理或螢幕關掉再打開都還在）
@@ -177,7 +267,29 @@ const ld = {
     background: url(/images/ui/step-circle.svg) no-repeat center / 100% 100%; }
   .steps .st { display: block; font-size: 24px; line-height: 1.35; }
   .steps .sp { display: block; white-space: pre-line; margin-top: 4px; line-height: 1.9; }
-  .timer { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--olive-ink); border: 1.5px solid var(--olive); border-radius: 3px; padding: 2px 10px; }
+  .timers { display: flex; flex-wrap: wrap; gap: 8px 10px; padding: 0 0 16px 64px; margin-top: -6px; }
+  .tgroup { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .timer, .plus { white-space: nowrap; }
+  .timer { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; color: var(--olive-ink); background: var(--paper);
+    border: 1.5px solid var(--olive); border-radius: 4px 6px 5px 6px; padding: 6px 12px; min-height: 40px; cursor: pointer; box-shadow: 1px 2px 0 rgba(62,58,48,.08); }
+  .timer.static { background: none; box-shadow: none; cursor: default; min-height: 0; padding: 2px 10px; }
+  .timer .ico { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent var(--olive); }
+  .timer .cd:empty { display: none; }
+  .timer .cd { font-variant-numeric: tabular-nums; padding-left: 8px; border-left: 1px solid currentColor; }
+  .timer.running { background: var(--olive); color: var(--on-terracotta); border-color: var(--olive-ink); }
+  .timer.running .ico { width: 10px; height: 12px; border: 0; border-left: 3.5px solid var(--on-terracotta); border-right: 3.5px solid var(--on-terracotta); }
+  .timer.done { background: var(--terracotta); color: var(--on-terracotta); border-color: var(--terracotta-ink); animation: wobble .6s ease-in-out infinite alternate; }
+  .timer.done .ico { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--on-terracotta); }
+  @keyframes wobble { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+  .plus { font: inherit; font-size: 14px; color: var(--terracotta-ink); background: none; border: 1.5px dashed var(--terracotta-ink); border-radius: 4px; padding: 6px 10px; min-height: 40px; cursor: pointer; }
+  .plus[hidden] { display: none; }
+  .tmsg { margin: -6px 0 16px 64px; font-size: 14px; color: var(--terracotta-ink); }
+  .timerbar { position: fixed; z-index: 41; left: max(18px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); display: none; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .timerbar.show { display: flex; }
+  .timerbar :global(button) { font: inherit; font-size: 15px; font-variant-numeric: tabular-nums; color: var(--on-terracotta); background: var(--olive); border: 1.5px solid var(--olive-ink);
+    border-radius: 22px 18px 24px 20px; padding: 9px 16px; box-shadow: var(--shadow-paper); cursor: pointer; }
+  .timerbar :global(button.done) { background: var(--terracotta); border-color: var(--terracotta-ink); }
+  @media (prefers-reduced-motion: reduce) { .timer.done { animation: none; } }
   .lower { padding: 44px 0 50px; }
   .cookmode { position: fixed; z-index: 40; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
     display: flex; align-items: center; gap: 10px; padding: 10px 18px 10px 14px; font: inherit; color: var(--ink); text-align: left; cursor: pointer;
@@ -227,6 +339,8 @@ const ld = {
     .ingredients { padding: 26px 18px 18px; }
     .group label { padding: 11px 0; }
     .steps label { gap: 14px; }
+    .timers { padding-left: 60px; }
+    .tmsg { margin-left: 60px; }
     .lower { padding-bottom: 90px; }
   }
 </style>
