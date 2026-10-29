@@ -27,11 +27,11 @@ import Note from '../components/Note.astro';
   </section>
 </Base>
 <style>
-  .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; padding-top: 40px; padding-bottom: 30px; }
+  .intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 50px; align-items: center; padding-top: 40px; padding-bottom: 30px; }
   .eyebrow { color: var(--olive-ink); font-size: 22px; }
   h1 { font-size: 52px; line-height: 1.25; margin-top: 4px; }
   .intro p { font-size: 17px; line-height: 2; margin-top: 16px; max-width: 520px; }
   .how { padding-top: 34px; padding-bottom: 60px; }
   .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
-  @media (max-width: 860px) { .intro, .notes { grid-template-columns: 1fr; } .intro img { order: -1; max-width: 420px; } }
+  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; max-width: min(420px, 100%); } }
 </style>
