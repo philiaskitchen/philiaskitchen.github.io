@@ -60,3 +60,6 @@ export const ADS = {
     listBottom: '',   // 分類頁：食譜卡片下面
   } as Record<string, string>,
 };
+
+// 聯絡信箱：拆成兩段放，網頁載入後才組起來，自動抓 email 的程式比較難抓到
+export const CONTACT = { user: 'msphilia.com', domain: 'gmail.com' };
