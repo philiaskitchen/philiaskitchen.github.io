@@ -27,6 +27,9 @@ export const CATEGORIES = {
 } as const;
 export type CategoryKey = keyof typeof CATEGORIES;
 
+/** 食譜插圖的 600px 小圖（網站建好時由 scripts/optimize.mjs 自動產生） */
+export const smallImage = (src: string) => src.replace(/\.(webp|png|jpe?g)$/i, '-sm.webp');
+
 export const catName = (c: CategoryKey, lang: Lang) => (lang === 'en' ? CATEGORIES[c].nameEn : CATEGORIES[c].name);
 export const catIntro = (c: CategoryKey, lang: Lang) => (lang === 'en' ? CATEGORIES[c].introEn : CATEGORIES[c].intro);
 
