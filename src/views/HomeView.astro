@@ -11,7 +11,7 @@ const u = t(lang);
 const recipes = await allRecipes(lang);
 const featured = await featuredRecipe(lang);
 const latest = recipes.slice(0, 3);
-const hw = featured ? u.heroWeek(u.kind[featured.data.category] ?? '', featured.data.title) : null;
+const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.category] || '', featured.data.title) : null;
 ---
 <Base home active="week">
   <section class="wrap hero">
