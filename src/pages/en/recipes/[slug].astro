@@ -1,0 +1,9 @@
+---
+import RecipeView from '../../../views/RecipeView.astro';
+import { allRecipes, type Recipe } from '../../../site';
+export async function getStaticPaths() {
+  return (await allRecipes('en')).map((r) => ({ params: { slug: r.id }, props: { recipe: r } }));
+}
+const { recipe } = Astro.props as { recipe: Recipe };
+---
+<RecipeView recipe={recipe} />
