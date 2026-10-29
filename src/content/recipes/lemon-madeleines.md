@@ -7,7 +7,7 @@ intro: 烤好的瑪德蓮背面會鼓起一個小肚子，邊緣酥、中間軟�
 image: /images/recipes/lemon-madeleines.webp
 date: 2026-10-28
 featured: false
-sample: true
+sample: false
 prepTime: 15 分鐘
 waitLabel: 冷藏
 waitTime: 60 分鐘

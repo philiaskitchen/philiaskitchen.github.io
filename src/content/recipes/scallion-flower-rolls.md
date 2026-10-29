@@ -7,7 +7,7 @@ intro: 一層麵皮一層蔥花，扭一扭打個結就是花捲。鹹香的蔥�
 image: /images/recipes/scallion-flower-rolls.webp
 date: 2026-10-27
 featured: true
-sample: true
+sample: false
 prepTime: 30 分鐘
 waitLabel: 發酵
 waitTime: 30 分鐘
