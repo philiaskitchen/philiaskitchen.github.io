@@ -82,4 +82,4 @@ export const ADS = {
 };
 
 // 聯絡信箱：拆成兩段放，網頁載入後才組起來，自動抓 email 的程式比較難抓到
-export const CONTACT = { user: 'msphilia.com', domain: 'gmail.com' };
+export const CONTACT = { user: 'hello', domain: 'philiaskitchen.com' };
