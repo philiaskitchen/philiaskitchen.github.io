@@ -1,0 +1,31 @@
+---
+import { recipeUrl, roman, type Recipe } from '../site';
+interface Props { recipes: Recipe[] }
+const { recipes } = Astro.props;
+---
+<div class="menu paper">
+  <div class="fr head">Le Menu</div>
+  <div class="sub">食譜目錄</div>
+  <ol>
+    {recipes.map((r, i) => (
+      <li><a href={recipeUrl(r)}>
+        <span class="fr n">{roman(i)}</span><span class="display t">{r.data.title}</span><span class="fr f">{r.data.titleFr}</span><span class="dots"></span><span class="time">{r.data.totalTime}</span>
+      </a></li>
+    ))}
+  </ol>
+</div>
+<style>
+  .menu { position: relative; border: 1.5px solid var(--pencil); padding: 26px 34px; }
+  .menu::before { content: ""; position: absolute; inset: 6px; border: 1px solid #CFC4AA; pointer-events: none; }
+  .head { text-align: center; font-size: 32px; color: var(--terracotta); line-height: 1.2; }
+  .sub { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 6px; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  a { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; }
+  a:hover .t { color: var(--terracotta-ink); }
+  .n { color: var(--terracotta-ink); width: 34px; font-size: 18px; flex: none; }
+  .t { font-size: 22px; }
+  .f { font-size: 15px; color: var(--olive-ink); }
+  .dots { flex: 1; border-bottom: 2px dotted #B9AE94; transform: translateY(-4px); min-width: 20px; }
+  .time { font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
+  @media (max-width: 600px) { .menu { padding: 22px 20px; } .f { display: none; } }
+</style>

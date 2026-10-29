@@ -1,0 +1,75 @@
+---
+import { featuredRecipe, recipeUrl, categoryUrl } from '../site';
+interface Props { active?: string; home?: boolean }
+const { active = '', home = false } = Astro.props;
+const featured = await featuredRecipe();
+const items = [
+  { key: 'week', label: '本週食譜', href: featured ? recipeUrl(featured) : '/' },
+  { key: 'taiwanese', label: '台式點心', href: categoryUrl('taiwanese') },
+  { key: 'french', label: '法式甜點', href: categoryUrl('french') },
+  { key: 'bread', label: '麵包', href: categoryUrl('bread') },
+  { key: 'about', label: '關於我', href: '/about/' },
+];
+---
+<header>
+  <img class="awning" src="/images/ui/awning.svg" alt="" aria-hidden="true" />
+  <div class:list={['wrap', 'bar', { home }]}>
+    <a class="brand" href="/" aria-label="Philia的廚房料理 首頁">
+      {home && <span class="issue fr">N° 01 · automne 2026</span>}
+      <img class="logo" src="/images/site/logo.png" alt="Philia的廚房料理" />
+      <span class="fr tagline">la cuisine de Philia</span>
+    </a>
+    <nav aria-label="主選單">
+      <details class="menu">
+        <summary aria-label="打開選單"><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2,3 Q15,1 28,4 M2,11 Q15,12 28,10 M2,19 Q15,18 28,20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></summary>
+        <ul>
+          {items.map((i) => (
+            <li><a href={i.href} aria-current={i.key === active ? 'page' : undefined} class:list={{ on: i.key === active }}>{i.label}</a></li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  </div>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+</header>
+<style>
+  header { padding-bottom: 6px; }
+  .awning { width: 100%; height: 44px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; padding-bottom: 10px; gap: 20px; }
+  .brand { display: flex; flex-direction: column; }
+  .logo { height: 34px; width: auto; }
+  .tagline { color: var(--terracotta-ink); font-size: 15px; line-height: 1.3; }
+  .issue { display: none; }
+  .bar.home { flex-direction: column; text-align: center; padding-top: 14px; }
+  .bar.home .brand { align-items: center; }
+  .bar.home .issue { display: block; font-size: 13px; letter-spacing: .3em; color: var(--ink-soft); font-style: normal; text-transform: uppercase; }
+  .bar.home .logo { height: 64px; margin: 4px 0 2px; }
+  .bar.home .tagline { font-size: 24px; }
+  summary { display: none; list-style: none; cursor: pointer; color: var(--pencil); padding: 6px; }
+  summary::-webkit-details-marker { display: none; }
+  ul { display: flex; gap: 34px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
+  li a { display: inline-block; padding-bottom: 6px; }
+  li a.on { background: url(/images/ui/underline.svg) no-repeat bottom / 100% 10px; }
+  li a:hover { color: var(--terracotta-ink); }
+  /* 讓 details 在桌機永遠展開 */
+  @media (min-width: 761px) { .menu > ul { display: flex !important; } }
+  @media (max-width: 760px) {
+    .bar, .bar.home { flex-direction: row; text-align: left; align-items: center; }
+    .bar.home .brand { align-items: flex-start; }
+    .bar.home .issue { display: none; }
+    .logo, .bar.home .logo { height: 26px; margin: 0; }
+    .tagline, .bar.home .tagline { font-size: 13px; }
+    summary { display: block; }
+    .menu { position: relative; }
+    .menu:not([open]) > ul { display: none; }
+    .menu[open] > ul { position: absolute; right: 0; top: 44px; z-index: 60; flex-direction: column; gap: 4px; background: var(--paper);
+      box-shadow: var(--shadow-paper); padding: 14px 22px; min-width: 170px; }
+  }
+</style>
+<script>
+  // 桌機：選單永遠打開；手機：點漢堡才打開
+  const d = document.querySelector('header .menu') as HTMLDetailsElement | null;
+  const mq = matchMedia('(min-width: 761px)');
+  const sync = () => { if (d) d.open = mq.matches; };
+  sync(); mq.addEventListener('change', sync);
+</script>

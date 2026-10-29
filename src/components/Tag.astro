@@ -1,0 +1,10 @@
+---
+import { CATEGORIES, type CategoryKey } from '../site';
+interface Props { category: CategoryKey }
+const c = CATEGORIES[Astro.props.category];
+---
+<span class="tag" style={`background-image:url(/images/ui/tag-${c.tag}.svg);color:${c.tagText}`}>{c.name}</span>
+<style>
+  .tag { display: inline-flex; align-items: flex-start; justify-content: center; width: 104px; height: 40px; padding-top: 8px;
+    background: no-repeat center / 104px 40px; font-size: 13px; letter-spacing: .15em; line-height: 1; }
+</style>

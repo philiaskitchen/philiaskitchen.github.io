@@ -1,0 +1,10 @@
+---
+interface Props { href: string; label: string; width?: 170 | 200 | 230 }
+const { href, label, width = 200 } = Astro.props;
+---
+<a class="scallop" href={href} style={`width:${width}px;background-image:url(/images/ui/button-${width}.svg)`}>{label}</a>
+<style>
+  .scallop { display: inline-flex; align-items: center; justify-content: center; height: 62px; background: no-repeat center / 100% 100%;
+    color: var(--on-terracotta); font-size: 17px; letter-spacing: .04em; transition: transform .15s ease; }
+  .scallop:hover { transform: rotate(-1.5deg); }
+</style>
