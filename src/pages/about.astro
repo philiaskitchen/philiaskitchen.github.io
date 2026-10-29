@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import Note from '../components/Note.astro';
+---
+<Base title="關於我" description="寫食譜的人：關於 Philia 和這個食譜網站。" active="about">
+  <section class="wrap intro">
+    <div>
+      <div class="fr eyebrow">à propos —</div>
+      <h1 class="display">寫食譜的人</h1>
+      <p class="muted">我是 Philia。從小吃到大的饅頭、花捲，和後來愛上的法式甜點，都是我在家一次一次試出來的。</p>
+      <p class="muted">開這個網站，一開始是想留給自己看：哪一次水加太多、哪一次發酵太久，下次就不會再犯。如果剛好也幫上你，那就更好了。</p>
+      <div class="sample-note">這段是範例文字，之後換成我自己的話。</div>
+    </div>
+    <img src="/images/site/stilllife-teapot.webp" alt="蒸籠、茶壺和蔥的插圖" width="1000" height="647" />
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <section class="wrap how">
+    <div class="section-title"><h2>這裡的食譜怎麼看</h2><span class="fr">mode d'emploi</span></div>
+    <div class="notes">
+      <Note title="份量都用克" items={['麵粉、糖、油都寫重量，比用杯子準。', '液體用 ml，溫度用 °C。']} tape="var(--mustard)" tilt={-1} />
+      <Note title="每道都有失敗紀錄" items={['我做壞過的地方都寫下來。', '第一次做之前先看一眼。']} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={0.8} />
+      <Note title="為什麼有法文名" items={['我喜歡法式甜點，也喜歡它們的名字。', '台式點心也取一個，好玩而已。']} tape="var(--dusty-blue)" tilt={-0.6} />
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; padding-top: 40px; padding-bottom: 30px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 52px; line-height: 1.25; margin-top: 4px; }
+  .intro p { font-size: 17px; line-height: 2; margin-top: 16px; max-width: 520px; }
+  .how { padding-top: 34px; padding-bottom: 60px; }
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
+  @media (max-width: 860px) { .intro, .notes { grid-template-columns: 1fr; } .intro img { order: -1; max-width: 420px; } }
+</style>
