@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import Note from '../../components/Note.astro';
+---
+<Base title="About" description="The cook behind the recipes: about Philia and this recipe site." active="about">
+  <section class="wrap intro">
+    <div>
+      <div class="fr eyebrow">à propos —</div>
+      <h1 class="display">The cook behind the recipes</h1>
+      <p class="muted">Philia lives in Australia. She still loves the Taiwanese food she grew up with, and she loves desserts too.</p>
+      <p class="muted">I used to work in an office, and the kitchen always felt unfamiliar and a little scary to me. Recently I have had more time for myself, so I started making simple snacks and desserts for my family. To my surprise, making them became a very calming time for me. Time seems to slow down, and I really love that feeling! If you would like to try, you are welcome to use my recipes.</p>
+    </div>
+    <img src="/images/site/stilllife-teapot.webp" alt="Illustration of a bamboo steamer, a teapot and spring onions" width="1000" height="647" />
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <section class="wrap how">
+    <div class="section-title"><h2>How to use these recipes</h2><span class="fr">mode d'emploi</span></div>
+    <div class="notes">
+      <Note title="Weights in grams" items={['Flour, sugar and oil are weighed — more accurate than cups.', 'Liquids are in ml, temperatures in °C.']} tape="var(--mustard)" tilt={-1} />
+      <Note title="My mistakes are included" items={['I write down everything that went wrong for me.', 'Have a quick look before you start.']} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={0.8} />
+      <Note title="Why the French names?" items={['I love French pastries, and I love their names too.', 'So the Taiwanese recipes get one as well — just for fun.']} tape="var(--dusty-blue)" tilt={-0.6} />
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 50px; align-items: center; padding-top: 40px; padding-bottom: 30px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 48px; line-height: 1.2; margin-top: 4px; }
+  .intro p { font-size: 17px; line-height: 2; margin-top: 16px; max-width: 520px; }
+  .how { padding-top: 34px; padding-bottom: 60px; }
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
+  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; max-width: min(420px, 100%); } }
+</style>
