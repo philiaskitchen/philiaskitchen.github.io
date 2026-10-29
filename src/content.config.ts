@@ -8,7 +8,7 @@ const recipes = defineCollection({
   schema: z.object({
     title: z.string(),                       // 食譜名稱
     titleFr: z.string().default(''),        // 法文名
-    category: z.enum(['taiwanese', 'french', 'bread']),
+    category: z.enum(['taiwanese', 'french', 'bread', 'sweets']),
     intro: z.string().default(''),          // 介紹（一兩句話）
     image: z.string().optional(),           // 去背插圖，例如 /images/recipes/xxx.webp
     date: z.coerce.date(),                  // 發佈日期，用來排序
@@ -37,4 +37,29 @@ const recipes = defineCollection({
   }),
 });
 
-export const collections = { recipes };
+// 英文版：檔名和中文食譜一樣（例如 chocolate-mantou.md），只放要翻譯的文字。
+// 圖片、分類、日期、難易度等都沿用中文版。
+const recipesEn = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/recipes-en' }),
+  schema: z.object({
+    title: z.string(),
+    intro: z.string().default(''),
+    prepTime: z.string().default(''),
+    waitLabel: z.string().default(''),
+    waitTime: z.string().default(''),
+    cookLabel: z.string().default(''),
+    cookTime: z.string().default(''),
+    totalTime: z.string().default(''),
+    servings: z.string().default(''),
+    ingredients: z.array(z.object({
+      group: z.string().default(''),
+      items: z.array(z.object({ name: z.string(), amount: z.string().default('') })).default([]),
+    })).default([]),
+    steps: z.array(z.object({ title: z.string(), text: z.string().default(''), timer: z.string().default('') })).default([]),
+    tips: z.array(z.string()).default([]),
+    fails: z.array(z.string()).default([]),
+    storage: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { recipes, recipesEn };
