@@ -2,21 +2,23 @@
 // 廣告位置。ADS.client 和這個位置的編號都填好才會放真的廣告；
 // 沒填時只輸出一個隱藏的預覽框（網址加 ?ads=preview 才看得到）。
 import { ADS } from '../site';
+import { getLang, t } from '../i18n';
+const u = t(getLang(Astro.url));
 interface Props { name: string }
 const { name } = Astro.props;
 const slot = ADS.slots[name];
 const live = Boolean(ADS.client && slot);
 ---
 {live ? (
-  <aside class="ad wrap" aria-label="廣告">
-    <div class="label">廣告 · <span class="fr">publicité</span></div>
+  <aside class="ad wrap" aria-label={u.ad}>
+    <div class="label">{u.ad} · <span class="fr">publicité</span></div>
     <ins class="adsbygoogle" style="display:block" data-ad-client={ADS.client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
   </aside>
 ) : (
   <aside class="ad wrap ad-preview" aria-hidden="true">
-    <div class="label">廣告預留位置 · <span class="fr">{name}</span></div>
-    <div class="box">廣告會出現在這裡</div>
+    <div class="label">{u.adPreview} · <span class="fr">{name}</span></div>
+    <div class="box">{u.adHere}</div>
   </aside>
 )}
 <style>

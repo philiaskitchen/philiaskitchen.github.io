@@ -1,27 +1,32 @@
 ---
 import { featuredRecipe, recipeUrl, categoryUrl } from '../site';
-interface Props { active?: string; home?: boolean }
-const { active = '', home = false } = Astro.props;
-const featured = await featuredRecipe();
+import { getLang, lp, t } from '../i18n';
+interface Props { active?: string; home?: boolean; altHref?: string }
+const { active = '', home = false, altHref } = Astro.props;
+const lang = getLang(Astro.url);
+const u = t(lang);
+const featured = await featuredRecipe(lang);
 const items = [
-  { key: 'week', label: '本週食譜', href: featured ? recipeUrl(featured) : '/' },
-  { key: 'taiwanese', label: '台式點心', href: categoryUrl('taiwanese') },
-  { key: 'french', label: '法式甜點', href: categoryUrl('french') },
-  { key: 'bread', label: '麵包', href: categoryUrl('bread') },
-  { key: 'about', label: '關於我', href: '/about/' },
+  { key: 'week', label: u.nav.week, href: featured ? recipeUrl(featured, lang) : lp(lang, '/') },
+  { key: 'taiwanese', label: u.nav.taiwanese, href: categoryUrl('taiwanese', lang) },
+  { key: 'french', label: u.nav.french, href: categoryUrl('french', lang) },
+  { key: 'bread', label: u.nav.bread, href: categoryUrl('bread', lang) },
+  { key: 'sweets', label: u.nav.sweets, href: categoryUrl('sweets', lang) },
+  { key: 'about', label: u.nav.about, href: lp(lang, '/about/') },
 ];
 ---
 <header>
   <img class="awning" src="/images/ui/awning.svg" alt="" aria-hidden="true" />
   <div class:list={['wrap', 'bar', { home }]}>
-    <a class="brand" href="/" aria-label="Philia的廚房料理 首頁">
+    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`}>
       {home && <span class="issue fr">N° 01 · automne 2026</span>}
-      <img class="logo" src="/images/site/logo.png" alt="Philia的廚房料理" />
+      <img class="logo" src={u.logo} alt={u.siteName} />
       <span class="fr tagline">la cuisine de Philia</span>
     </a>
-    <nav aria-label="主選單">
+    <nav aria-label={u.mainNav}>
+      {altHref && <a class="lang" href={altHref} hreflang={u.switchLang === 'en' ? 'en' : 'zh-Hant'} lang={u.switchLang === 'en' ? 'en' : 'zh-Hant'} aria-label={u.switchLabel}>{u.switchTo}</a>}
       <details class="menu">
-        <summary aria-label="打開選單"><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2,3 Q15,1 28,4 M2,11 Q15,12 28,10 M2,19 Q15,18 28,20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></summary>
+        <summary aria-label={u.openMenu}><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2,3 Q15,1 28,4 M2,11 Q15,12 28,10 M2,19 Q15,18 28,20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></summary>
         <ul>
           {items.map((i) => (
             <li><a href={i.href} aria-current={i.key === active ? 'page' : undefined} class:list={{ on: i.key === active }}>{i.label}</a></li>
@@ -45,6 +50,12 @@ const items = [
   .bar.home .issue { display: block; font-size: 13px; letter-spacing: .3em; color: var(--ink-soft); font-style: normal; text-transform: uppercase; }
   .bar.home .logo { height: 64px; margin: 4px 0 2px; }
   .bar.home .tagline { font-size: 24px; }
+  nav { display: flex; align-items: center; gap: 30px; }
+  .lang { order: 2; font-size: 13px; letter-spacing: .04em; color: var(--ink-soft); border: 1.2px solid rgba(74, 69, 54, .5); border-radius: 14px 12px 15px 13px; padding: 3px 11px 2px; white-space: nowrap; }
+  .lang:hover { color: var(--terracotta-ink); border-color: var(--terracotta-ink); }
+  .bar.home nav { flex-direction: column; gap: 10px; }
+  .bar.home .lang { position: absolute; top: 56px; right: max(30px, env(safe-area-inset-right)); }
+  .bar { position: relative; }
   summary { display: none; list-style: none; cursor: pointer; color: var(--pencil); padding: 6px; }
   summary::-webkit-details-marker { display: none; }
   ul { display: flex; gap: 34px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
@@ -60,6 +71,9 @@ const items = [
     .logo, .bar.home .logo { height: 26px; margin: 0; }
     .tagline, .bar.home .tagline { font-size: 13px; }
     summary { display: block; }
+    nav, .bar.home nav { flex-direction: row; gap: 10px; }
+    .bar.home .lang { position: static; }
+    .lang { order: 0; }
     .menu { position: relative; }
     .menu:not([open]) > ul { display: none; }
     .menu[open] > ul { position: absolute; right: 0; top: 44px; z-index: 60; flex-direction: column; gap: 4px; background: var(--paper);

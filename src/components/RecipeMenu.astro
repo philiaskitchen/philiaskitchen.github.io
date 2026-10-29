@@ -1,15 +1,17 @@
 ---
 import { recipeUrl, roman, type Recipe } from '../site';
+import { getLang, t } from '../i18n';
+const lang = getLang(Astro.url);
 interface Props { recipes: Recipe[] }
 const { recipes } = Astro.props;
 ---
 <div class="menu paper">
   <div class="fr head">Le Menu</div>
-  <div class="sub">食譜目錄</div>
+  <div class="sub">{t(lang).menuSub}</div>
   <ol>
     {recipes.map((r, i) => (
-      <li><a href={recipeUrl(r)}>
-        <span class="fr n">{roman(i)}</span><span class="display t">{r.data.title}</span><span class="fr f">{r.data.titleFr}</span><span class="dots"></span><span class="time">{r.data.totalTime}</span>
+      <li><a href={recipeUrl(r, lang)}>
+        <span class="fr n">{roman(i)}</span><span class="display t">{r.data.title}</span>{lang === 'zh' && <span class="fr f">{r.data.titleFr}</span>}<span class="dots"></span><span class="time">{r.data.totalTime}</span>
       </a></li>
     ))}
   </ol>

@@ -1,16 +1,19 @@
 ---
 import { categoryUrl } from '../site';
 import EmailLink from './EmailLink.astro';
+import { getLang, lp, t } from '../i18n';
+const lang = getLang(Astro.url);
+const u = t(lang);
 ---
 <footer class="band">
   <div class="wrap inner">
     <div>
-      <img src="/images/site/logo.png" alt="Philia的廚房料理" class="logo" />
+      <img src={u.logo} alt={u.siteName} class="logo" />
       <div class="fr" style="color:var(--terracotta-ink);font-size:17px">à bientôt dans la cuisine</div>
-      <p class="small muted">每一道都是在家實際做過的食譜 · © 2026 · <a class="plink" href="/privacy/">隱私權政策</a> · <EmailLink class="plink" label="聯絡我" /></p>
+      <p class="small muted">{u.footerLine} · © 2026 · <a class="plink" href={lp(lang, '/privacy/')}>{u.privacy}</a> · <EmailLink class="plink" label={u.contact} /></p>
     </div>
-    <nav aria-label="頁尾選單">
-      <a href={categoryUrl('taiwanese')}>台式點心</a><a href={categoryUrl('french')}>法式甜點</a><a href={categoryUrl('bread')}>麵包</a><a href="/about/">關於我</a>
+    <nav aria-label={u.footerNav}>
+      <a href={categoryUrl('taiwanese', lang)}>{u.nav.taiwanese}</a><a href={categoryUrl('french', lang)}>{u.nav.french}</a><a href={categoryUrl('bread', lang)}>{u.nav.bread}</a><a href={categoryUrl('sweets', lang)}>{u.nav.sweets}</a><a href={lp(lang, '/about/')}>{u.nav.about}</a>
     </nav>
   </div>
 </footer>

@@ -1,10 +1,14 @@
 ---
-import { CATEGORIES, type CategoryKey } from '../site';
+import { CATEGORIES, catName, type CategoryKey } from '../site';
+import { getLang } from '../i18n';
 interface Props { category: CategoryKey }
+const lang = getLang(Astro.url);
 const c = CATEGORIES[Astro.props.category];
+const name = catName(Astro.props.category, lang);
 ---
-<span class="tag" style={`background-image:url(/images/ui/tag-${c.tag}.svg);color:${c.tagText}`}>{c.name}</span>
+<span class:list={['tag', { en: lang === 'en' }]} style={`background-image:url(/images/ui/tag-${c.tag}.svg);color:${c.tagText}`}>{name}</span>
 <style>
   .tag { display: inline-flex; align-items: flex-start; justify-content: center; width: 104px; height: 40px; padding-top: 8px;
     background: no-repeat center / 104px 40px; font-size: 13px; letter-spacing: .15em; line-height: 1; }
+  .tag.en { letter-spacing: .04em; font-size: 12px; white-space: nowrap; width: auto; min-width: 104px; padding-left: 12px; padding-right: 12px; background-size: 100% 40px; }
 </style>

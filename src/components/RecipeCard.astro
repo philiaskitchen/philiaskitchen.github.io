@@ -1,16 +1,19 @@
 ---
 import Tag from './Tag.astro';
 import { recipeUrl, metaLine, type Recipe } from '../site';
+import { getLang, t } from '../i18n';
+const lang = getLang(Astro.url);
+const u = t(lang);
 interface Props { recipe: Recipe; index?: number }
 const { recipe, index = 0 } = Astro.props;
 const d = recipe.data;
 const tilts = [-1.2, 0.9, -0.6, 1.1];
 const tapes = ['var(--mustard)', 'var(--tape-sage)', 'var(--dusty-blue)', 'var(--tape-rose)'];
 ---
-<a class="card" href={recipeUrl(recipe)} style={`--tilt:${tilts[index % 4]}deg`}>
+<a class="card" href={recipeUrl(recipe, lang)} style={`--tilt:${tilts[index % 4]}deg`}>
   <span class="tape" style={`background:${tapes[index % 4]}`}></span>
   <span class="img">
-    {d.image ? <img src={d.image} alt={`${d.title}插圖`} loading="lazy" /> : <span class="ph">插圖待生成</span>}
+    {d.image ? <img src={d.image} alt={u.illus(d.title)} loading="lazy" /> : <span class="ph">{u.artTodo}</span>}
   </span>
   <Tag category={d.category} />
   <span class="title display">{d.title}</span>
