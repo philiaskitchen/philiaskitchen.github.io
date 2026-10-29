@@ -69,3 +69,4 @@ content:
           - { name: timer, label: 計時提示（例如 發酵 40–60 分鐘，可空白）, type: string }
       - { name: tips, label: Philia 的小提醒, type: string, list: true }
       - { name: fails, label: 我失敗過的地方, type: string, list: true }
+      - { name: storage, label: 保存與加熱, type: string, list: true }
