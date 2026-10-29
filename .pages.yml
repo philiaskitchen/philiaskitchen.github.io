@@ -1,0 +1,71 @@
+# Pages CMS 後台設定：https://pagescms.org
+media:
+  input: public/images/recipes
+  output: /images/recipes
+
+content:
+  - name: recipes
+    label: 食譜
+    type: collection
+    path: src/content/recipes
+    filename: "{fields.slug}.md"
+    view:
+      fields: [title, category, date, featured]
+      primary: title
+      sort: [date, title]
+    fields:
+      - { name: title, label: 食譜名稱, type: string, required: true }
+      - { name: slug, label: 網址代稱（英文小寫，用 - 連接，例如 chocolate-mantou）, type: string, required: true }
+      - { name: titleFr, label: 法文名, type: string }
+      - name: category
+        label: 分類
+        type: select
+        required: true
+        options:
+          values:
+            - { value: taiwanese, label: 台式點心 }
+            - { value: french, label: 法式甜點 }
+            - { value: bread, label: 麵包 }
+      - { name: intro, label: 介紹（一兩句話）, type: text }
+      - { name: image, label: 去背插圖, type: image }
+      - { name: date, label: 發佈日期, type: date, required: true }
+      - { name: featured, label: 本週精選（首頁大標會顯示這一道）, type: boolean }
+      - { name: sample, label: 範例內容（勾選會顯示「範例食譜」提醒）, type: boolean }
+      - { name: prepTime, label: 準備時間（例如 20 分鐘）, type: string }
+      - { name: waitLabel, label: 等待項目一（發酵／冷藏／靜置）, type: string }
+      - { name: waitTime, label: 等待時間一, type: string }
+      - { name: cookLabel, label: 等待項目二（蒸／烤）, type: string }
+      - { name: cookTime, label: 等待時間二, type: string }
+      - { name: totalTime, label: 總時間（例如 90 分鐘）, type: string }
+      - { name: servings, label: 份量（例如 6 顆）, type: string }
+      - name: difficulty
+        label: 難易度
+        type: select
+        options:
+          values:
+            - { value: "1", label: ★☆☆ 簡單 }
+            - { value: "2", label: ★★☆ 普通 }
+            - { value: "3", label: ★★★ 要一點經驗 }
+      - name: ingredients
+        label: 材料（可以分組，例如 麵團／內餡）
+        type: object
+        list: true
+        fields:
+          - { name: group, label: 分組名稱, type: string }
+          - name: items
+            label: 材料
+            type: object
+            list: true
+            fields:
+              - { name: name, label: 材料名稱, type: string }
+              - { name: amount, label: 份量（例如 300 g）, type: string }
+      - name: steps
+        label: 步驟
+        type: object
+        list: true
+        fields:
+          - { name: title, label: 步驟小標（2–5 個字）, type: string }
+          - { name: text, label: 說明, type: text }
+          - { name: timer, label: 計時提示（例如 發酵 40–60 分鐘，可空白）, type: string }
+      - { name: tips, label: Philia 的小提醒, type: string, list: true }
+      - { name: fails, label: 我失敗過的地方, type: string, list: true }
