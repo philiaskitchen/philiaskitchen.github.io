@@ -1,8 +1,8 @@
 /* 「Philia的廚房料理」— 顏色、字體都照 Design System 的 tokens */
-@font-face { font-family: "Huninn"; src: url("/fonts/jf-openhuninn-2.1.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Huninn"; src: url("/fonts/jf-openhuninn-2.1.woff2?v=2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Cormorant"; font-style: italic; src: url("/fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2"); font-display: swap; }
 /* 凝書體（justfont 買斷授權，可用於個人網站） */
-@font-face { font-family: "Cream"; src: url("/fonts/creamfont.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cream"; src: url("/fonts/creamfont.woff2?v=2") format("woff2"); font-display: swap; }
 
 :root {
   --sage: #DDE3D2;
