@@ -33,6 +33,7 @@ const recipes = defineCollection({
     })).default([]),
     tips: z.array(z.string()).default([]),   // Philia 的小提醒
     fails: z.array(z.string()).default([]),  // 我失敗過的地方
+    storage: z.array(z.string()).default([]), // 保存與加熱
   }),
 });
 
