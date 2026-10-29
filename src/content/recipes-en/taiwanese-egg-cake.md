@@ -1,46 +1,49 @@
 ---
 title: Old-Style Taiwanese Egg Cakes
-intro: Made the traditional way by whipping whole eggs — no baking powder at all. The whipped eggs alone make them crisp outside, soft inside and naturally fluffy.
-prepTime: about 20 min
+intro: Taiwanese egg cakes that are easy to make at home — this batch makes about 10–12. Resting the batter in the fridge gives a finer texture, with a crisp outside and a soft, fluffy inside.
+prepTime: about 15 min
+waitLabel: Rest in fridge
+waitTime: 30–60 min
 cookLabel: Cook
-cookTime: 1.5–2 min per side
-totalTime: about 30 min
+cookTime: 3–4 min
+totalTime: about 1 hour
+servings: 10–12 cakes
 ingredients:
   - group: Batter
     items:
-      - name: Cake flour (always sift it)
+      - name: Cake flour (decides how soft the cakes are)
         amount: 100 g
-      - name: Eggs at room temperature (they whip up more easily)
-        amount: 3–4
-      - name: Caster sugar (anywhere from 50 to 70 g)
-        amount: 60 g
-      - name: Milk
-        amount: 30 ml
-      - name: Unsalted butter (or vegetable oil)
+      - name: Eggs (room temperature eggs whip up more easily)
+        amount: "2"
+      - name: Milk (adjust for the thickness of the batter)
+        amount: 40 ml
+      - name: Sugar (up to 40 g if you like it sweeter)
         amount: 30 g
+      - name: Unsalted butter (melted in the microwave or over hot water; or use vegetable oil)
+        amount: 20 g
+      - name: Baking powder (about half a teaspoon, helps them rise)
+        amount: 3 g
       - name: Vanilla extract (optional, takes away any eggy smell)
         amount: a little
 steps:
-  - title: Get ready
-    text: |-
-      Sift the 100 g of cake flour and set it aside.
-      Put the milk and butter in a small bowl and warm it in the microwave or over hot water until just warm (about 40°C — the butter has melted and it doesn't feel hot to your finger).
-      If you are using a stovetop egg cake mould, preheat it over low heat and brush the inside with a thin layer of oil.
-  - title: Whip the eggs
-    text: |-
-      Put the eggs and sugar in a clean, dry, grease-free bowl and whip with an electric mixer on high speed until pale yellow.
-      Test it: lift the beaters — the batter falling off should be able to draw a clear "8" on the surface that stays for a few seconds.
-      Once it's ready, whip on low speed for 1 more minute to get rid of big bubbles and make it finer.
-    timer: Low speed 1 min
-  - title: Fold in the flour
-    text: Add the sifted flour in two batches. Fold it in gently and quickly with a spatula — cut down through the middle, then lift from the bottom of the bowl — until no dry flour is left. Never stir in circles, or the batter gets tough and loses the air you whipped in.
-  - title: Mix in the liquid
-    text: Never pour the warm milk and butter straight into the batter — it will sink to the bottom. First stir a spoonful of batter into the milk and butter, then pour that mixture back into the big bowl and fold gently until even.
-  - title: Cook
-    text: Pour the batter into the hot mould until each cup is 80–90% full. Close the mould and flip it straight away, so the batter runs to the other side and both sides come out full and round. Cook over medium-low heat until the edges are golden and they smell of egg — then they're ready to eat!
-    timer: Cook 1.5–2 min per side
+  - title: Sift the dry ingredients
+    text: Mix the cake flour and baking powder and sift them so the batter doesn't get lumps. Sifting also adds air, which makes the egg cakes fluffier.
+  - title: Whisk eggs and sugar
+    text: Put the eggs and sugar in a large bowl and whisk until well mixed. For an even softer texture, whip briefly with an electric mixer until the eggs turn paler and a little foamy.
+  - title: Add the liquid and flour
+    text: Stir the milk (and vanilla) into the eggs, then add the sifted flour in two batches. Fold gently with a spatula, cutting down and lifting from the bottom. Don't over-mix, or the batter gets tough and the cakes won't be as soft. Finally, mix in the melted butter.
+  - title: Rest the batter
+    text: This step is important — cover the batter with cling wrap and rest it in the fridge so everything comes together. The cakes will have a finer texture.
+    timer: Rest 30–60 min
+  - title: Heat and grease the mould
+    text: Preheat the egg cake maker (or a waffle maker). Brush a thin layer of butter or oil on the top and bottom plates — this helps the cakes come out cleanly and makes the outside taste better.
+  - title: Fill and cook
+    text: Pour the batter into the moulds until they are 80–90% full (they puff up as they cook). Close the lid and cook following the machine's instructions. If your mould can be flipped, flip it straight after closing so the cakes come out full and even.
+    timer: Cook 3–4 min
 tips:
-  - There is no baking powder, so the fluffiness comes only from the eggs — whip them until they can draw an "8".
-  - Mixing a spoonful of batter into the warm milk and butter first stops it sinking to the bottom.
-  - Close and flip the mould as soon as the batter goes in, so the cakes are round on both sides.
+  - Resting the batter in the fridge is the key to a finer texture.
+  - With a flip-over mould, close and flip it as soon as the batter goes in, so the cakes are round on both sides.
+storage:
+  - They are crispest straight away. If you don't eat them all, it's normal for the outside to go soft as they cool.
+  - Warm them briefly in the oven before eating and they'll be crisp again!
 ---
