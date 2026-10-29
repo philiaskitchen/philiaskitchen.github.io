@@ -48,3 +48,15 @@ export function isoDuration(s: string): string | undefined {
 
 const ROMAN = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv'];
 export const roman = (n: number) => `${ROMAN[n] ?? n + 1}.`;
+
+// Google AdSense 設定。申請通過後，把 client（ca-pub-…）和各位置的廣告單元編號填進來，廣告才會出現。
+// 還沒填之前，網站上完全不會顯示廣告。
+// 想先看看廣告會出現在哪裡：在網址後面加上 ?ads=preview
+export const ADS = {
+  client: '',
+  slots: {
+    recipeTop: '',    // 食譜頁：介紹和材料之間
+    recipeBottom: '', // 食譜頁：「你可能也會喜歡」上面
+    listBottom: '',   // 分類頁：食譜卡片下面
+  } as Record<string, string>,
+};
