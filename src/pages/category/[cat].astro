@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tag from '../../components/Tag.astro';
+import RecipeCard from '../../components/RecipeCard.astro';
+import { allRecipes, CATEGORIES, type CategoryKey } from '../../site';
+export function getStaticPaths() {
+  return (Object.keys(CATEGORIES) as CategoryKey[]).map((cat) => ({ params: { cat } }));
+}
+const cat = Astro.params.cat as CategoryKey;
+const c = CATEGORIES[cat];
+const list = (await allRecipes()).filter((r) => r.data.category === cat);
+---
+<Base title={c.name} description={c.intro} active={cat}>
+  <section class="wrap head">
+    <div>
+      <div class="soft crumbs"><a href="/">首頁</a> ／ {c.name}</div>
+      <div style="margin-top:14px"><Tag category={cat} /></div>
+      <h1 class="display">{c.name}</h1>
+      <div class="fr sub">{c.fr}</div>
+      <p class="muted">{c.intro}</p>
+      <p class="count soft">目前有 {list.length} 道食譜，最新的在前面。</p>
+    </div>
+    <img src="/images/site/stilllife-teapot.webp" alt="" aria-hidden="true" width="1000" height="647" />
+  </section>
+  <section class="wrap grid-wrap">
+    <div class="card-grid">
+      {list.map((r, i) => <RecipeCard recipe={r} index={i} />)}
+      <div class="next"><div class="display">下一道還在廚房裡</div><div class="fr">bientôt</div></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .head { display: grid; grid-template-columns: 1fr 380px; gap: 30px; align-items: end; padding-top: 30px; }
+  .crumbs { font-size: 13px; }
+  h1 { font-size: 56px; line-height: 1.2; margin-top: 4px; }
+  .sub { font-size: 22px; color: var(--olive-ink); }
+  .head p { margin-top: 12px; line-height: 1.9; max-width: 600px; }
+  .count { font-size: 14px; }
+  .grid-wrap { padding-top: 44px; padding-bottom: 60px; }
+  .next { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; border: 1.5px dashed rgba(74, 69, 54, .45); transform: rotate(-0.6deg); text-align: center; }
+  .next .display { font-size: 24px; }
+  .next .fr { color: var(--olive-ink); font-size: 17px; }
+  @media (max-width: 860px) { .head { grid-template-columns: 1fr; } .head img { max-width: 320px; } .next { min-height: 200px; } }
+</style>
