@@ -1,0 +1,30 @@
+---
+// 廣告位置。ADS.client 和這個位置的編號都填好才會放真的廣告；
+// 沒填時只輸出一個隱藏的預覽框（網址加 ?ads=preview 才看得到）。
+import { ADS } from '../site';
+interface Props { name: string }
+const { name } = Astro.props;
+const slot = ADS.slots[name];
+const live = Boolean(ADS.client && slot);
+---
+{live ? (
+  <aside class="ad wrap" aria-label="廣告">
+    <div class="label">廣告 · <span class="fr">publicité</span></div>
+    <ins class="adsbygoogle" style="display:block" data-ad-client={ADS.client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </aside>
+) : (
+  <aside class="ad wrap ad-preview" aria-hidden="true">
+    <div class="label">廣告預留位置 · <span class="fr">{name}</span></div>
+    <div class="box">廣告會出現在這裡</div>
+  </aside>
+)}
+<style>
+  .ad { padding-top: 18px; padding-bottom: 18px; }
+  .label { font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: .05em; }
+  .label .fr { font-size: 13px; }
+  .ad :global(ins.adsbygoogle) { min-height: 250px; }
+  .ad-preview { display: none; }
+  :global(html.show-ad-preview) .ad-preview { display: block; }
+  .box { min-height: 250px; border: 1.5px dashed var(--pencil); opacity: .6; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--ink-soft); background: rgba(255, 255, 255, .35); }
+</style>
