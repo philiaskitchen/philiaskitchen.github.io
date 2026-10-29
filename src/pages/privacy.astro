@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { ADS } from '../site';
+const adsLive = Boolean(ADS.client);
+---
+<Base title="隱私權政策" description="Philia的廚房料理如何處理你的資料：不需要註冊、勾選紀錄只存在你的裝置上，以及廣告和 Cookie 的說明。">
+  <article class="wrap policy">
+    <div class="fr eyebrow">confidentialité —</div>
+    <h1 class="display">隱私權政策</h1>
+    <p class="soft updated">最後更新：2026 年 10 月 29 日</p>
+
+    <section class="paper sheet">
+      <h2 class="display">這個網站</h2>
+      <p>「Philia的廚房料理」是我個人的食譜網站。看食譜不需要註冊或登入，網站也不會要求你留下姓名、email 等個人資料。</p>
+
+      <h2 class="display">存在你裝置上的資料</h2>
+      <p>你在食譜頁勾選的材料、做完的步驟和計時器，只會存在你自己瀏覽器的本機儲存空間（localStorage），方便你重新整理後還看得到。這些資料不會傳給我，也不會傳給任何人。</p>
+      <p>想刪除的話，在食譜頁按「全部重來」，或清除瀏覽器裡這個網站的資料就可以。</p>
+
+      <h2 class="display">網站主機</h2>
+      <p>這個網站放在 GitHub Pages 上。為了網站安全和正常運作，GitHub 可能會記錄造訪者的 IP 位址等技術資訊。詳細內容請看 <a class="link" href="https://docs.github.com/zh/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隱私權聲明</a>。</p>
+
+      <h2 class="display">廣告與 Cookie</h2>
+      {adsLive ? (
+        <p>這個網站使用 Google AdSense 顯示廣告。</p>
+      ) : (
+        <p>這個網站目前沒有廣告。之後可能會使用 Google AdSense 顯示廣告，開始顯示後，以下說明就會適用。</p>
+      )}
+      <ul>
+        <li>Google 等第三方廠商會使用 Cookie，根據你之前造訪這個網站或其他網站的紀錄，向你顯示廣告。</li>
+        <li>Google 使用廣告 Cookie，讓 Google 和它的合作夥伴可以根據你造訪這個網站和其他網站的紀錄，向你顯示廣告。</li>
+        <li>你可以到 <a class="link" href="https://adssettings.google.com" target="_blank" rel="noopener">Google 廣告設定</a> 關閉個人化廣告，也可以到 <a class="link" href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info</a> 關閉其他第三方廠商的個人化廣告 Cookie。</li>
+        <li>想了解 Google 如何使用這些資料，請看 <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=zh-TW" target="_blank" rel="noopener">Google 如何使用合作夥伴網站或應用程式的資訊</a>。</li>
+      </ul>
+      <p>如果你在歐洲經濟區、英國或瑞士，網站會先詢問你是否同意使用 Cookie，你可以選擇不同意。</p>
+
+      <h2 class="display">政策更新</h2>
+      <p>如果這份政策有變動，我會更新這一頁和上面的「最後更新」日期。</p>
+    </section>
+  </article>
+</Base>
+<style>
+  .policy { max-width: 820px; padding-top: 34px; padding-bottom: 70px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 48px; line-height: 1.25; margin-top: 4px; }
+  .updated { font-size: 14px; margin-top: 6px; }
+  .sheet { margin-top: 28px; padding: 34px 38px 30px; }
+  h2 { font-size: 24px; line-height: 1.35; margin-top: 30px; }
+  h2:first-child { margin-top: 0; }
+  p, li { font-size: 16px; line-height: 1.95; color: var(--ink-muted); }
+  p { margin-top: 10px; }
+  ul { margin: 10px 0 0; padding-left: 22px; }
+  li + li { margin-top: 6px; }
+  .link { font-size: inherit; }
+  @media (max-width: 600px) { h1 { font-size: 38px; } .sheet { padding: 26px 20px 22px; } }
+</style>
