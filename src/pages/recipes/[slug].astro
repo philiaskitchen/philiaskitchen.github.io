@@ -4,6 +4,7 @@ import Tag from '../../components/Tag.astro';
 import Note from '../../components/Note.astro';
 import RecipeCard from '../../components/RecipeCard.astro';
 import ScallopButton from '../../components/ScallopButton.astro';
+import AdSlot from '../../components/AdSlot.astro';
 import { allRecipes, CATEGORIES, categoryUrl, isoDuration, type Recipe } from '../../site';
 
 export async function getStaticPaths() {
@@ -53,6 +54,7 @@ const ld = {
     {d.image && <img class="art" src={d.image} alt={`${d.title}插圖`} width="1100" height="720" />}
   </section>
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <AdSlot name="recipeTop" />
 
   <section class="wrap body" id="cook" data-recipe={recipe.id}>
     <div class="ingredients paper">
@@ -101,6 +103,7 @@ const ld = {
         {d.storage.length > 0 && <Note title="保存與加熱" items={d.storage} tape="var(--dusty-blue)" tilt={-0.6} />}
       </section>
     )}
+    <AdSlot name="recipeBottom" />
     {others.length > 0 && (
       <section class="wrap more">
         <div class="section-title"><h2>你可能也會喜歡</h2><span class="fr">à essayer aussi</span></div>
