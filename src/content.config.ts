@@ -13,6 +13,7 @@ const recipes = defineCollection({
     image: z.string().optional(),           // 去背插圖，例如 /images/recipes/xxx.webp
     date: z.coerce.date(),                  // 發佈日期，用來排序
     featured: z.boolean().default(false),   // 本週精選：會出現在首頁大標
+    measure: z.string().default(''),        // 首頁大標用的量詞，例如「幾杯」；空白就依分類（一籠／一盤／一爐）
     sample: z.boolean().default(false),     // 範例內容：會在頁面上加一行提醒
     prepTime: z.string().default(''),       // 準備時間，例如「20 分鐘」
     waitLabel: z.string().default(''),      // 等待項目：發酵／烘烤／蒸／靜置
