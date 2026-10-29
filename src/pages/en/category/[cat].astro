@@ -1,0 +1,9 @@
+---
+import CategoryView from '../../../views/CategoryView.astro';
+import { CATEGORIES, type CategoryKey } from '../../../site';
+export function getStaticPaths() {
+  return (Object.keys(CATEGORIES) as CategoryKey[]).map((cat) => ({ params: { cat }, props: { cat } }));
+}
+const { cat } = Astro.props as { cat: CategoryKey };
+---
+<CategoryView cat={cat} />
