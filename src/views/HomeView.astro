@@ -1,0 +1,79 @@
+---
+// 首頁（中英文共用）
+import Base from '../layouts/Base.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import RecipeMenu from '../components/RecipeMenu.astro';
+import ScallopButton from '../components/ScallopButton.astro';
+import { allRecipes, featuredRecipe, recipeUrl } from '../site';
+import { getLang, lp, t } from '../i18n';
+const lang = getLang(Astro.url);
+const u = t(lang);
+const recipes = await allRecipes(lang);
+const featured = await featuredRecipe(lang);
+const latest = recipes.slice(0, 3);
+const hw = featured ? u.heroWeek(u.kind[featured.data.category] ?? '', featured.data.title) : null;
+---
+<Base home active="week">
+  <section class="wrap hero">
+    <div class="copy">
+      <div class="fr eyebrow">Cette semaine —</div>
+      {hw ? (
+        lang === 'en' ? (
+          <h1 class="display en">{hw.before}<span class="under">{hw.title}</span></h1>
+        ) : (
+          <h1 class="display">{hw.before}<br />{hw.mid}<span class="circle">{hw.title}</span>{hw.after}</h1>
+        )
+      ) : (
+        <h1 class="display" set:html={u.heroEmpty} />
+      )}
+      <p class="muted lead" set:html={u.lead} />
+      <div class="actions">
+        {featured && <ScallopButton href={recipeUrl(featured, lang)} label={u.seeWeek} width={lang === 'en' ? 230 : 200} />}
+        <a class="link" href="#menu">{u.allRecipes}</a>
+      </div>
+    </div>
+    <img class="banner" src="/images/site/banner-home.webp" alt={u.bannerAlt} width="796" height="502" />
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+
+  <section class="wrap latest">
+    <div class="section-title"><h2>{u.latest}</h2><span class="fr">les dernières recettes</span></div>
+    <div class="card-grid">{latest.map((r, i) => <RecipeCard recipe={r} index={i} />)}</div>
+  </section>
+
+  <div class="band" id="menu">
+    <section class="wrap duo">
+      <div class="menu-col"><RecipeMenu recipes={recipes} /></div>
+      <div class="about-col">
+        <img src="/images/site/stilllife-teapot.webp" alt={u.stillAlt} loading="lazy" width="1000" height="647" />
+        <h2 class="display">{u.whoWrites}</h2>
+        <p class="muted">{u.aboutShort}</p>
+        <a class="link" href={lp(lang, '/about/')}>{u.moreAbout}</a>
+      </div>
+    </section>
+  </div>
+</Base>
+<style>
+  .hero { display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 30px; padding-top: 40px; padding-bottom: 30px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 48px; line-height: 1.3; margin-top: 4px; }
+  h1.en { font-size: 44px; line-height: 1.25; }
+  .under { display: block; color: var(--terracotta-ink); padding-bottom: 8px; background: url(/images/ui/underline.svg) no-repeat left bottom / min(100%, 420px) 12px; width: fit-content; }
+  .circle { position: relative; display: inline-block; padding: 0 6px; }
+  .circle::after { content: ""; position: absolute; inset: -14px -16px -10px -16px; background: url(/images/ui/pencil-circle.svg) no-repeat center / 100% 100%; pointer-events: none; }
+  .lead { margin-top: 14px; line-height: 1.9; }
+  .actions { display: flex; align-items: center; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+  .banner { justify-self: end; width: 100%; max-width: 560px; }
+  .latest { padding-top: 30px; padding-bottom: 50px; }
+  .latest .card-grid { margin-top: 32px; }
+  .band { padding: 44px 0 50px; scroll-margin-top: 20px; }
+  .duo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; }
+  .about-col img { max-height: 270px; width: auto; margin: 0 auto; }
+  .about-col h2 { font-size: 28px; margin-top: 6px; }
+  .about-col p { font-size: 15px; line-height: 1.9; margin: 6px 0 12px; }
+  @media (max-width: 860px) {
+    .hero, .duo { grid-template-columns: 1fr; }
+    .banner { order: -1; justify-self: center; }
+    h1 { font-size: 36px; }
+  }
+</style>

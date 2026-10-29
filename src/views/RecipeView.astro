@@ -1,0 +1,360 @@
+---
+// 食譜內頁（中文 /recipes/xxx/ 和英文 /en/recipes/xxx/ 共用）
+import Base from '../layouts/Base.astro';
+import Tag from '../components/Tag.astro';
+import Note from '../components/Note.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import ScallopButton from '../components/ScallopButton.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { allRecipes, catName, categoryUrl, recipeUrl, isoDuration, type Recipe } from '../site';
+import { getLang, lp, t } from '../i18n';
+
+const { recipe } = Astro.props as { recipe: Recipe };
+const lang = getLang(Astro.url);
+const u = t(lang);
+const other = u.switchLang;
+const d = recipe.data;
+const others = (await allRecipes(lang)).filter((r) => r.id !== recipe.id).slice(0, 3);
+// 另一個語言有沒有這篇（英文還沒翻譯的話，語言切換會回到英文首頁）
+const altExists = (await allRecipes(other)).some((r) => r.id === recipe.id);
+// 「發酵 40–50 分鐘」「蒸 12–15 分鐘＋悶 3–5 分鐘」「Steam 12–15 min + rest 3–5 min」→ 一段一段的計時器
+const UNIT = /(小時|分鐘|分|秒|hours?|hrs?|minutes?|mins?|min|seconds?|secs?)/i;
+const parseTimer = (tm: string) => tm.split(/\s*[＋+]\s*/).map((seg) => {
+  const text = seg.trim();
+  const m = text.match(new RegExp('^(.*?)(\\d+(?:\\.\\d+)?)\\s*(?:(?:[–\\-~～至]|to)\\s*(\\d+(?:\\.\\d+)?))?\\s*' + UNIT.source, 'i'));
+  if (!m) return { text, min: 0, max: 0, label: '' };
+  const un = m[4].toLowerCase();
+  const unit = /^(小時|h)/.test(un) ? 3600 : /^(秒|s)/.test(un) ? 1 : 60;
+  const lb = m[1].trim();
+  return { text, label: lb.charAt(0).toUpperCase() + lb.slice(1), min: Math.round(Number(m[2]) * unit), max: m[3] ? Math.round(Number(m[3]) * unit) : 0 };
+});
+const stars = '★'.repeat(Number(d.difficulty)) + '☆'.repeat(3 - Number(d.difficulty));
+const meta = [
+  [u.prep, d.prepTime], [d.waitLabel, d.waitTime], [d.cookLabel, d.cookTime], [u.servings, d.servings], [u.difficulty, stars],
+].filter(([k, v]) => k && v);
+const longTitle = lang === 'en' ? d.title.length > 22 : d.title.length > 6;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Recipe', name: d.title, description: d.intro,
+  image: d.image ? [new URL(d.image, Astro.site).href] : undefined,
+  author: { '@type': 'Person', name: 'Philia' }, datePublished: d.date.toISOString().slice(0, 10),
+  recipeCategory: catName(d.category, lang), inLanguage: lang === 'en' ? 'en' : 'zh-Hant', recipeYield: d.servings, prepTime: isoDuration(d.prepTime), totalTime: isoDuration(d.totalTime),
+  recipeIngredient: d.ingredients.flatMap((g) => g.items.map((i) => `${i.name} ${i.amount}`.trim())),
+  recipeInstructions: d.steps.map((s) => ({ '@type': 'HowToStep', name: s.title, text: s.text })),
+};
+---
+<Base title={d.title} description={d.intro} active={d.category} image={d.image} alt={altExists ? recipeUrl(recipe, other) : null}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <div class="wrap crumbs soft"><a href={lp(lang, '/')}>{u.home}</a> ／ <a href={categoryUrl(d.category, lang)}>{catName(d.category, lang)}</a> ／ {d.title}</div>
+  <section class="wrap hero">
+    <div class="copy">
+      <Tag category={d.category} />
+      <h1 class:list={['display', { long: longTitle, en: lang === 'en' }]}>{d.title}</h1>
+      {d.titleFr && <div class="fr sub">{d.titleFr}</div>}
+      <p class="muted intro">{d.intro}</p>
+      {d.sample && <div class="sample-note">{u.sampleNote}</div>}
+      <dl class="meta paper">
+        {meta.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <div class="actions"><ScallopButton href="#cook" label={u.start} width={170} /></div>
+    </div>
+    {d.image && <img class="art" src={d.image} alt={u.illus(d.title)} width="1100" height="720" />}
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <AdSlot name="recipeTop" />
+
+  <section class="wrap body" id="cook" data-recipe={recipe.id}>
+    <div class="ingredients paper">
+      <span class="tape" style="background:var(--mustard)"></span>
+      <div class="head"><h2 class="display">{u.ingredients}</h2><span class="fr">Ingrédients</span></div>
+      {d.servings && <div class="serv">{u.servings} <strong>{d.servings}</strong></div>}
+      {d.ingredients.map((g) => (
+        <div class="group">
+          {g.group && <div class="gname">{g.group}</div>}
+          <ul>{g.items.map((i) => (
+            <li><label><input type="checkbox" /><span class="box" aria-hidden="true"></span><span class="name">{i.name}</span><span class="amt">{i.amount}</span></label></li>
+          ))}</ul>
+        </div>
+      ))}
+    </div>
+    <div class="steps" id="steps">
+      <div class="section-title"><h2>{u.steps}</h2><span class="fr">Étapes</span></div>
+      <p class="hint soft">{u.hint}<button type="button" class="reset" hidden>{u.reset}</button></p>
+      <ol>{d.steps.map((s, i) => (
+        <li><label>
+          <input type="checkbox" />
+          <span class="num display" aria-hidden="true"><span class="n">{i + 1}</span></span>
+          <span class="txt"><span class="sr-only">{u.stepN(i + 1)}</span><span class="st display">{s.title}</span><span class="sp muted">{s.text}</span></span>
+        </label>
+        {s.timer && (
+          <div class="timers">{parseTimer(s.timer).map((t, j) => t.min ? (
+            <span class="tgroup">
+              <button type="button" class="timer" data-id={`${i}-${j}`} data-label={t.label || s.title} data-min={t.min} data-max={t.max}>
+                <span class="ico" aria-hidden="true"></span><span class="tt">{t.text}</span><span class="cd"></span>
+              </button>
+              <button type="button" class="plus" data-for={`${i}-${j}`} hidden>{u.plus5}</button>
+            </span>
+          ) : <span class="timer static">⏱ {t.text}</span>)}</div>
+        )}
+        <p class="tmsg" hidden></p>
+        </li>
+      ))}</ol>
+    </div>
+  </section>
+
+  <div class="band lower">
+    {(d.tips.length > 0 || d.fails.length > 0 || d.storage.length > 0) && (
+      <section class="wrap notes">
+        {d.tips.length > 0 && <Note title={u.tips} items={d.tips} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={-1} />}
+        {d.fails.length > 0 && <Note title={u.fails} items={d.fails} tape="var(--tape-rose)" tilt={0.8} />}
+        {d.storage.length > 0 && <Note title={u.storage} items={d.storage} tape="var(--dusty-blue)" tilt={-0.6} />}
+      </section>
+    )}
+    <AdSlot name="recipeBottom" />
+    {others.length > 0 && (
+      <section class="wrap more">
+        <div class="section-title"><h2>{u.alsoLike}</h2><span class="fr">à essayer aussi</span></div>
+        <div class="card-grid">{others.map((r, i) => <RecipeCard recipe={r} index={i + 1} />)}</div>
+      </section>
+    )}
+  </div>
+
+  <div class="timerbar" aria-live="polite"></div>
+  <button type="button" class="cookmode" aria-pressed="false" hidden>
+    <span class="dot" aria-hidden="true"></span>
+    <span><strong>{u.cook}</strong><small class="off">{u.cookOff}</small><small class="on">{u.cookOn}</small></span>
+  </button>
+  <script type="application/json" id="ui-timer" set:html={JSON.stringify(u.timer)} />
+</Base>
+<script>
+  // 1. 烹飪模式：讓螢幕保持亮著（手機、iPad、電腦瀏覽器都支援；不支援的瀏覽器就不顯示按鈕）
+  const btn = document.querySelector<HTMLButtonElement>('.cookmode');
+  let lock: any = null;
+  const wl = (navigator as any).wakeLock;
+  if (btn && wl) {
+    btn.hidden = false;
+    const setOn = (on: boolean) => { btn.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('cooking', on); };
+    const request = async () => { try { lock = await wl.request('screen'); lock.addEventListener('release', () => { if (document.visibilityState === 'visible') setOn(false); }); setOn(true); } catch { setOn(false); } };
+    btn.addEventListener('click', async () => {
+      if (btn.getAttribute('aria-pressed') === 'true') { await lock?.release(); lock = null; setOn(false); }
+      else await request();
+    });
+    // 捲到材料和步驟時才出現，不會擋住上面的標題和按鈕；開著的時候一直顯示
+    const cook = document.querySelector('#cook');
+    if (cook && 'IntersectionObserver' in window) {
+      btn.classList.add('away');
+      new IntersectionObserver(([e]) => btn.classList.toggle('away', !e.isIntersecting)).observe(cook);
+    }
+    // 切到別的 App 再回來時，螢幕鎖會被系統放掉，自動再開一次
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && document.body.classList.contains('cooking') && (!lock || lock.released)) request(); });
+  }
+
+  // 3. 計時器：點時間按鈕開始倒數；時間到會響、會震動（Android），畫面上也會提示。
+  //    用「結束時間」來算，就算切到別的 App、螢幕關掉再回來，剩下的時間還是對的。
+  {
+    const root = document.querySelector<HTMLElement>('#cook');
+    const bar = document.querySelector<HTMLElement>('.timerbar')!;
+    const KEY = 'pk-timers-' + (root?.dataset.recipe || '');
+    type T = { end: number; done?: boolean; extra?: boolean };
+    let state: Record<string, T> = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch {}
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+    const btns = [...document.querySelectorAll<HTMLButtonElement>('button.timer')];
+    const byId = (id: string) => btns.find((b) => b.dataset.id === id)!;
+    const fmt = (sec: number) => { sec = Math.max(0, Math.ceil(sec)); const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+      return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0'); };
+    let ctx: AudioContext | null = null;
+    const unlock = () => { try { ctx = ctx || new (window.AudioContext || (window as any).webkitAudioContext)(); ctx.resume(); } catch {} };
+    let ringing: number | null = null;
+    const beep = () => { if (!ctx) return; const t0 = ctx.currentTime;
+      for (let k = 0; k < 3; k++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.0001, t0 + k * 0.35); g.gain.exponentialRampToValueAtTime(0.4, t0 + k * 0.35 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + k * 0.35 + 0.25);
+        o.connect(g).connect(ctx.destination); o.start(t0 + k * 0.35); o.stop(t0 + k * 0.35 + 0.3); } };
+    const ring = () => { if (ringing) return; let n = 0; beep(); try { navigator.vibrate?.([400, 200, 400, 200, 400]); } catch {}
+      ringing = window.setInterval(() => { if (++n >= 15 || !Object.values(state).some((t) => t.done)) stopRing(); else beep(); }, 2000); };
+    const stopRing = () => { if (ringing) clearInterval(ringing); ringing = null; };
+    const title = document.title;
+    const L = JSON.parse(document.getElementById('ui-timer')?.textContent || '{}');
+    const fill = (s: string, o: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(o[k] ?? ''));
+    const render = () => {
+      const now = Date.now(); let anyDone = false; const rows: string[] = [];
+      for (const b of btns) {
+        const id = b.dataset.id!, t = state[id], li = b.closest('li')!, msg = li.querySelector<HTMLElement>('.tmsg')!;
+        const plus = li.querySelector<HTMLButtonElement>(`.plus[data-for="${id}"]`)!;
+        b.classList.toggle('running', !!t && !t.done); b.classList.toggle('done', !!t?.done);
+        const cd = b.querySelector<HTMLElement>('.cd')!;
+        if (!t) { cd.textContent = ''; b.setAttribute('aria-label', `${L.start}${b.dataset.label} ${fmt(+b.dataset.min!)}`); plus.hidden = true; if (!li.querySelector('.timer.done')) msg.hidden = true; continue; }
+        if (t.done) { anyDone = true; cd.textContent = L.done; plus.hidden = false; b.setAttribute('aria-label', L.doneAria);
+          const max = +b.dataset.max!, min = +b.dataset.min!;
+          msg.hidden = false; msg.textContent = max > min && !t.extra ? fill(L.rangeMsg, { min: Math.round(min / 60), max: Math.round(max / 60) }) : fill(L.doneMsg, { label: b.dataset.label! });
+          rows.push(`<button type="button" data-go="${id}" class="done">${fill(L.barDone, { label: b.dataset.label! })}</button>`); continue; }
+        const left = (t.end - now) / 1000;
+        cd.textContent = L.left + fmt(left); plus.hidden = true; msg.hidden = true;
+        b.setAttribute('aria-label', `${b.dataset.label} ${fmt(left)}${L.leftAria}`);
+        rows.push(`<button type="button" data-go="${id}">${b.dataset.label} ${fmt(left)}</button>`);
+      }
+      bar.innerHTML = rows.join(''); bar.classList.toggle('show', rows.length > 0);
+      document.title = anyDone ? L.titlePrefix + title : title;
+      if (!anyDone) stopRing();
+    };
+    const tick = () => { const now = Date.now(); let fired = false;
+      for (const [id, t] of Object.entries(state)) if (!t.done && t.end <= now) { t.done = true; fired = true; }
+      if (fired) { save(); ring(); } render(); };
+    let armed: string | null = null, armTimer = 0;
+    btns.forEach((b) => b.addEventListener('click', () => {
+      unlock(); const id = b.dataset.id!, t = state[id];
+      if (!t) { state[id] = { end: Date.now() + +b.dataset.min! * 1000 }; save(); tick(); return; }
+      if (t.done) { delete state[id]; save(); render(); return; }
+      // 倒數中：連點兩下才取消，避免手忙腳亂時不小心按掉
+      if (armed === id) { delete state[id]; armed = null; save(); render(); return; }
+      armed = id; clearTimeout(armTimer); b.querySelector<HTMLElement>('.cd')!.textContent = L.cancel;
+      armTimer = window.setTimeout(() => { armed = null; render(); }, 2500);
+    }));
+    document.querySelectorAll<HTMLButtonElement>('.plus').forEach((p) => p.addEventListener('click', () => {
+      unlock(); const id = p.dataset.for!; state[id] = { end: Date.now() + 5 * 60 * 1000, extra: true }; save(); tick(); }));
+    bar.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]'); if (!go) return;
+      byId(go.dataset.go!).closest('li')!.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+    // 重新整理後，已經過了的計時直接顯示「時間到」
+    for (const t of Object.values(state)) if (!t.done && t.end <= Date.now()) t.done = true;
+    render(); setInterval(tick, 1000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
+  }
+
+  // 2. 材料和步驟的勾選會記住（重新整理或螢幕關掉再打開都還在）
+  const root = document.querySelector<HTMLElement>('#cook');
+  if (root) {
+    const key = 'pk-checks-' + root.dataset.recipe;
+    const boxes = [...root.querySelectorAll<HTMLInputElement>('input[type=checkbox]')];
+    const reset = root.querySelector<HTMLButtonElement>('.reset');
+    const sync = () => { if (reset) reset.hidden = !boxes.some((b) => b.checked); };
+    try { const saved = JSON.parse(localStorage.getItem(key) || '[]'); boxes.forEach((b, i) => (b.checked = !!saved[i])); } catch {}
+    sync();
+    root.addEventListener('change', () => { try { localStorage.setItem(key, JSON.stringify(boxes.map((b) => b.checked))); } catch {} sync(); });
+    reset?.addEventListener('click', () => { boxes.forEach((b) => (b.checked = false)); try { localStorage.removeItem(key); } catch {} sync(); });
+  }
+</script>
+<style>
+  .crumbs { font-size: 13px; padding-top: 6px; }
+  .crumbs a:hover { color: var(--terracotta-ink); }
+  .hero { display: grid; grid-template-columns: 1fr 1.05fr; gap: 30px; align-items: center; padding-top: 14px; padding-bottom: 20px; }
+  h1 { font-size: 64px; line-height: 1.15; margin-top: 4px; }
+  h1.long { font-size: 50px; }
+  h1.en { font-size: 54px; line-height: 1.12; }
+  h1.en.long { font-size: 44px; }
+  .sub { color: var(--olive-ink); font-size: 22px; }
+  .intro { font-size: 17px; line-height: 1.95; margin-top: 14px; max-width: 470px; }
+  .meta { display: inline-grid; grid-auto-flow: column; margin: 20px 0 0; padding: 12px 6px; }
+  dd { white-space: nowrap; }
+  .meta div { text-align: center; padding: 0 16px; border-left: 1px solid rgba(74, 69, 54, .35); }
+  .meta div:first-child { border-left: 0; }
+  dt { font-size: 13px; color: var(--olive-ink); }
+  dd { margin: 2px 0 0; font-size: 20px; }
+  .actions { margin-top: 18px; }
+  .art { justify-self: center; width: 100%; max-width: 600px; }
+  .body { display: grid; grid-template-columns: 360px 1fr; gap: 56px; align-items: start; padding-top: 34px; padding-bottom: 50px; }
+  .ingredients { position: relative; padding: 30px 28px 24px; transform: rotate(-0.8deg); }
+  .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .head h2 { font-size: 32px; }
+  .head .fr { color: var(--terracotta-ink); font-size: 18px; }
+  .serv { font-size: 14px; color: var(--olive-ink); margin: 6px 0 4px; }
+  .serv strong { font-weight: 400; color: var(--ink); font-size: 17px; margin-left: 6px; }
+  .gname { font-size: 14px; color: var(--terracotta-ink); margin-top: 12px; }
+  .group ul { list-style: none; margin: 0; padding: 0; }
+  .group label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dashed var(--line-dashed); cursor: pointer; }
+  .group input { position: absolute; opacity: 0; }
+  .box { flex: none; width: 20px; height: 20px; margin-top: 4px; background: url(/images/ui/checkbox.svg) no-repeat center; position: relative; }
+  .group input:checked + .box::after { content: ""; position: absolute; left: 4px; top: -4px; width: 9px; height: 16px; border: solid var(--olive); border-width: 0 3px 3px 0; transform: rotate(40deg); }
+  .group input:checked ~ .name { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: rgba(74, 69, 54, .5); }
+  .name { flex: 1; }
+  .amt { color: var(--terracotta-ink); white-space: nowrap; }
+  .hint { font-size: 14px; margin-top: 6px; }
+  .reset { font: inherit; font-size: 14px; color: var(--terracotta-ink); background: none; border: 0; border-bottom: 1.5px solid currentColor; padding: 0 0 1px; margin-left: 12px; cursor: pointer; }
+  .steps ol { list-style: none; margin: 10px 0 0; padding: 0; }
+  .steps li { border-bottom: 1px dashed #C6CDB8; }
+  .steps label { display: flex; gap: 18px; padding: 16px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .steps input { position: absolute; opacity: 0; }
+  .txt { display: block; transition: opacity .2s; }
+  .steps input:checked ~ .txt { opacity: .45; }
+  .steps input:checked ~ .num .n { visibility: hidden; }
+  .steps input:checked ~ .num::after { content: ""; position: absolute; left: 17px; top: 9px; width: 10px; height: 20px; border: solid var(--olive); border-width: 0 3.5px 3.5px 0; transform: rotate(40deg); }
+  .steps input:focus-visible ~ .num { outline: 2px solid var(--terracotta-ink); outline-offset: 2px; border-radius: 50%; }
+  .num { position: relative; flex: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--terracotta);
+    background: url(/images/ui/step-circle.svg) no-repeat center / 100% 100%; }
+  .steps .st { display: block; font-size: 24px; line-height: 1.35; }
+  .steps .sp { display: block; white-space: pre-line; margin-top: 4px; line-height: 1.9; }
+  .timers { display: flex; flex-wrap: wrap; gap: 8px 10px; padding: 0 0 16px 64px; margin-top: -6px; }
+  .tgroup { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .timer, .plus { white-space: nowrap; }
+  .timer { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; color: var(--olive-ink); background: var(--paper);
+    border: 1.5px solid var(--olive); border-radius: 4px 6px 5px 6px; padding: 6px 12px; min-height: 40px; cursor: pointer; box-shadow: 1px 2px 0 rgba(62,58,48,.08); }
+  .timer.static { background: none; box-shadow: none; cursor: default; min-height: 0; padding: 2px 10px; }
+  .timer .ico { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent var(--olive); }
+  .timer .cd:empty { display: none; }
+  .timer .cd { font-variant-numeric: tabular-nums; padding-left: 8px; border-left: 1px solid currentColor; }
+  .timer.running { background: var(--olive); color: var(--on-terracotta); border-color: var(--olive-ink); }
+  .timer.running .ico { width: 10px; height: 12px; border: 0; border-left: 3.5px solid var(--on-terracotta); border-right: 3.5px solid var(--on-terracotta); }
+  .timer.done { background: var(--terracotta); color: var(--on-terracotta); border-color: var(--terracotta-ink); animation: wobble .6s ease-in-out infinite alternate; }
+  .timer.done .ico { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--on-terracotta); }
+  @keyframes wobble { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+  .plus { font: inherit; font-size: 14px; color: var(--terracotta-ink); background: none; border: 1.5px dashed var(--terracotta-ink); border-radius: 4px; padding: 6px 10px; min-height: 40px; cursor: pointer; }
+  .plus[hidden] { display: none; }
+  .tmsg { margin: -6px 0 16px 64px; font-size: 14px; color: var(--terracotta-ink); }
+  .timerbar { position: fixed; z-index: 41; left: max(18px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); display: none; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .timerbar.show { display: flex; }
+  .timerbar :global(button) { font: inherit; font-size: 15px; font-variant-numeric: tabular-nums; color: var(--on-terracotta); background: var(--olive); border: 1.5px solid var(--olive-ink);
+    border-radius: 22px 18px 24px 20px; padding: 9px 16px; box-shadow: var(--shadow-paper); cursor: pointer; }
+  .timerbar :global(button.done) { background: var(--terracotta); border-color: var(--terracotta-ink); }
+  @media (prefers-reduced-motion: reduce) { .timer.done { animation: none; } }
+  .lower { padding: 44px 0 50px; }
+  .cookmode { position: fixed; z-index: 40; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
+    display: flex; align-items: center; gap: 10px; padding: 10px 18px 10px 14px; font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+    background: var(--paper); border: 1.5px solid var(--pencil); border-radius: 26px 22px 28px 24px; box-shadow: var(--shadow-paper); }
+  .cookmode[hidden] { display: none; }
+  .cookmode { transition: opacity .25s, transform .25s; }
+  .cookmode.away:not([aria-pressed="true"]) { opacity: 0; transform: translateY(12px); pointer-events: none; }
+  .cookmode strong { display: block; font-weight: 400; font-size: 16px; line-height: 1.3; }
+  .cookmode small { font-size: 12px; color: var(--ink-soft); }
+  .cookmode .on, .cookmode[aria-pressed="true"] .off { display: none; }
+  .cookmode[aria-pressed="true"] .on { display: inline; color: var(--on-terracotta); }
+  .cookmode .dot { flex: none; width: 34px; height: 20px; border-radius: 10px; border: 1.5px solid var(--pencil); position: relative; background: var(--sage); }
+  .cookmode .dot::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--pencil); transition: left .2s; }
+  .cookmode[aria-pressed="true"] { background: var(--olive); border-color: var(--olive-ink); color: var(--on-terracotta); }
+  .cookmode[aria-pressed="true"] .dot { background: var(--on-terracotta); }
+  .cookmode[aria-pressed="true"] .dot::after { left: 16px; background: var(--olive); }
+  /* 烹飪模式開著時，步驟字放大一點，離遠一點也看得清楚 */
+  :global(body.cooking) .steps .st { font-size: 27px; }
+  :global(body.cooking) .steps .sp { font-size: 18px; }
+  :global(body.cooking) .group label { font-size: 18px; }
+  .notes { display: flex; gap: 40px; }
+  .more { margin-top: 44px; }
+  .more .card-grid { margin-top: 30px; }
+  @media (max-width: 860px) {
+    .hero, .body { grid-template-columns: 1fr; }
+    .art { order: -1; }
+    h1, h1.long { font-size: 44px; }
+    .ingredients { transform: none; }
+    .notes { flex-direction: column; }
+    .meta div { padding: 0 12px; }
+  }
+  /* 手機：插圖縮小，打開就先看到標題、時間和材料 */
+  @media (max-width: 600px) {
+    .hero { gap: 6px; padding-top: 6px; }
+    .art { max-width: 210px; max-height: 170px; width: auto; }
+    h1 { font-size: 38px; }
+    h1.long { font-size: 32px; }
+    .intro { font-size: 16px; line-height: 1.8; margin-top: 8px; }
+    .meta { display: grid; grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); row-gap: 12px; width: 100%; margin-top: 14px; padding: 12px 2px; }
+    .meta div { padding: 0 4px; }
+    .meta div:nth-child(3n+1) { border-left: 0; }
+    dt { font-size: 12px; }
+    dd { font-size: 16px; white-space: nowrap; }
+    .cookmode { padding: 8px 14px 8px 10px; }
+    .cookmode small { display: none !important; }
+    .body { padding-top: 24px; gap: 40px; padding-bottom: 90px; }
+    .ingredients { padding: 26px 18px 18px; }
+    .group label { padding: 11px 0; }
+    .steps label { gap: 14px; }
+    .timers { padding-left: 60px; }
+    .tmsg { margin-left: 60px; }
+    .lower { padding-bottom: 90px; }
+  }
+</style>
