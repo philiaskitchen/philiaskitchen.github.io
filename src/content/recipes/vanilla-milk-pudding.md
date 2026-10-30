@@ -16,6 +16,7 @@ cookLabel: 烤
 cookTime: 35–40 分鐘
 totalTime: 約 5 小時（含冷藏）
 servings: 約 4 杯
+servingMl: 120
 difficulty: "2"
 ingredients:
   - group: 布丁液
