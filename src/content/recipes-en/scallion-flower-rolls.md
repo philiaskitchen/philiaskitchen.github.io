@@ -1,54 +1,62 @@
 ---
 title: Spring Onion Flower Rolls
-intro: Layers of dough and spring onion, twisted and knotted into a flower. That savoury spring onion oil flavour makes it a classic Taiwanese breakfast.
-prepTime: 30 min
-waitLabel: Prove
-waitTime: 30 min
+intro: The keys to spring onion flower rolls are a good yeast rise and layering the dough with oil. Whether you use a half-scalded dough or a simple cold-water dough, they come out soft with a nice chew.
+prepTime: about 30 min
+waitLabel: Two proves
+waitTime: about 1–1.5 hours
 cookLabel: Steam
-cookTime: 15 min
-totalTime: 80 min
-servings: 8 rolls
+cookTime: 12 min
+totalTime: about 2 hours
+servings: about 8 rolls
 ingredients:
   - group: Dough
     items:
       - name: Plain flour
         amount: 300 g
-      - name: Caster sugar
-        amount: 15 g
-      - name: Instant yeast
+      - name: Instant dried yeast (about 1 teaspoon)
         amount: 3 g
-      - name: Warm water (about 35°C)
-        amount: 165 ml
-      - name: Vegetable oil
+      - name: Caster sugar (helps the yeast and adds flavour)
+        amount: 15 g
+      - name: Water (lukewarm, about 35°C, is best)
+        amount: 150–160 g
+      - name: Vegetable oil (makes the dough smoother)
         amount: 5 g
-  - group: Filling
+  - group: Spring onion filling
     items:
-      - name: Spring onion, finely chopped
-        amount: 60 g
+      - name: Spring onion, chopped (dry it completely after washing, before chopping)
+        amount: 80–100 g
+      - name: Cooking oil or sesame oil (to brush the dough and seal in moisture)
+        amount: 1.5 tablespoons
       - name: Salt
-        amount: 3 g
-      - name: Ground white pepper
-        amount: a pinch
-      - name: Vegetable oil
-        amount: 15 g
+        amount: 1/2 teaspoon
+      - name: Ground white pepper (for the traditional flavour)
+        amount: 1/2 teaspoon
 steps:
-  - title: Make the dough
-    text: Mix the flour, sugar and yeast, pour in the warm water and stir until shaggy. Add the oil and knead until smooth. Cover with a cloth and let it rest.
-    timer: Rest 10 min
+  - title: Knead the dough
+    text: Mix the plain flour, sugar and instant yeast, then add the water and oil. Bring it together and knead by hand until the surface is smooth.
+    timer: Knead 8–10 min
+  - title: First prove
+    text: Cover with a damp cloth or cling wrap and leave somewhere warm until doubled in size and a floured finger poked in leaves a hole that doesn't spring back.
+    timer: Prove 45–60 min
   - title: Roll out and fill
-    text: Roll the dough into a rectangle about 40 × 30 cm. Brush with oil, then scatter the salt, white pepper and spring onion evenly over it.
-  - title: Roll up and cut
-    text: Roll it up from the long side and cut into 16 pieces. Stack them in pairs.
-  - title: Twist into flowers
-    text: Press a chopstick down the middle of each stacked pair. Stretch it out with both hands, twist the ends in opposite directions, then pinch the two ends together underneath.
-  - title: Prove
-    text: Place the rolls in a steamer lined with baking paper, cover and leave until slightly puffed.
-    timer: Prove 20–30 min
-  - title: Steam from cold water
-    text: Start with cold water. Once it boils, turn the heat to medium and steam for 15 minutes. Turn off the heat and leave the lid on for 5 minutes before opening.
-    timer: Steam 15 min + rest 5 min
+    text: |-
+      Knock the air out of the dough and roll it into a large, thin rectangle of about 40 × 25 cm.
+      The key step: brush a thin layer of oil over the dough, sprinkle the salt and white pepper evenly, and only then scatter over the dry spring onion. If salt touches the spring onion too early, it draws out lots of water and spoils the layers and texture.
+  - title: Fold and cut
+    text: Fold the rectangle in three along the long side (like folding a letter) and press lightly. Cut it into about 16 narrow strips — every 2 strips make one roll.
+  - title: Shape the flowers
+    text: |-
+      Stack two strips together and press a chopstick firmly down the middle, lengthways, to make a deep groove.
+      Hold both ends and gently stretch it to about 1.5 times the length.
+      Put the chopstick under the middle, wrap the strip around it once, pinch the two ends together and tuck them underneath. Pull out the chopstick — you have a pretty spiral flower roll.
+  - title: Second prove
+    text: Put the shaped rolls on steamer paper in the steamer for a second prove, until they are slightly puffed and feel light.
+    timer: Prove 15–20 min
+  - title: Steam
+    text: Start with cold water. Steam on high heat until the water boils, then turn to medium. After turning off the heat, leave the lid on for 3 minutes before opening, so a sudden rush of cold air doesn't make the rolls collapse or wrinkle.
+    timer: Steam 12 min + rest 3 min
 tips:
-  - Dry the spring onion thoroughly after washing, or it will make the dough wet when you roll it up.
-  - Sprinkling the salt on top of the oil helps it stick, so it doesn't fall off when you roll.
-fails: []
+  - Dry the spring onion completely after washing and before chopping, so it doesn't make the dough wet.
+  - Brush on the oil and add the salt and pepper first, and the spring onion last — salt draws water out of spring onion if they meet too early.
+  - Wait 3 minutes after turning off the heat before opening the lid, so the rolls don't collapse or wrinkle.
 ---

@@ -1,53 +1,61 @@
 ---
-title: Lemon Madeleines
-intro: A good madeleine bakes up with a little hump on its back — crisp at the edges, soft in the middle, and fresh with lemon zest.
-prepTime: 15 min
+title: Classic French Lemon Madeleines
+intro: Crisp outside and soft inside, rich with butter and fresh with lemon. The most important part is baking that lovely little hump on the back.
+prepTime: 20 min
 waitLabel: Chill
-waitTime: 60 min
+waitTime: at least 1 hour (overnight is best)
 cookLabel: Bake
-cookTime: 12 min
-totalTime: 90 min
-servings: 12 madeleines
+cookTime: 10–12 min
+totalTime: from about 1.5 hours
+servings: about 12 madeleines
 ingredients:
   - group: Batter
     items:
-      - name: Eggs (room temperature)
+      - name: Unsalted butter (melted and cooled until just warm, about 40°C)
+        amount: 100 g
+      - name: Eggs (room temperature, about 100 g)
         amount: "2"
-      - name: Caster sugar
-        amount: 80 g
-      - name: Honey
-        amount: 10 g
-      - name: Lemon zest
+      - name: Caster sugar (adjust to taste, but no less than 65 g so they stay moist)
+        amount: 70–80 g
+      - name: Lemon zest (yellow skin only — avoid the bitter white pith)
         amount: from 1 lemon
-      - name: Cake flour
-        amount: 90 g
-      - name: Baking powder
+      - name: Lemon juice (freshly squeezed)
+        amount: 15 ml
+      - name: Honey (for aroma and moisture)
+        amount: 10 g
+      - name: Cake flour (sifted)
+        amount: 100 g
+      - name: Baking powder (about 1 small teaspoon, sifted)
         amount: 3 g
-      - name: Unsalted butter (melted)
-        amount: 90 g
-      - name: Lemon juice
-        amount: 10 ml
-  - group: For the tin
+      - name: Salt (for flavour)
+        amount: 1/4 teaspoon
+  - group: Lemon glaze (optional)
     items:
-      - name: Butter and flour
-        amount: a little
+      - name: Icing sugar
+        amount: 50 g
+      - name: Lemon juice
+        amount: 10–12 ml
 steps:
-  - title: Mix eggs and sugar
-    text: Whisk the eggs, sugar, honey and lemon zest together until the sugar has mostly dissolved. No need to whip it.
-  - title: Add the flour
-    text: Sift in the flour and baking powder, and mix only until there is no dry flour left.
-  - title: Add the butter
-    text: Let the melted butter cool until just warm, then mix it in two additions. Stir in the lemon juice last.
+  - title: Release the lemon aroma
+    text: Mix the sugar with the lemon zest and rub them together with your fingertips until the sugar feels slightly damp and smells strongly of lemon oil.
+    timer: Rub 1–2 min
+  - title: Whisk eggs and sugar
+    text: Add the room-temperature eggs, salt and honey. Whisk until the sugar dissolves and the mixture is pale and slightly thick (no need to whip it stiff).
+  - title: Add the dry ingredients
+    text: Sift in the cake flour and baking powder, and gently stir from the centre outwards with a whisk or spatula until there are no lumps.
+  - title: Add butter and lemon juice
+    text: Mix in the melted, cooled butter in two batches, then add the 15 ml of lemon juice. You'll have a smooth, glossy batter.
   - title: Chill the batter
-    text: Cover with cling wrap and chill. Cold, thick batter is what gives madeleines their hump in the oven.
+    text: This is the hump step. Put the batter in a piping bag, seal it and chill for at least 1 hour (4–12 hours is best) so the flour fully hydrates. The difference between cold batter and a hot oven is the secret to the hump.
     timer: Chill 1 hour or more
-  - title: Prepare the tin
-    text: Preheat the oven to 200°C. Brush the tin with softened butter, dust with flour and tap out the extra.
+  - title: Preheat and fill
+    text: Preheat the oven to 190°C. Brush the tin with a thin layer of melted butter, dust with a little cake flour and tap out the extra (skip this with a good non-stick tin). Pipe the cold batter into the tin until each shell is 80% full.
   - title: Bake
-    text: Pipe the batter into the tin until each shell is 80% full. Bake until the edges are golden and the middles have risen. Turn them out straight away and cool on a rack.
-    timer: Bake 10–12 min
+    text: Bake at 190°C until the edges set and the middles start to rise like little hills, then lower the oven to 170°C and keep baking. They're ready when golden with slightly browned edges, and a skewer comes out clean.
+    timer: 190°C bake 4 min + 170°C bake 6–7 min
+  - title: Turn out
+    text: As soon as they come out, tap the tin at an angle to release them, and stand them on their sides on a cooling rack so the outside stays crisp.
 tips:
-  - You can chill the batter overnight and bake it the next day.
-  - They are crispest straight from the oven, and turn softer — and still delicious — the next day.
-fails: []
+  - "Why the hump forms: very cold batter meets a hot oven, so the edges set quickly while the centre heats, rises and pushes up into a hump."
+  - "Lemon glaze (optional): mix 50 g icing sugar with 10–12 ml lemon juice into a thin glaze. Brush it over the cooled madeleines and bake at 150°C for 2 minutes to set it. Once dry, it becomes a shiny, crisp lemon coating."
 ---
