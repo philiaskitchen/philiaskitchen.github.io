@@ -22,6 +22,7 @@ const recipes = defineCollection({
     cookTime: z.string().default(''),
     totalTime: z.string().default(''),      // 總時間，例如「90 分鐘」
     servings: z.string().default(''),       // 份量，例如「6 顆」
+    servingMl: z.number().optional(),        // 每份容量（ml），例如布丁每杯 120；有填才會出現「每份容量」欄位
     difficulty: z.enum(['1', '2', '3']).default('2'),
     ingredients: z.array(z.object({
       group: z.string().default(''),
