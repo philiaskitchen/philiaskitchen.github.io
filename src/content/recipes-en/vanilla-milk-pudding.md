@@ -1,6 +1,6 @@
 ---
 title: Vanilla Milk Pudding
-intro: Silky vanilla milk puddings — makes about 4 cups. An extra egg yolk makes them richer and smoother, and you can bake them in a water bath or steam them in a rice cooker.
+intro: Silky vanilla milk puddings — makes about 4 cups. Two extra egg yolks make them richer and smoother, and you can bake them in a water bath or steam them in a rice cooker.
 prepTime: about 25 min
 waitLabel: Chill
 waitTime: at least 3–4 hours
@@ -12,11 +12,11 @@ ingredients:
   - group: Custard
     items:
       - name: Full-cream milk
-        amount: 350 ml
+        amount: 300 ml
       - name: Whole eggs
         amount: "2"
-      - name: Egg yolk (for a richer, smoother texture)
-        amount: "1"
+      - name: Egg yolks (for a richer, smoother texture)
+        amount: "2"
       - name: Caster sugar (adjust to taste)
         amount: 35–40 g
       - name: Vanilla bean
@@ -29,7 +29,7 @@ steps:
       Cover with the lid and leave to infuse so the vanilla flavour comes through, then take out the pod.
     timer: Infuse 10–15 min
   - title: Mix the eggs
-    text: Put the 2 whole eggs and 1 yolk in a bowl and gently break them up with a whisk, keeping it against the bottom of the bowl so you don't add too much air.
+    text: Put the 2 whole eggs and 2 yolks in a bowl and gently break them up with a whisk, keeping it against the bottom of the bowl so you don't add too much air.
   - title: Combine and strain
     text: Pour the warm vanilla milk into the eggs a little at a time, stirring gently as you pour. Strain the custard through a fine sieve 2–3 times to remove any egg white strands and bubbles. The vanilla seeds will pass through the sieve — that's normal.
   - title: Fill the moulds
