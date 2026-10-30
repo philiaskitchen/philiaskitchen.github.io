@@ -11,6 +11,8 @@ const lang = getLang(Astro.url);
 const u = t(lang);
 const c = { ...CATEGORIES[cat], name: catName(cat, lang), intro: catIntro(cat, lang) };
 const list = (await allRecipes(lang)).filter((r) => r.data.category === cat);
+// 每個分類自己的工具插圖（寬 1000，高度各不同）
+const CAT_ART: Record<CategoryKey, number> = { taiwanese: 342, french: 362, bread: 458, sweets: 364 };
 ---
 <Base title={c.name} description={c.intro} active={cat}>
   <section class="wrap head">
@@ -22,7 +24,7 @@ const list = (await allRecipes(lang)).filter((r) => r.data.category === cat);
       <p class="muted">{c.intro}</p>
       <p class="count soft">{u.count(list.length)}</p>
     </div>
-    <img src="/images/site/stilllife-teapot.webp" alt="" aria-hidden="true" width="1000" height="647" />
+    <img src={`/images/site/cat-${cat}.webp`} alt="" aria-hidden="true" width="1000" height={CAT_ART[cat]} />
   </section>
   <section class="wrap grid-wrap">
     <div class="card-grid">
