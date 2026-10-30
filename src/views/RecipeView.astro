@@ -430,6 +430,10 @@ const ld = {
     .ingredients { transform: none; }
     .notes { flex-direction: column; }
     .meta div { padding: 0 12px; }
+    /* 平板、手機：字太長時自動換行，不要把版面撐寬 */
+    .meta { max-width: 100%; }
+    .meta div { min-width: 0; max-width: 13em; }
+    dd { white-space: normal; overflow-wrap: anywhere; text-wrap: balance; }
   }
   /* 手機：插圖縮小，打開就先看到標題、時間和材料 */
   @media (max-width: 600px) {
@@ -438,11 +442,11 @@ const ld = {
     h1 { font-size: 38px; }
     h1.long { font-size: 32px; }
     .intro { font-size: 16px; line-height: 1.8; margin-top: 8px; }
-    .meta { display: grid; grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); row-gap: 12px; width: 100%; margin-top: 14px; padding: 12px 2px; }
-    .meta div { padding: 0 4px; }
+    .meta { display: grid; grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 12px; width: 100%; margin-top: 14px; padding: 12px 2px; }
+    .meta div { padding: 0 4px; max-width: none; }
     .meta div:nth-child(3n+1) { border-left: 0; }
     dt { font-size: 12px; }
-    dd { font-size: 16px; white-space: nowrap; }
+    dd { font-size: 16px; line-height: 1.35; }
     .cookmode { padding: 8px 14px 8px 10px; }
     .cookmode small { display: none !important; }
     .body { padding-top: 24px; gap: 40px; padding-bottom: 90px; }
