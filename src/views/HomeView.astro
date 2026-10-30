@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import RecipeCard from '../components/RecipeCard.astro';
 import RecipeMenu from '../components/RecipeMenu.astro';
 import ScallopButton from '../components/ScallopButton.astro';
-import { allRecipes, featuredRecipe, recipeUrl } from '../site';
+import { allRecipes, featuredRecipe, recipeUrl, smallImage } from '../site';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
 const u = t(lang);
@@ -32,7 +32,13 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
         <a class="link" href="#menu">{u.allRecipes}</a>
       </div>
     </div>
-    <img class="banner" src="/images/site/banner-home.webp" alt={u.bannerAlt} width="796" height="502" />
+    {featured?.data.image ? (
+      <a class="banner feat" href={recipeUrl(featured, lang)} aria-label={featured.data.title}>
+        <img src={featured.data.image} srcset={`${smallImage(featured.data.image)} 720w, ${featured.data.image} 1100w`} sizes="(max-width: 860px) 90vw, 560px" alt={u.illus(featured.data.title)} width="1100" height="752" fetchpriority="high" />
+      </a>
+    ) : (
+      <img class="banner" src="/images/site/banner-home.webp" alt={u.bannerAlt} width="796" height="502" />
+    )}
   </section>
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
 
@@ -64,6 +70,9 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   .lead { margin-top: 14px; line-height: 1.9; }
   .actions { display: flex; align-items: center; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
   .banner { justify-self: end; width: 100%; max-width: 560px; }
+  .banner.feat { display: block; transition: transform .25s ease; }
+  .banner.feat:hover { transform: rotate(-1deg) scale(1.01); }
+  .banner.feat img { width: 100%; height: auto; }
   .latest { padding-top: 30px; padding-bottom: 50px; }
   .latest .card-grid { margin-top: 32px; }
   .band { padding: 44px 0 50px; scroll-margin-top: 20px; }
@@ -74,6 +83,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   @media (max-width: 860px) {
     .hero, .duo { grid-template-columns: 1fr; }
     .banner { order: -1; justify-self: center; }
+    .banner.feat { max-width: 380px; }
     h1 { font-size: 36px; }
   }
 </style>

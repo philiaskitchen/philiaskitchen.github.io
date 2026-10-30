@@ -28,6 +28,17 @@ const parseTimer = (tm: string) => tm.split(/\s*[＋+]\s*/).map((seg) => {
   const lb = m[1].trim();
   return { text, label: lb.charAt(0).toUpperCase() + lb.slice(1), min: Math.round(Number(m[2]) * unit), max: m[3] ? Math.round(Number(m[3]) * unit) : 0 };
 });
+// 份量調整：從「約 4 杯」「6–8 顆」「about 4 cups」取出基準數量和單位
+const sm = d.servings.match(/(\d+(?:\.\d+)?)(?:\s*[–\-~～]\s*\d+(?:\.\d+)?)?\s*([^\d\s（(]+)?/);
+const baseCount = sm ? Number(sm[1]) : 0;
+const unit = sm?.[2] ?? '';
+// 蛋不好切成小數顆：換算後不是整數時，旁邊補上大約的克數（全蛋約 50 g、蛋黃約 18 g）
+const eggGrams = (name: string, amount: string) => {
+  if (!/^\s*\d+(\.\d+)?\s*(顆|個)?\s*$/.test(amount)) return undefined;
+  if (/蛋黃|yolk/i.test(name)) return '18';
+  if (/蛋|egg/i.test(name) && !/蛋液|beaten/i.test(name)) return '50';
+  return undefined;
+};
 const stars = '★'.repeat(Number(d.difficulty)) + '☆'.repeat(3 - Number(d.difficulty));
 const meta = [
   [u.prep, d.prepTime], [d.waitLabel, d.waitTime], [d.cookLabel, d.cookTime], [u.servings, d.servings], [u.difficulty, stars],
@@ -67,11 +78,34 @@ const ld = {
       <span class="tape" style="background:var(--mustard)"></span>
       <div class="head"><h2 class="display">{u.ingredients}</h2><span class="fr">Ingrédients</span></div>
       {d.servings && <div class="serv">{u.servings} <strong>{d.servings}</strong></div>}
+      {baseCount > 0 && (
+        <div class="scaler" data-base={baseCount} data-ml={d.servingMl ?? ''} data-unit={unit}>
+          <div class="sc-row">
+            <span class="sc-label">{u.scale.label}</span>
+            <span class="stepper">
+              <button type="button" class="sc-minus" aria-label={u.scale.less}>−</button>
+              <input class="sc-count" type="number" inputmode="decimal" min="1" step="1" value={baseCount} aria-label={u.scale.label} />
+              <span class="sc-unit">{unit}</span>
+              <button type="button" class="sc-plus" aria-label={u.scale.more}>＋</button>
+            </span>
+          </div>
+          {d.servingMl && (
+            <div class="sc-row">
+              <span class="sc-label">{u.scale.each}</span>
+              <span class="stepper"><input class="sc-ml" type="number" inputmode="decimal" min="10" step="5" value={d.servingMl} aria-label={u.scale.each} /><span class="sc-unit">ml</span></span>
+              <span class="sc-total soft"></span>
+            </div>
+          )}
+          <div class="sc-foot" hidden><span class="sc-factor"></span><button type="button" class="sc-reset">{u.scale.reset}</button></div>
+          <p class="sc-note soft" hidden>{u.scale.note}</p>
+          <script type="application/json" class="sc-i18n" set:html={JSON.stringify({ total: u.scale.total, times: u.scale.times })} />
+        </div>
+      )}
       {d.ingredients.map((g) => (
         <div class="group">
           {g.group && <div class="gname">{g.group}</div>}
           <ul>{g.items.map((i) => (
-            <li><label><input type="checkbox" /><span class="box" aria-hidden="true"></span><span class="name">{i.name}</span><span class="amt">{i.amount}</span></label></li>
+            <li><label><input type="checkbox" /><span class="box" aria-hidden="true"></span><span class="name">{i.name}</span><span class="amt" data-base={i.amount} data-egg={eggGrams(i.name, i.amount)}>{i.amount}</span></label></li>
           ))}</ul>
         </div>
       ))}
@@ -219,6 +253,52 @@ const ld = {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
   }
 
+  // 4. 份量調整：輸入要做幾份（和每份容量），材料份量自動換算
+  {
+    const sc = document.querySelector<HTMLElement>('.scaler');
+    if (sc) {
+      const base = Number(sc.dataset.base), baseMl = Number(sc.dataset.ml) || 0;
+      const countIn = sc.querySelector<HTMLInputElement>('.sc-count')!, mlIn = sc.querySelector<HTMLInputElement>('.sc-ml');
+      const totalEl = sc.querySelector<HTMLElement>('.sc-total'), foot = sc.querySelector<HTMLElement>('.sc-foot')!, note = sc.querySelector<HTMLElement>('.sc-note')!;
+      const factorEl = sc.querySelector<HTMLElement>('.sc-factor')!;
+      const T = JSON.parse(sc.querySelector('.sc-i18n')?.textContent || '{}');
+      const amts = [...document.querySelectorAll<HTMLElement>('.amt[data-base]')];
+      const KEY = 'pk-scale-' + (document.querySelector<HTMLElement>('#cook')?.dataset.recipe || '');
+      const nice = (x: number) => {
+        if (x >= 100) return String(Math.round(x / 5) * 5);
+        if (x >= 10) return String(Math.round(x));
+        const r = Math.round(x * 4) / 4;            // 小數字取到 0.25
+        return r === 0 ? String(Math.round(x * 100) / 100) : String(r);
+      };
+      const scaleText = (t: string, f: number) => t.replace(/(\d+(?:\.\d+)?)(?:\s*\/\s*(\d+))?/g, (_, a, b) => nice((b ? Number(a) / Number(b) : Number(a)) * f));
+      const apply = (save = true) => {
+        const n = Math.max(0.5, Number(countIn.value) || base);
+        const ml = mlIn ? Math.max(1, Number(mlIn.value) || baseMl) : baseMl;
+        const f = (n * (baseMl ? ml : 1)) / (base * (baseMl || 1));
+        const same = Math.abs(f - 1) < 0.001;
+        amts.forEach((a) => {
+          if (same) { a.textContent = a.dataset.base!; return; }
+          let t = scaleText(a.dataset.base!, f);
+          const eg = Number(a.dataset.egg);
+          if (eg) { const n = parseFloat(a.dataset.base!) * f; if (Math.abs(n - Math.round(n)) > 0.05) t += `（≈ ${Math.round(n * eg)} g）`; }
+          a.textContent = t;
+        });
+        if (totalEl) totalEl.textContent = baseMl ? `${T.total} ${nice(n * ml)} ml` : '';
+        factorEl.textContent = `× ${Math.round(f * 100) / 100}`;
+        foot.hidden = same; note.hidden = same;
+        sc.classList.toggle('changed', !same);
+        if (save) { try { same ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, JSON.stringify({ n, ml })); } catch {} }
+      };
+      sc.querySelector('.sc-minus')!.addEventListener('click', () => { countIn.value = String(Math.max(1, (Number(countIn.value) || base) - 1)); apply(); });
+      sc.querySelector('.sc-plus')!.addEventListener('click', () => { countIn.value = String((Number(countIn.value) || base) + 1); apply(); });
+      countIn.addEventListener('input', () => apply());
+      mlIn?.addEventListener('input', () => apply());
+      sc.querySelector('.sc-reset')!.addEventListener('click', () => { countIn.value = String(base); if (mlIn) mlIn.value = String(baseMl); apply(); });
+      try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) { countIn.value = String(s.n); if (mlIn && s.ml) mlIn.value = String(s.ml); } } catch {}
+      apply(false);
+    }
+  }
+
   // 2. 材料和步驟的勾選會記住（重新整理或螢幕關掉再打開都還在）
   const root = document.querySelector<HTMLElement>('#cook');
   if (root) {
@@ -266,6 +346,22 @@ const ld = {
   .group input:checked ~ .name { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: rgba(74, 69, 54, .5); }
   .name { flex: 1; }
   .amt { color: var(--terracotta-ink); white-space: nowrap; }
+  .scaler { margin: 8px 0 6px; padding: 10px 12px; border: 1.5px dashed var(--line-dashed); border-radius: 6px 8px 7px 9px; font-size: 14px; }
+  .scaler.changed { border-color: var(--terracotta); background: rgba(181, 85, 43, .05); }
+  .sc-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+  .sc-row + .sc-row { margin-top: 8px; }
+  .sc-label { color: var(--olive-ink); min-width: 72px; }
+  .stepper { display: inline-flex; align-items: center; gap: 6px; }
+  .stepper button { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--pencil); background: var(--paper); font: inherit; font-size: 18px; line-height: 1; color: var(--ink); cursor: pointer; }
+  .stepper input { width: 58px; height: 34px; text-align: center; font: inherit; font-size: 17px; color: var(--ink); border: 1.5px solid var(--pencil); border-radius: 4px; background: var(--paper); -moz-appearance: textfield; }
+  .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .sc-unit { color: var(--ink-soft); }
+  .sc-total { font-size: 13px; }
+  .sc-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .sc-foot[hidden], .sc-note[hidden] { display: none; }
+  .sc-factor { font-family: var(--font-french); font-style: italic; font-size: 18px; color: var(--terracotta-ink); }
+  .sc-reset { font: inherit; font-size: 13px; color: var(--terracotta-ink); background: none; border: 0; border-bottom: 1.5px solid currentColor; padding: 0; cursor: pointer; }
+  .sc-note { font-size: 12.5px; line-height: 1.7; margin-top: 6px; }
   .hint { font-size: 14px; margin-top: 6px; }
   .reset { font: inherit; font-size: 14px; color: var(--terracotta-ink); background: none; border: 0; border-bottom: 1.5px solid currentColor; padding: 0 0 1px; margin-left: 12px; cursor: pointer; }
   .steps ol { list-style: none; margin: 10px 0 0; padding: 0; }
