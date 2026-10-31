@@ -10,7 +10,7 @@ import Note from '../../components/Note.astro';
       <p class="muted">Philia lives in Australia. She still loves the Taiwanese food she grew up with, and she loves desserts too.</p>
       <p class="muted">I used to work in an office, and the kitchen always felt unfamiliar and a little scary to me. Recently I have had more time for myself, so I started making simple snacks and desserts for my family. To my surprise, making them became a very calming time for me. Time seems to slow down, and I really love that feeling! If you would like to try, you are welcome to use my recipes.</p>
     </div>
-    <img src="/images/site/about-tools.webp" alt="Illustration of a whisk, wooden spoons, a flour sack, a mixing bowl and eggs" width="1000" height="415" />
+    <img src="/images/site/about-tools.webp" alt="Illustration of mixing bowls, a jug, a floury board, whisks and an oven mitt" width="1000" height="444" />
   </section>
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
   <section class="wrap how">
@@ -29,5 +29,5 @@ import Note from '../../components/Note.astro';
   .intro p { font-size: 17px; line-height: 2; margin-top: 16px; max-width: 520px; }
   .how { padding-top: 34px; padding-bottom: 60px; }
   .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
-  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; max-width: min(420px, 100%); } }
+  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; width: 100%; max-width: 560px; margin: 0 auto; } }
 </style>
