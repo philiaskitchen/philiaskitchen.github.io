@@ -1,6 +1,6 @@
 ---
 slug: lemon-madeleines
-title: 法式經典檸檬瑪德蓮
+title: 法式檸檬瑪德蓮
 titleFr: madeleines au citron
 category: french
 intro: 外酥內軟，帶著濃郁的奶油香和檸檬清香。最關鍵的是要烤出漂亮的「肚臍凸起」。
