@@ -12,7 +12,7 @@ const u = t(lang);
 const c = { ...CATEGORIES[cat], name: catName(cat, lang), intro: catIntro(cat, lang) };
 const list = (await allRecipes(lang)).filter((r) => r.data.category === cat);
 // 每個分類自己的工具插圖（寬 1000，高度各不同）
-const CAT_ART: Record<CategoryKey, number> = { taiwanese: 342, french: 362, bread: 458, sweets: 364 };
+const CAT_ART: Record<CategoryKey, number> = { taiwanese: 426, french: 345, bread: 466, sweets: 315 };
 ---
 <Base title={c.name} description={c.intro} active={cat}>
   <section class="wrap head">
@@ -45,5 +45,5 @@ const CAT_ART: Record<CategoryKey, number> = { taiwanese: 342, french: 362, brea
   .next { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; border: 1.5px dashed rgba(74, 69, 54, .45); transform: rotate(-0.6deg); text-align: center; }
   .next .display { font-size: 24px; }
   .next .fr { color: var(--olive-ink); font-size: 17px; }
-  @media (max-width: 860px) { .head { grid-template-columns: 1fr; } .head img { max-width: 320px; } .next { min-height: 200px; } }
+  @media (max-width: 860px) { .head { grid-template-columns: 1fr; } .head img { width: 100%; max-width: 560px; margin: 4px auto 0; } .next { min-height: 200px; } }
 </style>
