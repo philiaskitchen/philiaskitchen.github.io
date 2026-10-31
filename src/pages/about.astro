@@ -14,7 +14,7 @@ import Note from '../components/Note.astro';
         住在澳洲的Philia，是個台灣胃，也是個甜點控。以前是個朝九晚五的上班族，對廚房總是有種陌生和懼怕。就在最近閒了下來，開始嘗試做些簡單的點心給家人吃。意外的發現做點心是個療心的時間，時光都慢了下來，好喜歡這樣的時光! 如果你也想試試，歡迎使用我的食譜。
       */}
     </div>
-    <img src="/images/site/about-tools.webp" alt="打蛋器、木鏟、麵粉袋、攪拌碗和雞蛋的插圖" width="1000" height="415" />
+    <img src="/images/site/about-tools.webp" alt="攪拌碗、陶壺、砧板、打蛋器和隔熱手套的插圖" width="1000" height="444" />
   </section>
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
   <section class="wrap how">
@@ -33,5 +33,5 @@ import Note from '../components/Note.astro';
   .intro p { font-size: 17px; line-height: 2; margin-top: 16px; max-width: 520px; }
   .how { padding-top: 34px; padding-bottom: 60px; }
   .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
-  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; max-width: min(420px, 100%); } }
+  @media (max-width: 860px) { .intro, .notes { grid-template-columns: minmax(0, 1fr); } .intro img { order: -1; width: 100%; max-width: 560px; margin: 0 auto; } }
 </style>
