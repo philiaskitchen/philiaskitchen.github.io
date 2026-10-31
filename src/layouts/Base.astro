@@ -31,8 +31,10 @@ const ogImage = new URL(image, Astro.site);
   {hasAlt && zhUrl && <link rel="alternate" hreflang="zh-Hant" href={new URL(zhUrl, Astro.site)} />}
   {hasAlt && enUrl && <link rel="alternate" hreflang="en" href={new URL(enUrl, Astro.site)} />}
   {hasAlt && zhUrl && <link rel="alternate" hreflang="x-default" href={new URL(zhUrl, Astro.site)} />}
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v2.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-v3.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v3.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" href="/fonts/jf-openhuninn-2.1.woff2?v=2" as="font" type="font/woff2" crossorigin />
   <meta property="og:type" content="website" />
   <meta property="og:title" content={fullTitle} />
