@@ -1,5 +1,5 @@
 ---
-title: Sydney Strawberry Watermelon Cake
+title: Strawberry Watermelon Cake
 intro: In the style of Black Star Pastry. Two layers of almond dacquoise with rose-scented cream and a whole slice of fresh watermelon, topped with strawberries, pistachios and rose petals. Fresh and light, not too sweet.
 prepTime: about 1 hour
 waitLabel: Chill to set

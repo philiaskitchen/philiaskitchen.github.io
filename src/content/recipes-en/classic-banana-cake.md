@@ -6,7 +6,7 @@ waitLabel: Bake
 waitTime: 50–60 min
 cookLabel: Cool in the pan
 cookTime: 10 min
-totalTime: about 1 hr 30 min (incl. cooling)
+totalTime: about 1.5 hours
 servings: 1 loaf (9×5-inch loaf pan)
 ingredients:
   - group: Wet ingredients
