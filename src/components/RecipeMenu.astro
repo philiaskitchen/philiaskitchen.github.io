@@ -4,6 +4,8 @@ import { getLang, t } from '../i18n';
 const lang = getLang(Astro.url);
 interface Props { recipes: Recipe[] }
 const { recipes } = Astro.props;
+// 手機版只顯示主要時間，括號說明（含冷藏等）藏起來，避免換行
+const splitTime = (s: string) => { const m = s.match(/^(.*?)(\s*[（(].*)$/); return m ? [m[1], m[2]] : [s, ''] };
 ---
 <div class="menu paper">
   <div class="fr head">Le Menu</div>
@@ -11,7 +13,7 @@ const { recipes } = Astro.props;
   <ol>
     {recipes.map((r, i) => (
       <li><a href={recipeUrl(r, lang)}>
-        <span class="fr n">{roman(i)}</span><span class="display t">{r.data.title}</span>{lang === 'zh' && <span class="fr f">{r.data.titleFr}</span>}<span class="dots"></span><span class="time">{r.data.totalTime}</span>
+        <span class="fr n">{roman(i)}</span><span class="display t">{r.data.title}</span>{lang === 'zh' && <span class="fr f">{r.data.titleFr}</span>}<span class="dots"></span><span class="time">{splitTime(r.data.totalTime)[0]}{splitTime(r.data.totalTime)[1] && <span class="note">{splitTime(r.data.totalTime)[1]}</span>}</span>
       </a></li>
     ))}
   </ol>
@@ -25,9 +27,9 @@ const { recipes } = Astro.props;
   a { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; }
   a:hover .t { color: var(--terracotta-ink); }
   .n { color: var(--terracotta-ink); width: 34px; font-size: 18px; flex: none; }
-  .t { font-size: 22px; }
+  .t { font-size: 22px; white-space: nowrap; }
   .f { font-size: 15px; color: var(--olive-ink); }
   .dots { flex: 1; border-bottom: 2px dotted #B9AE94; transform: translateY(-4px); min-width: 20px; }
   .time { font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
-  @media (max-width: 600px) { .menu { padding: 22px 20px; } .f { display: none; } }
+  @media (max-width: 600px) { .menu { padding: 22px 20px; } .f { display: none; } .note { display: none; } a { gap: 7px; } .n { width: 28px; } .t { font-size: 20px; } .dots { min-width: 10px; } }
 </style>
