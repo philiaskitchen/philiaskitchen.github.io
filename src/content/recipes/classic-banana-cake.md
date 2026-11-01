@@ -13,7 +13,7 @@ waitLabel: 烤
 waitTime: 50–60 分鐘
 cookLabel: 模內放涼
 cookTime: 10 分鐘
-totalTime: 約 1 小時 30 分鐘（含放涼）
+totalTime: 約 1.5 小時
 servings: 1 條（9×5 吋長條烤模）
 difficulty: "1"
 ingredients:

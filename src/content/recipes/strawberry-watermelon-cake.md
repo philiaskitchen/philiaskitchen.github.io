@@ -1,6 +1,6 @@
 ---
 slug: strawberry-watermelon-cake
-title: 雪梨草莓西瓜蛋糕
+title: 草莓西瓜蛋糕
 titleFr: gâteau fraise et pastèque
 category: sweets
 intro: Black Star Pastry 風格。兩層杏仁達克瓦茲夾著帶玫瑰香的鮮奶油和一整片新鮮西瓜，頂部鋪滿草莓、開心果和玫瑰花瓣，口感清爽不膩。
