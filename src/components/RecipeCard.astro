@@ -13,7 +13,7 @@ const tapes = ['var(--mustard)', 'var(--tape-sage)', 'var(--dusty-blue)', 'var(-
 <a class="card" href={recipeUrl(recipe, lang)} style={`--tilt:${tilts[index % 4]}deg`}>
   <span class="tape" style={`background:${tapes[index % 4]}`}></span>
   <span class="img">
-    {d.image ? <img src={smallImage(d.image)} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="240px" alt={u.illus(d.title)} loading="lazy" decoding="async" /> : <span class="ph">{u.artTodo}</span>}
+    {d.image ? <img src={smallImage(d.image)} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="(max-width: 600px) 100vw, 400px" alt={u.illus(d.title)} loading="lazy" decoding="async" /> : <span class="ph">{u.artTodo}</span>}
   </span>
   <Tag category={d.category} />
   <span class="title display">{d.title}</span>
@@ -27,7 +27,8 @@ const tapes = ['var(--mustard)', 'var(--tape-sage)', 'var(--dusty-blue)', 'var(-
     transition: transform .2s ease; }
   .card:hover { transform: rotate(0deg) translateY(-4px); }
   .img { align-self: stretch; height: 200px; display: flex; align-items: center; justify-content: center; margin: 0 -6px 8px; }
-  .img img { max-height: 100%; width: auto; max-width: 100%; }
+  /* 插圖填滿 200px 高的框（object-fit: contain），橫長或直長的圖看起來大小差不多 */
+  .img img { width: 100%; height: 100%; object-fit: contain; }
   .ph { width: 86%; height: 170px; border: 1.5px dashed var(--pencil); opacity: .55; display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--ink-soft); }
   .title { font-size: 28px; line-height: 1.3; }
   .sub { color: var(--olive-ink); font-size: 17px; line-height: 1.3; }
