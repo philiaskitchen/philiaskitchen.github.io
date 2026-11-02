@@ -22,7 +22,7 @@ ingredients:
       - name: 中筋麵粉
         amount: 300 g
       - name: 鮮奶（冷藏或室溫均可，依麵粉吸水性微調）
-        amount: 約 150–160 g
+        amount: 約 165–175 g
       - name: 黑芝麻粉（建議選用無糖、新鮮研磨的）
         amount: 20–25 g
       - name: 細砂糖（可依喜好微調甜度）
