@@ -14,7 +14,7 @@ ingredients:
       - name: Plain flour
         amount: 300 g
       - name: Fresh milk (cold or room temperature; adjust to how much your flour absorbs)
-        amount: about 150–160 g
+        amount: about 165–175 g
       - name: Black sesame powder (unsweetened and freshly ground is best)
         amount: 20–25 g
       - name: Caster sugar (adjust to taste)
