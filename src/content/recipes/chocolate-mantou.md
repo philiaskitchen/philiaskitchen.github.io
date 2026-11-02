@@ -1,7 +1,7 @@
 ---
 slug: chocolate-mantou
-title: 椰香爆漿巧克力饅頭
-titleFr: petits pains vapeur au chocolat et coco
+title: 椰香可可饅頭
+titleFr: petits pains vapeur au cacao et coco
 category: taiwanese
 intro: 微甜鬆軟版。可可麵糰加一點椰子油，裡面包巧克力豆，咬開會爆漿。
 image: /images/recipes/chocolate-mantou.webp
