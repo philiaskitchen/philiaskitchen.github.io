@@ -28,7 +28,7 @@ ingredients:
       - name: 細砂糖（可依喜好微調甜度）
         amount: 25–30 g
       - name: 速發乾酵母
-        amount: 3 g
+        amount: 6 g
       - name: 植物油／植物雪白酵粉（讓麵糰更光滑）
         amount: 5 g
   - group: 內餡（可省略）
