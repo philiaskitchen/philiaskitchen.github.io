@@ -20,7 +20,7 @@ ingredients:
       - name: Caster sugar (adjust to taste)
         amount: 25–30 g
       - name: Instant dried yeast
-        amount: 3 g
+        amount: 6 g
       - name: Vegetable oil or shortening (makes the dough smoother)
         amount: 5 g
   - group: Filling (optional)
