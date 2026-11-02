@@ -1,5 +1,5 @@
 ---
-title: Coconut Chocolate Lava Steamed Buns
+title: Coconut Cocoa Steamed Buns
 intro: The lightly sweet, extra-soft version. A cocoa dough with a little coconut oil, filled with chocolate chips that melt when you bite in.
 prepTime: 30 min
 waitLabel: Prove
