@@ -27,6 +27,15 @@ export const CATEGORIES = {
 } as const;
 export type CategoryKey = keyof typeof CATEGORIES;
 
+/** 料理類型（Google 食譜結構化資料的 recipeCuisine） */
+export const CUISINES = {
+  taiwanese: { zh: '台灣', en: 'Taiwanese' },
+  french: { zh: '法式', en: 'French' },
+  american: { zh: '美式', en: 'American' },
+  filipino: { zh: '菲律賓', en: 'Filipino' },
+  australian: { zh: '澳洲', en: 'Australian' },
+} as const;
+
 /** 食譜插圖的 600px 小圖（網站建好時由 scripts/optimize.mjs 自動產生） */
 export const smallImage = (src: string) => src.replace(/\.(webp|png|jpe?g)$/i, '-sm.webp');
 

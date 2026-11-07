@@ -24,6 +24,12 @@ const recipes = defineCollection({
     servings: z.string().default(''),       // 份量，例如「6 顆」
     servingMl: z.number().optional(),        // 每份容量（ml），例如布丁每杯 120；有填才會出現「每份容量」欄位
     difficulty: z.enum(['1', '2', '3']).default('2'),
+    cuisine: z.enum(['taiwanese', 'french', 'american', 'filipino', 'australian']).optional(), // 料理類型（給 Google 的 recipeCuisine）
+    // 營養估算（每份）：依材料用 USDA 營養資料估算，count 是全部分成幾份
+    nutrition: z.object({
+      count: z.number(), calories: z.number(), fat: z.number(), saturatedFat: z.number(),
+      carbohydrate: z.number(), sugar: z.number(), protein: z.number(), fiber: z.number(), sodium: z.number(),
+    }).optional(),
     ingredients: z.array(z.object({
       group: z.string().default(''),
       items: z.array(z.object({ name: z.string(), amount: z.string().default('') })).default([]),
