@@ -6,7 +6,7 @@ import Note from '../components/Note.astro';
 import RecipeCard from '../components/RecipeCard.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import AdSlot from '../components/AdSlot.astro';
-import { allRecipes, catName, categoryUrl, recipeUrl, isoDuration, smallImage, type Recipe } from '../site';
+import { allRecipes, CUISINES, catName, categoryUrl, recipeUrl, isoDuration, smallImage, type Recipe } from '../site';
 import { getLang, lp, t } from '../i18n';
 
 const { recipe } = Astro.props as { recipe: Recipe };
@@ -44,13 +44,20 @@ const meta = [
   [u.prep, d.prepTime], [d.waitLabel, d.waitTime], [d.cookLabel, d.cookTime], [u.servings, d.servings], [u.difficulty, stars],
 ].filter(([k, v]) => k && v);
 const longTitle = lang === 'en' ? d.title.length > 22 : d.title.length > 6;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const nu = d.nutrition;
 const ld = {
   '@context': 'https://schema.org', '@type': 'Recipe', name: d.title, description: d.intro,
   image: d.image ? [new URL(d.image, Astro.site).href] : undefined,
   author: { '@type': 'Person', name: 'Philia' }, datePublished: d.date.toISOString().slice(0, 10),
-  recipeCategory: catName(d.category, lang), inLanguage: lang === 'en' ? 'en' : 'zh-Hant', recipeYield: d.servings, prepTime: isoDuration(d.prepTime), totalTime: isoDuration(d.totalTime),
+  recipeCategory: catName(d.category, lang), recipeCuisine: d.cuisine ? CUISINES[d.cuisine][lang] : undefined, inLanguage: lang === 'en' ? 'en' : 'zh-Hant', recipeYield: d.servings, prepTime: isoDuration(d.prepTime), totalTime: isoDuration(d.totalTime),
   recipeIngredient: d.ingredients.flatMap((g) => g.items.map((i) => `${i.name} ${i.amount}`.trim())),
-  recipeInstructions: d.steps.map((s) => ({ '@type': 'HowToStep', name: s.title, text: s.text })),
+  recipeInstructions: d.steps.map((s, i) => ({ '@type': 'HowToStep', name: s.title, text: s.text || s.title, url: `${pageUrl}#step-${i + 1}` })),
+  nutrition: nu ? {
+    '@type': 'NutritionInformation', servingSize: u.nutri.serving(nu.count), calories: `${nu.calories} kcal`,
+    fatContent: `${nu.fat} g`, saturatedFatContent: `${nu.saturatedFat} g`, carbohydrateContent: `${nu.carbohydrate} g`,
+    sugarContent: `${nu.sugar} g`, proteinContent: `${nu.protein} g`, fiberContent: `${nu.fiber} g`, sodiumContent: `${nu.sodium} mg`,
+  } : undefined,
 };
 ---
 <Base title={d.title} description={d.intro} active={d.category} image={d.image} alt={altExists ? recipeUrl(recipe, other) : null}>
@@ -109,12 +116,21 @@ const ld = {
           ))}</ul>
         </div>
       ))}
+      {nu && (
+        <details class="nutri">
+          <summary><span>{u.nutri.title}</span><span class="kc">{u.nutri.per(nu.count)} · {u.nutri.about(nu.calories)}</span></summary>
+          <dl>
+            {[[u.nutri.protein, `${nu.protein} g`], [u.nutri.fat, `${nu.fat} g`], [u.nutri.carb, `${nu.carbohydrate} g`], [u.nutri.sugar, `${nu.sugar} g`], [u.nutri.fiber, `${nu.fiber} g`], [u.nutri.sodium, `${nu.sodium} mg`]].map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+          </dl>
+          <p class="soft">{u.nutri.note}</p>
+        </details>
+      )}
     </div>
     <div class="steps" id="steps">
       <div class="section-title"><h2>{u.steps}</h2><span class="fr">Étapes</span></div>
       <p class="hint soft">{u.hint}<button type="button" class="reset" hidden>{u.reset}</button></p>
       <ol>{d.steps.map((s, i) => (
-        <li><label>
+        <li id={`step-${i + 1}`}><label>
           <input type="checkbox" />
           <span class="num display" aria-hidden="true"><span class="n">{i + 1}</span></span>
           <span class="txt"><span class="sr-only">{u.stepN(i + 1)}</span><span class="st display">{s.title}</span><span class="sp muted">{s.text}</span></span>
@@ -337,6 +353,13 @@ const ld = {
   .head .fr { color: var(--terracotta-ink); font-size: 18px; }
   .serv { font-size: 14px; color: var(--olive-ink); margin: 6px 0 4px; }
   .serv strong { font-weight: 400; color: var(--ink); font-size: 17px; margin-left: 6px; }
+  .nutri { margin-top: 18px; font-size: 14px; }
+  .nutri summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; color: var(--olive-ink); list-style-position: outside; }
+  .nutri summary .kc { color: var(--ink); font-size: 13px; }
+  .nutri dl { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; margin: 10px 0 6px; }
+  .nutri dl div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line-dashed); padding: 4px 0; }
+  .nutri dt, .nutri dd { margin: 0; }
+  .nutri p { font-size: 12px; margin: 6px 0 0; }
   .gname { font-size: 14px; color: var(--terracotta-ink); margin-top: 12px; }
   .group ul { list-style: none; margin: 0; padding: 0; }
   .group label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dashed var(--line-dashed); cursor: pointer; }
