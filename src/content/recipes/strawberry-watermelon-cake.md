@@ -16,6 +16,17 @@ cookTime: 10–15 分鐘
 totalTime: 約 6 小時（含冷藏）
 servings: 1 個（方形或長方形慕斯圈）
 difficulty: "3"
+cuisine: australian
+nutrition:
+  count: 12
+  calories: 320
+  fat: 22.2
+  saturatedFat: 10.2
+  carbohydrate: 27
+  sugar: 23
+  protein: 6.0
+  fiber: 2.3
+  sodium: 35
 ingredients:
   - group: 西瓜層
     items:

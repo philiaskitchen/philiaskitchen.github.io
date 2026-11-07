@@ -18,6 +18,17 @@ totalTime: 約 5 小時（含冷藏）
 servings: 約 4 杯
 servingMl: 120
 difficulty: "2"
+cuisine: french
+nutrition:
+  count: 4
+  calories: 150
+  fat: 7.3
+  saturatedFat: 3.1
+  carbohydrate: 14
+  sugar: 14
+  protein: 7.1
+  fiber: 0.0
+  sodium: 75
 ingredients:
   - group: 布丁液
     items:

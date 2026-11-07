@@ -16,6 +16,17 @@ cookTime: 45–50 分鐘
 totalTime: 約 4 小時（含放涼）
 servings: 1 個（8 或 9 吋派模）
 difficulty: "2"
+cuisine: american
+nutrition:
+  count: 8
+  calories: 350
+  fat: 16.5
+  saturatedFat: 10.0
+  carbohydrate: 48
+  sugar: 20
+  protein: 4.1
+  fiber: 3.2
+  sodium: 155
 ingredients:
   - group: 經典美式派皮（Pâte Brisée）
     items:

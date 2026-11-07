@@ -16,6 +16,17 @@ cookTime: 10 分鐘
 totalTime: 約 1.5 小時
 servings: 1 條（9×5 吋長條烤模）
 difficulty: "1"
+cuisine: american
+nutrition:
+  count: 10
+  calories: 235
+  fat: 10.6
+  saturatedFat: 6.2
+  carbohydrate: 32
+  sugar: 13
+  protein: 3.8
+  fiber: 1.3
+  sodium: 245
 ingredients:
   - group: 濕性材料
     items:

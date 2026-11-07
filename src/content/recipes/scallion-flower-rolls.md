@@ -16,6 +16,17 @@ cookTime: 12 分鐘
 totalTime: 約 2 小時
 servings: 約 8 顆
 difficulty: "3"
+cuisine: taiwanese
+nutrition:
+  count: 8
+  calories: 175
+  fat: 3.6
+  saturatedFat: 0.5
+  carbohydrate: 31
+  sugar: 2
+  protein: 4.2
+  fiber: 1.4
+  sodium: 150
 ingredients:
   - group: 麵糰
     items:

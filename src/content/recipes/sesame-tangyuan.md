@@ -16,6 +16,17 @@ cookTime: 浮起後 1 分鐘
 totalTime: 約 1.5 小時
 servings: 16–20 顆
 difficulty: "2"
+cuisine: taiwanese
+nutrition:
+  count: 16
+  calories: 125
+  fat: 6.4
+  saturatedFat: 1.7
+  carbohydrate: 15
+  sugar: 3
+  protein: 1.9
+  fiber: 1.1
+  sodium: 0
 ingredients:
   - group: 黑芝麻流沙餡
     items:

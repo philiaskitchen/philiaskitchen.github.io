@@ -16,6 +16,17 @@ cookTime: 5–8 分鐘
 totalTime: 20 分鐘
 servings: 約 15–20 顆
 difficulty: "1"
+cuisine: filipino
+nutrition:
+  count: 15
+  calories: 75
+  fat: 2.6
+  saturatedFat: 1.6
+  carbohydrate: 11
+  sugar: 9
+  protein: 1.9
+  fiber: 0.1
+  sodium: 25
 ingredients:
   - group: 牛奶片
     items:

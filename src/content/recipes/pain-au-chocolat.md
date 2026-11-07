@@ -16,6 +16,17 @@ cookTime: 20–22 分鐘
 totalTime: 約 2 天（含隔夜冷藏）
 servings: 約 10–12 個
 difficulty: "3"
+cuisine: french
+nutrition:
+  count: 10
+  calories: 475
+  fat: 28.4
+  saturatedFat: 17.3
+  carbohydrate: 49
+  sugar: 10
+  protein: 6.8
+  fiber: 1.9
+  sodium: 405
 ingredients:
   - group: 麵團
     items:

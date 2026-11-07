@@ -16,6 +16,17 @@ cookTime: 約 10 分鐘
 totalTime: 約 1 小時 15 分鐘（含放涼）
 servings: 10–12 個
 difficulty: "2"
+cuisine: taiwanese
+nutrition:
+  count: 10
+  calories: 200
+  fat: 9.5
+  saturatedFat: 5.5
+  carbohydrate: 26
+  sugar: 18
+  protein: 3.6
+  fiber: 0.2
+  sodium: 35
 ingredients:
   - group: 蛋糕體
     items:

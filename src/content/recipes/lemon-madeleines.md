@@ -16,6 +16,17 @@ cookTime: 10–12 分鐘
 totalTime: 約 1.5 小時起
 servings: 約 12 個
 difficulty: "2"
+cuisine: french
+nutrition:
+  count: 12
+  calories: 130
+  fat: 7.6
+  saturatedFat: 4.5
+  carbohydrate: 14
+  sugar: 7
+  protein: 1.8
+  fiber: 0.1
+  sodium: 90
 ingredients:
   - group: 麵糊
     items:
