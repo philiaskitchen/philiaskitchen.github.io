@@ -82,7 +82,7 @@ export const roman = (n: number) => `${ROMAN[n] ?? n + 1}.`;
 // 還沒填之前，網站上完全不會顯示廣告。
 // 想先看看廣告會出現在哪裡：在網址後面加上 ?ads=preview
 export const ADS = {
-  client: '',
+  client: 'ca-pub-8908399220949936',
   slots: {
     recipeTop: '',    // 食譜頁：介紹和材料之間
     recipeBottom: '', // 食譜頁：「你可能也會喜歡」上面
