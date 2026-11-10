@@ -13,7 +13,7 @@ export const stripLang = (pathname: string) => pathname.replace(/^\/en(?=\/|$)/,
 export const UI = {
   zh: {
     siteName: 'Philia的廚房料理',
-    logo: '/images/site/logo.png',
+    logo: '/images/site/logo-v2.png',
     defaultDesc: '台式點心與法式甜點，一道一道記下來的家庭食譜：份量、時間、失敗過的地方都寫在裡面。',
     switchTo: 'English', switchLang: 'en' as Lang, switchLabel: 'Read this page in English',
     nav: { week: '本週食譜', taiwanese: '台式點心', french: '法式甜點', bread: '麵包', sweets: '其他甜點', about: '關於我' },
@@ -58,7 +58,7 @@ export const UI = {
   },
   en: {
     siteName: "Philia's Kitchen",
-    logo: '/images/site/logo-en.png',
+    logo: '/images/site/logo-en-v2.png',
     defaultDesc: 'Taiwanese dim sum and French pastries from a home kitchen in Australia — with weights, timings and the mistakes I made along the way.',
     switchTo: '中文', switchLang: 'zh' as Lang, switchLabel: '用中文看這一頁',
     nav: { week: "This week", taiwanese: 'Taiwanese', french: 'French pastry', bread: 'Bread', sweets: 'Other sweets', about: 'About' },
