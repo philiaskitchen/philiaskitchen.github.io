@@ -6,7 +6,7 @@ category: french
 intro: 柔嫩的香草鮮奶布丁，大約 4 杯份。多加兩顆蛋黃讓口感更濃郁滑順；用烤箱水浴或電鍋都可以做。
 image: /images/recipes/vanilla-milk-pudding.webp
 date: 2026-10-29
-featured: true
+featured: false
 measure: 幾杯
 sample: false
 prepTime: 約 25 分鐘
