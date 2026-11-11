@@ -1,5 +1,5 @@
 ---
-title: Classic Banana Cake
+title: Classic Banana Bread
 intro: A classic banana bread — moist, simple to make, and the best way to use up very ripe bananas with spotty black skins. One loaf pan makes a whole loaf.
 prepTime: about 15 min
 waitLabel: Bake
@@ -37,7 +37,7 @@ ingredients:
         amount: ½ cup
 steps:
   - title: Preheat and prepare the pan
-    text: Preheat the oven to 175°C. Line a 9×5-inch loaf pan with baking paper so the cake is easy to lift out.
+    text: Preheat the oven to 175°C. Line a 9×5-inch loaf pan with baking paper so the loaf is easy to lift out.
   - title: Mash the bananas
     text: Peel the bananas into a large bowl and mash them with a fork. Leave a few small pieces for more texture.
   - title: Mix the wet ingredients
@@ -52,6 +52,6 @@ steps:
     timer: Cool in the pan 10 min
 tips:
   - Use the ripest bananas you have — the ones covered in black spots are the sweetest.
-  - Don't over-mix once the dry ingredients go in, or the cake will turn tough.
+  - Don't over-mix once the dry ingredients go in, or the bread will turn tough.
   - If the top is getting too dark around the 40-minute mark, cover it with foil so it doesn't burn.
 ---
