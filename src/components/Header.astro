@@ -66,7 +66,7 @@ const items = [
   .bar.home .tagline { font-size: 24px; }
   nav { display: flex; align-items: center; gap: 30px; }
   .tools { order: 2; display: flex; align-items: center; gap: 12px; }
-  .lang { font-size: 13px; letter-spacing: .04em; color: var(--ink-soft); border: 1.2px solid rgba(74, 69, 54, .5); border-radius: 14px 12px 15px 13px; padding: 2.5px 11px; white-space: nowrap; }
+  .lang { display: inline-flex; align-items: center; font-size: 13px; letter-spacing: .04em; color: var(--ink-soft); border: 1.2px solid rgba(74, 69, 54, .5); border-radius: 14px 12px 15px 13px; padding: 2.5px 11px; white-space: nowrap; }
   .lang:hover { color: var(--terracotta-ink); border-color: var(--terracotta-ink); }
   .bar.home nav { flex-direction: column; gap: 10px; }
   .bar.home .tools { position: absolute; top: 56px; right: max(30px, env(safe-area-inset-right)); }
@@ -101,7 +101,7 @@ const items = [
     .bar.home .issue { display: none; }
     .logo, .bar.home .logo { height: 30px; margin: 0; }
     .tagline, .bar.home .tagline { font-size: 13px; }
-    summary { display: block; }
+    summary { display: flex; align-items: center; }
     nav, .bar.home nav { flex-direction: row; gap: 10px; }
     .bar.home .tools { position: static; }
     .tools { order: 0; gap: 8px; }
