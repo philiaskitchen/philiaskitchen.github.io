@@ -6,7 +6,7 @@ category: sweets
 intro: 經典的美式編織蘋果派（Lattice Apple Pie）。格子狀的編織頂蓋外觀好看，也讓內餡在烘烤時自然透氣、把汁液收濃。酥鬆的手工派皮包著肉桂蘋果，配一球冰淇淋最對味。
 image: /images/recipes/lattice-apple-pie.webp
 date: 2026-11-07
-featured: true
+featured: false
 measure: 一個
 sample: false
 prepTime: 約 1 小時
