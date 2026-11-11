@@ -1,5 +1,7 @@
 /* 「Philia的廚房料理」— 顏色、字體都照 Design System 的 tokens */
-@font-face { font-family: "Huninn"; src: url("/fonts/jf-openhuninn-2.1.woff2?v=2") format("woff2"); font-display: swap; }
+/* 粉圓字型在 Windows 會用另一組上下高度（字會偏下約 1px），這裡固定成跟 Mac／iPhone 一樣，按鈕裡的字才會置中 */
+@font-face { font-family: "Huninn"; src: url("/fonts/jf-openhuninn-2.1.woff2?v=2") format("woff2"); font-display: swap;
+  ascent-override: 85.06%; descent-override: 14.94%; line-gap-override: 0%; }
 @font-face { font-family: "Cormorant"; font-style: italic; src: url("/fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2"); font-display: swap; }
 /* 凝書體（justfont 買斷授權，可用於個人網站） */
 @font-face { font-family: "Cream"; src: url("/fonts/creamfont.woff2?v=2") format("woff2"); font-display: swap; }
