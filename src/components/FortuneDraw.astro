@@ -1,0 +1,113 @@
+---
+// 首頁「今天做什麼？」抽籤：搖一搖籤筒，抽出一支籤＝一道食譜＋一句籤詩
+import { recipeUrl, smallImage, type Recipe } from '../site';
+import { getLang, t } from '../i18n';
+interface Props { recipes: Recipe[] }
+const lang = getLang(Astro.url);
+const u = t(lang);
+const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, lang), i: r.data.image ? smallImage(r.data.image) : '' }));
+---
+<section class="wrap fortune">
+  <div class="box paper">
+    <span class="tape" style="background:var(--tape-rose)"></span>
+    <div class="tube-wrap">
+      <svg class="tube" viewBox="0 0 120 170" width="120" height="170" aria-hidden="true">
+        <g class="sticks" stroke="#4A4536" stroke-width="1.3">
+          <rect x="34" y="18" width="7" height="80" rx="2" fill="#E6C590" transform="rotate(-8 37 90)" />
+          <rect x="47" y="10" width="7" height="88" rx="2" fill="#E6C590" transform="rotate(-3 50 90)" />
+          <rect x="66" y="12" width="7" height="86" rx="2" fill="#E6C590" transform="rotate(4 69 90)" />
+          <rect x="79" y="20" width="7" height="78" rx="2" fill="#E6C590" transform="rotate(9 82 90)" />
+          <rect x="34" y="18" width="7" height="10" rx="2" fill="#B5552B" transform="rotate(-8 37 90)" />
+          <rect x="66" y="12" width="7" height="10" rx="2" fill="#B5552B" transform="rotate(4 69 90)" />
+        </g>
+        <g class="pick" stroke="#4A4536" stroke-width="1.3">
+          <rect x="56" y="8" width="8" height="90" rx="2" fill="#F0D7A6" />
+          <rect x="56" y="8" width="8" height="12" rx="2" fill="#B5552B" />
+        </g>
+        <path d="M24 62 Q60 54 96 62 L92 160 Q60 168 28 160 Z" fill="#C9874A" stroke="#4A4536" stroke-width="1.6" stroke-linejoin="round" />
+        <path d="M26 82 Q60 75 94 82 M27 138 Q60 145 93 138" fill="none" stroke="#8C5A2E" stroke-width="3" />
+        <path d="M40 90 L41 132 M60 92 L60 134 M80 90 L79 132" stroke="#E2B07A" stroke-width="1.4" opacity=".7" />
+        <rect x="47" y="96" width="26" height="34" rx="3" fill="#B5552B" stroke="#4A4536" stroke-width="1.2" />
+        <text x="60" y="118" text-anchor="middle" font-size="16" fill="#FFF8EE" font-family="Cream, serif">籤</text>
+      </svg>
+    </div>
+    <div class="copy">
+      <div class="section-title"><h2>{u.fortune.title}</h2><span class="fr">la recette du jour</span></div>
+      <p class="muted">{u.fortune.lead}</p>
+      <button type="button" class="draw">{u.fortune.draw}</button>
+    </div>
+    <div class="slip" hidden aria-live="polite">
+      <div class="grade display"></div>
+      <div class="body">
+        <img alt="" />
+        <a class="name display"></a>
+        <p class="line"></p>
+        <div class="slip-btns"><a class="go"></a><button type="button" class="again">{u.fortune.again}</button></div>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" class="fortune-data" set:html={JSON.stringify({ list, grades: u.fortune.grades, lines: u.fortune.lines, go: u.fortune.go })} />
+</section>
+<script>
+  const root = document.querySelector<HTMLElement>('.fortune');
+  if (root) {
+    const D = JSON.parse(root.querySelector('.fortune-data')!.textContent!);
+    const tube = root.querySelector<SVGElement>('.tube')!, slip = root.querySelector<HTMLElement>('.slip')!;
+    const btn = root.querySelector<HTMLButtonElement>('.draw')!, again = root.querySelector<HTMLButtonElement>('.again')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let last = -1;
+    const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
+    const draw = () => {
+      btn.disabled = again.disabled = true; slip.hidden = true;
+      tube.classList.remove('shake', 'out'); void (tube as any).getBoundingClientRect();
+      tube.classList.add('shake');
+      setTimeout(() => {
+        tube.classList.remove('shake'); tube.classList.add('out');
+        let k; do { k = Math.floor(Math.random() * D.list.length); } while (D.list.length > 1 && k === last); last = k;
+        const r = D.list[k];
+        slip.querySelector('.grade')!.textContent = pick(D.grades as string[]);
+        const img = slip.querySelector('img')!; if (r.i) { img.src = r.i; img.hidden = false; } else img.hidden = true;
+        const name = slip.querySelector<HTMLAnchorElement>('.name')!; name.textContent = r.t; name.href = r.u;
+        slip.querySelector('.line')!.textContent = pick(D.lines as string[]);
+        const go = slip.querySelector<HTMLAnchorElement>('.go')!; go.textContent = D.go; go.href = r.u;
+        setTimeout(() => { slip.hidden = false; btn.disabled = again.disabled = false; }, still ? 0 : 500);
+      }, still ? 0 : 1000);
+    };
+    btn.addEventListener('click', draw);
+    again.addEventListener('click', draw);
+  }
+</script>
+<style>
+  .fortune { padding-top: 10px; padding-bottom: 50px; }
+  .box { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; padding: 28px 34px; }
+  .tube-wrap { width: 120px; }
+  .tube { overflow: visible; transform-origin: 50% 95%; }
+  .tube .pick { transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); }
+  .tube.shake { animation: shake .25s ease-in-out 4; }
+  .tube.out .pick { transform: translateY(-46px); }
+  @keyframes shake { 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+  .copy .muted { margin: 6px 0 14px; font-size: 15px; }
+  .draw, .again { font: inherit; font-size: 16px; padding: 9px 20px; cursor: pointer; color: var(--on-terracotta); background: var(--terracotta);
+    border: 0; border-radius: 22px 18px 24px 20px; box-shadow: var(--shadow-paper); }
+  .draw:disabled, .again:disabled { opacity: .6; cursor: default; }
+  .again { background: var(--paper); color: var(--ink); border: 1.5px solid var(--pencil); box-shadow: none; font-size: 15px; padding: 7px 16px; }
+  /* 籤紙：直式紅色標題＋內容 */
+  .slip { display: flex; width: 300px; background: var(--paper-cream); border: 1.5px solid var(--pencil); box-shadow: var(--shadow-paper);
+    transform: rotate(1.5deg); animation: slipIn .5s cubic-bezier(.3, 1.4, .5, 1); }
+  .slip[hidden] { display: none; }
+  .grade { writing-mode: vertical-rl; background: var(--terracotta); color: var(--on-terracotta); font-size: 22px; letter-spacing: .25em; padding: 14px 8px; }
+  .body { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .body img { height: 70px; width: auto; max-width: 100%; object-fit: contain; align-self: flex-start; }
+  .name { font-size: 24px; line-height: 1.25; color: var(--ink); }
+  .name:hover { color: var(--terracotta-ink); }
+  .line { font-size: 14px; line-height: 1.7; color: var(--ink-muted); }
+  .slip-btns { display: flex; align-items: center; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  .go { font-size: 15px; color: var(--terracotta-ink); border-bottom: 1.5px solid currentColor; }
+  @keyframes slipIn { from { opacity: 0; transform: translateY(-30px) rotate(-6deg) scale(.8); } }
+  @media (max-width: 860px) {
+    .box { grid-template-columns: auto 1fr; padding: 24px 20px; gap: 16px 18px; }
+    .slip { grid-column: 1 / -1; width: 100%; max-width: 380px; justify-self: center; }
+  }
+  @media (max-width: 480px) { .tube-wrap { width: 84px; } .tube { width: 84px; height: 119px; } .copy .section-title h2 { font-size: 26px; } }
+  @media (prefers-reduced-motion: reduce) { .tube.shake, .slip { animation: none; } .tube .pick { transition: none; } }
+</style>

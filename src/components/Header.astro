@@ -18,13 +18,19 @@ const items = [
 <header>
   <img class="awning" src="/images/ui/awning.svg" alt="" aria-hidden="true" />
   <div class:list={['wrap', 'bar', { home }]}>
-    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`}>
+    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`} data-fresh={u.egg.fresh} data-burnt={u.egg.burnt}>
       {home && <span class="issue fr">N° 01 · automne 2026</span>}
       <span class="logo-box"><img class="logo" src={u.logo} alt={u.siteName} /><span class="glow" style={lang === 'en' ? 'left:4.73%;width:7.65%' : 'left:4.47%;width:7.23%'}></span></span>
       <span class="fr tagline">la cuisine de Philia</span>
     </a>
     <nav aria-label={u.mainNav}>
+      <span class="tools">
+      <a class="favlink" href={lp(lang, '/favorites/')} aria-label={u.fav.nav} title={u.fav.nav}>
+        <svg viewBox="0 0 24 22" width="24" height="22" aria-hidden="true"><path d="M12 20.5C6.2 16.4 1.8 12.6 1.8 7.4 1.8 4.3 4.1 2 7 2c2.1 0 3.8 1.1 5 3 1.2-1.9 2.9-3 5-3 2.9 0 5.2 2.3 5.2 5.4 0 5.2-4.4 9-10.2 13.1Z" /></svg>
+        <span class="badge" hidden></span>
+      </a>
       {altHref && <a class="lang" href={altHref} hreflang={u.switchLang === 'en' ? 'en' : 'zh-Hant'} lang={u.switchLang === 'en' ? 'en' : 'zh-Hant'} aria-label={u.switchLabel}>{u.switchTo}</a>}
+      </span>
       <details class="menu">
         <summary aria-label={u.openMenu}><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2,3 Q15,1 28,4 M2,11 Q15,12 28,10 M2,19 Q15,18 28,20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></summary>
         <ul>
@@ -59,15 +65,32 @@ const items = [
   .bar.home .logo { height: 80px; margin: 4px 0 2px; }
   .bar.home .tagline { font-size: 24px; }
   nav { display: flex; align-items: center; gap: 30px; }
-  .lang { order: 2; font-size: 13px; letter-spacing: .04em; color: var(--ink-soft); border: 1.2px solid rgba(74, 69, 54, .5); border-radius: 14px 12px 15px 13px; padding: 2.5px 11px; white-space: nowrap; }
+  .tools { order: 2; display: flex; align-items: center; gap: 12px; }
+  .lang { font-size: 13px; letter-spacing: .04em; color: var(--ink-soft); border: 1.2px solid rgba(74, 69, 54, .5); border-radius: 14px 12px 15px 13px; padding: 2.5px 11px; white-space: nowrap; }
   .lang:hover { color: var(--terracotta-ink); border-color: var(--terracotta-ink); }
   .bar.home nav { flex-direction: column; gap: 10px; }
-  .bar.home .lang { position: absolute; top: 56px; right: max(30px, env(safe-area-inset-right)); }
+  .bar.home .tools { position: absolute; top: 56px; right: max(30px, env(safe-area-inset-right)); }
+  .favlink { position: relative; display: inline-flex; padding: 4px; color: var(--terracotta); }
+  .favlink path { fill: transparent; stroke: currentColor; stroke-width: 1.8; transition: fill .2s; }
+  .favlink.has path { fill: currentColor; }
+  .favlink:hover path { fill: rgba(181, 85, 43, .2); }
+  .favlink.has:hover path { fill: var(--terracotta-ink); }
+  .badge { position: absolute; top: -3px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; font-size: 11px; line-height: 18px; text-align: center;
+    background: var(--olive); color: var(--on-terracotta); }
+  .badge[hidden] { display: none; }
+  .favlink.bump { animation: bump .45s ease; }
+  @keyframes bump { 40% { transform: scale(1.3); } }
   .bar { position: relative; }
   summary { display: none; list-style: none; cursor: pointer; color: var(--pencil); padding: 6px; }
   summary::-webkit-details-marker { display: none; }
   ul { display: flex; gap: 34px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
-  li a { display: inline-block; padding-bottom: 6px; }
+  li a { display: inline-block; padding-bottom: 6px; white-space: nowrap; }
+  /* 平板（761–1100px）：選單字間距縮小，不要擠成兩三行 */
+  @media (min-width: 761px) and (max-width: 1100px) {
+    ul { gap: 18px; font-size: 14px; }
+    nav { gap: 16px; }
+    .bar:not(.home) .logo { height: 36px; }
+  }
   li a.on { background: url(/images/ui/underline.svg) no-repeat bottom / 100% 10px; }
   li a:hover { color: var(--terracotta-ink); }
   /* 讓 details 在桌機永遠展開 */
@@ -80,8 +103,8 @@ const items = [
     .tagline, .bar.home .tagline { font-size: 13px; }
     summary { display: block; }
     nav, .bar.home nav { flex-direction: row; gap: 10px; }
-    .bar.home .lang { position: static; }
-    .lang { order: 0; }
+    .bar.home .tools { position: static; }
+    .tools { order: 0; gap: 8px; }
     .menu { position: relative; }
     .menu:not([open]) > ul { display: none; }
     .menu[open] > ul { position: absolute; right: 0; top: 44px; z-index: 60; flex-direction: column; gap: 4px; background: var(--paper);
@@ -94,4 +117,58 @@ const items = [
   const mq = matchMedia('(min-width: 761px)');
   const sync = () => { if (d) d.open = mq.matches; };
   sync(); mq.addEventListener('change', sync);
+
+  // 頁首的愛心：顯示存了幾道「我想做」，點了去清單頁
+  const favlink = document.querySelector<HTMLElement>('header .favlink');
+  if (favlink) {
+    const badge = favlink.querySelector<HTMLElement>('.badge')!;
+    let prev = -1;
+    const upd = () => { let n = 0; try { n = JSON.parse(localStorage.getItem('pk-favs') || '[]').length; } catch {}
+      favlink.classList.toggle('has', n > 0); badge.hidden = n === 0; badge.textContent = String(n);
+      if (prev >= 0 && n > prev) { favlink.classList.remove('bump'); void favlink.offsetWidth; favlink.classList.add('bump'); } prev = n; };
+    upd(); addEventListener('pk-favs', upd); addEventListener('storage', upd); addEventListener('pageshow', upd);
+  }
+
+  // 小彩蛋：在首頁連點 logo 5 下，烤箱跳出一片吐司寶寶；連點 10 下……吐司烤焦了
+  const brand = document.querySelector<HTMLAnchorElement>('header .brand');
+  const box = brand?.querySelector<HTMLElement>('.logo-box');
+  if (brand && box) {
+    let n = 0, resetT = 0;
+    brand.addEventListener('click', (e) => {
+      if (new URL(brand.href).pathname !== location.pathname) return; // 不在首頁：照常回首頁
+      e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' });
+      n++; clearTimeout(resetT); resetT = window.setTimeout(() => (n = 0), 1500);
+      if (n === 5) pop(false);
+      if (n === 10) { pop(true); n = 0; }
+    });
+    const pop = (burnt: boolean) => {
+      const r = box.getBoundingClientRect(); const h = r.height;
+      const x = r.left + h * 0.5, y = r.top + h * 0.5;
+      const el = document.createElement('div'); el.className = 'egg-bread' + (burnt ? ' burnt' : '');
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+      el.innerHTML = burnt
+        ? `<svg viewBox="0 0 110 100" aria-hidden="true"><path d="M14 94V40C6 38 4 26 10 18 18 6 38 4 55 8 72 4 92 6 100 18c6 8 4 20-4 22v54Z" fill="#2E211A" stroke="#4A4536" stroke-width="3" stroke-linejoin="round"/><path d="M22 88V44c-6-2-7-12-2-18 7-9 22-11 35-7 13-4 28-2 35 7 5 6 4 16-2 18v44Z" fill="#5A3F2E"/><path d="M37 52l9 9 M46 52l-9 9 M63 52l9 9 M72 52l-9 9" stroke="#F7E6C4" stroke-width="3" stroke-linecap="round"/><path d="M47 70q4-4 8 0 4 4 8 0" fill="none" stroke="#F7E6C4" stroke-width="2.4" stroke-linecap="round"/></svg>`
+        : `<svg viewBox="0 0 110 100" aria-hidden="true"><path d="M14 94V40C6 38 4 26 10 18 18 6 38 4 55 8 72 4 92 6 100 18c6 8 4 20-4 22v54Z" fill="#C9874A" stroke="#4A4536" stroke-width="3" stroke-linejoin="round"/><path d="M22 88V44c-6-2-7-12-2-18 7-9 22-11 35-7 13-4 28-2 35 7 5 6 4 16-2 18v44Z" fill="#F7E6C4"/><g class="eyes"><ellipse cx="42" cy="56" rx="4" ry="5.2" fill="#3E3A30"/><ellipse cx="68" cy="56" rx="4" ry="5.2" fill="#3E3A30"/><circle cx="43.5" cy="54" r="1.4" fill="#fff"/><circle cx="69.5" cy="54" r="1.4" fill="#fff"/></g><ellipse cx="33" cy="66" rx="6" ry="3.5" fill="#F2A19A" opacity=".85"/><ellipse cx="77" cy="66" rx="6" ry="3.5" fill="#F2A19A" opacity=".85"/><path d="M49 65q6 7 12 0" fill="#B5552B" stroke="#3E3A30" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+      if (!burnt) for (let q = 0; q < 3; q++) { const hh = document.createElement('span'); hh.className = 'egg-heart'; hh.textContent = '♥'; hh.style.setProperty('--i', String(q)); el.append(hh); }
+      const tag = document.createElement('span'); tag.className = 'egg-tag' + (r.left > 160 ? ' left' : ''); tag.textContent = burnt ? brand.dataset.burnt! : brand.dataset.fresh!; el.append(tag);
+      if (burnt) { const s = document.createElement('span'); s.className = 'egg-smoke'; el.append(s); }
+      document.body.append(el);
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const k = Math.max(.5, Math.min(1, h / 70)); el.style.setProperty('--k', String(k));
+      const d = -(h * 0.5 + 23 * k - 2); // 最後坐在烤箱上面
+      const anim = still ? [{ opacity: 1, transform: `translate(-50%,-50%) translate(0px,${d}px)` }, { opacity: 1, transform: `translate(-50%,-50%) translate(0px,${d}px)` }] : [
+        { transform: 'translate(-50%,-50%) scale(.2)', opacity: 0 },
+        { transform: `translate(-50%,-50%) translate(0px,${d - 60}px) scale(1) rotate(-25deg)`, opacity: 1, offset: .3 },
+        { transform: `translate(-50%,-50%) translate(30px,${d - 30}px) rotate(200deg)`, offset: .55 },
+        { transform: `translate(-50%,-50%) translate(8px,${d - 18}px) rotate(330deg)`, offset: .7 },
+        { transform: `translate(-50%,-50%) translate(0px,${d}px) rotate(360deg)`, offset: .82 },
+        { transform: `translate(-50%,-50%) translate(0px,${d - 6}px) rotate(360deg)`, offset: .9 },
+        { transform: `translate(-50%,-50%) translate(0px,${d}px) rotate(360deg)`, opacity: 1 },
+      ];
+      el.animate(anim, { duration: 1600, easing: 'ease-out', fill: 'forwards' }).finished.then(() => {
+        el.classList.add('landed');
+        setTimeout(() => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }).finished.then(() => el.remove()), 2200);
+      });
+    };
+  }
 </script>
