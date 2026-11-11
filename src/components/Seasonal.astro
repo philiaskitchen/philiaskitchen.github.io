@@ -1,0 +1,148 @@
+---
+// 依時間、雪梨季節、節日變化網站
+// - 首頁：問候語（早安／午安／晚上／深夜，用讀者自己的時間）＋雪梨現在的季節一句話＋飄落的花瓣或葉子
+// - 全站頁首：節日裝飾（農曆新年、元宵掛燈籠；聖誕節掛小燈串；中秋有月亮）
+// - 整個畫面依時間帶一點點顏色（早上淡黃、傍晚暖橘、深夜淡藍）
+// 預覽用：網址加 ?when=morning|afternoon|evening|night&season=wattle|jacaranda|frangipani|autumn|winter&fest=cny|lantern|dragon|moon|dongzhi|xmas|none
+import { getLang, lp, t } from '../i18n';
+interface Props { home?: boolean }
+const { home = false } = Astro.props;
+const lang = getLang(Astro.url);
+const u = t(lang);
+// 節日日期（農曆用 lunardate 換算、冬至用台灣時間的天文冬至；2026–2030）
+const FEST = {
+  cny: ['2027-02-06', '2028-01-26', '2029-02-13', '2030-02-03'],
+  lantern: ['2027-02-20', '2028-02-09', '2029-02-27', '2030-02-17'],
+  dragon: ['2027-06-09', '2028-05-28', '2029-06-16', '2030-06-05'],
+  moon: ['2027-09-15', '2028-10-03', '2029-09-22', '2030-09-12'],
+  dongzhi: ['2026-12-22', '2027-12-22', '2028-12-21', '2029-12-21', '2030-12-22'],
+};
+const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/sesame-tangyuan/') };
+---
+<div class="sea-garnish" aria-hidden="true"></div>
+<div class="sea-tint" aria-hidden="true"></div>
+{home && <div class="sea-fall" aria-hidden="true"></div>}
+<script type="application/json" id="sea-data" set:html={JSON.stringify(data)} />
+<script>
+  const D = JSON.parse(document.getElementById('sea-data')!.textContent!);
+  const P = new URLSearchParams(location.search);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 雪梨今天的日期（季節和節日都用雪梨的日期）
+  const syd = (() => { const f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit' }); return P.get('date') || f.format(new Date()); })();
+  const [, M, Dd] = syd.split('-').map(Number);
+  const md = M * 100 + Dd;
+  const dayDiff = (a: string, b: string) => Math.round((Date.parse(a) - Date.parse(b)) / 864e5);
+  // 1) 一天的時間（讀者自己的時間）
+  const h = new Date().getHours();
+  const when = P.get('when') || (h >= 5 && h < 11 ? 'morning' : h >= 11 && h < 17 ? 'afternoon' : h >= 17 && h < 22 ? 'evening' : 'night');
+  // 2) 雪梨的季節：金合歡（8/15–10/9）→ 藍花楹（10/10–12/10）→ 雞蛋花（12/11–2/28）→ 秋天落葉（3–5 月）→ 冬天（6/1–8/14）
+  const season = P.get('season') || (md >= 815 && md <= 1009 ? 'wattle' : md >= 1010 && md <= 1210 ? 'jacaranda' : (md >= 1211 || md <= 228) ? 'frangipani' : md >= 301 && md <= 531 ? 'autumn' : 'winter');
+  // 3) 節日
+  const near = (list: string[], before: number, after: number) => list.some((d) => { const k = dayDiff(syd, d); return k >= -before && k <= after; });
+  let fest = P.get('fest') || '';
+  if (!fest) {
+    if (near(D.fest.lantern, 1, 0)) fest = 'lantern';
+    else if (near(D.fest.cny, 7, 13)) fest = 'cny';
+    else if (near(D.fest.dragon, 2, 0)) fest = 'dragon';
+    else if (near(D.fest.moon, 3, 1)) fest = 'moon';
+    else if (near(D.fest.dongzhi, 1, 0)) fest = 'dongzhi';
+    else if (M === 12 && Dd <= 26) fest = 'xmas';
+  }
+  if (fest === 'none') fest = '';
+  const root = document.documentElement;
+  root.dataset.when = when; root.dataset.season = season; if (fest) root.dataset.fest = fest;
+
+  // 首頁問候語
+  const greet = document.querySelector<HTMLElement>('.greet');
+  if (D.home && greet) {
+    const S = D.s;
+    const g1 = greet.querySelector<HTMLElement>('.g1')!, g2 = greet.querySelector<HTMLElement>('.g2')!;
+    g1.textContent = fest ? S.fest[fest] : S.time[when];
+    if (fest === 'lantern' || fest === 'dongzhi') { const a = document.createElement('a'); a.href = D.tangyuan; a.textContent = S.tangyuanLink; g1.append(' ', a); }
+    g2.textContent = S.season[season];
+    greet.hidden = false;
+  }
+
+  // 頁首節日裝飾
+  const gar = document.querySelector<HTMLElement>('.sea-garnish')!;
+  if (fest === 'cny' || fest === 'lantern') {
+    // 桌機：避開中間的標題，左右各兩個；手機：四個小燈籠，貼在遮陽棚下面，不蓋到 logo
+    const small = innerWidth < 761 || !D.home; // 首頁桌機以外：小燈籠直接掛在遮陽棚的波浪邊上
+    const pos = small ? [4, 30, 70, 96] : [6, 19, 81, 94];
+    const lens = small ? [0, 0, 0, 0] : [18, 34, 30, 16];
+    gar.innerHTML = pos.map((x, i) => `<span class="lantern${small ? ' sm' : ''}" style="left:${x}%;--d:${(i % 3) * -0.7}s;--len:${lens[i]}px"><i></i><svg viewBox="0 0 30 42" width="26" height="36"><rect x="10" y="0" width="10" height="5" rx="1.5" fill="#D9A43A" stroke="#4A4536" stroke-width="1.2"/><ellipse cx="15" cy="19" rx="13" ry="14" fill="#C8352B" stroke="#4A4536" stroke-width="1.4"/><path d="M15 5v28 M8 7q-5 12 0 24 M22 7q5 12 0 24" fill="none" stroke="#E86A55" stroke-width="1.2"/><rect x="10" y="31" width="10" height="4" rx="1.5" fill="#D9A43A" stroke="#4A4536" stroke-width="1.2"/><path d="M15 35v6" stroke="#D9A43A" stroke-width="2.4" stroke-linecap="round"/></svg></span>`).join('');
+  } else if (fest === 'xmas') {
+    const n = Math.round(innerWidth / 46); const cols = ['#C8352B', '#D9A43A', '#5F8B4C', '#7FA3C9', '#E2859A'];
+    let path = 'M0 6'; for (let i = 0; i < n; i++) path += ` Q${(i + 0.5) * 100 / n} 16 ${(i + 1) * 100 / n} 6`;
+    gar.innerHTML = `<svg class="wire" viewBox="0 0 100 24" preserveAspectRatio="none"><path d="${path}" fill="none" stroke="#4A4536" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>` +
+      Array.from({ length: n }, (_, i) => `<span class="bulb" style="left:${(i + 0.5) * 100 / n}%;--c:${cols[i % 5]};--d:${(i % 4) * 0.4}s"></span>`).join('');
+  } else if (fest === 'moon') {
+    gar.innerHTML = `<span class="moon"><svg viewBox="0 0 60 60" width="40" height="40"><circle cx="30" cy="30" r="24" fill="#F6E3A1" stroke="#4A4536" stroke-width="1.4"/><circle cx="22" cy="24" r="4" fill="#EBD083"/><circle cx="36" cy="36" r="5.5" fill="#EBD083"/><circle cx="38" cy="20" r="2.6" fill="#EBD083"/></svg></span>`;
+  }
+
+  // 首頁飄落：依季節換花瓣／葉子
+  const fall = document.querySelector<HTMLElement>('.sea-fall');
+  const SHAPES: Record<string, string[]> = {
+    jacaranda: [
+      '<svg viewBox="0 0 20 26"><path d="M10 1C6 1 4.5 6 5 12c.4 5-2.5 8-3 10 2 2 5 3 8 3s6-1 8-3c-.5-2-3.4-5-3-10 .5-6-1-11-5-11Z" fill="#9F86D8" stroke="#6F58A8" stroke-width="1"/><path d="M10 6v12" stroke="#C9B8EE" stroke-width="2" stroke-linecap="round"/></svg>',
+      '<svg viewBox="0 0 20 20"><path d="M10 2c3 0 6 3 6 7 0 5-3 9-6 9s-6-4-6-9c0-4 3-7 6-7Z" fill="#B49CE6" stroke="#7D66B5" stroke-width="1"/></svg>',
+    ],
+    wattle: ['<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="#F2C230"/><g fill="#F7D96A"><circle cx="5" cy="6" r="2"/><circle cx="14" cy="5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="6" cy="15" r="2"/><circle cx="11" cy="16" r="2"/><circle cx="3.5" cy="10.5" r="2"/></g></svg>'],
+    frangipani: ['<svg viewBox="0 0 30 30"><g fill="#FFFDF5" stroke="#C9B994" stroke-width=".9">' + [0, 72, 144, 216, 288].map((r) => `<ellipse cx="15" cy="7.5" rx="5" ry="7.5" transform="rotate(${r} 15 15)"/>`).join('') + '</g><circle cx="15" cy="15" r="4.5" fill="#F4C84A"/></svg>'],
+    autumn: [
+      '<svg viewBox="0 0 24 24"><path d="M12 2c4 3 9 6 9 11-3 1-5 0-7-1 1 3 0 6-2 9-2-3-3-6-2-9-2 1-4 2-7 1 0-5 5-8 9-11Z" fill="#D97A3A" stroke="#8C4A1F" stroke-width="1"/><path d="M12 6v15" stroke="#8C4A1F" stroke-width="1"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M12 2c5 4 7 9 4 15-1 2-3 4-4 5-1-1-3-3-4-5-3-6-1-11 4-15Z" fill="#C9963A" stroke="#7D5A1F" stroke-width="1"/><path d="M12 5v17" stroke="#7D5A1F" stroke-width="1"/></svg>',
+    ],
+  };
+  if (fall && !still && SHAPES[season]) {
+    const shapes = SHAPES[season]; const n = innerWidth < 700 ? 9 : 16;
+    fall.innerHTML = Array.from({ length: n }, (_, i) => {
+      const s = 12 + Math.random() * 12, dur = 11 + Math.random() * 9, del = -Math.random() * dur, x = Math.random() * 100, sway = 30 + Math.random() * 50;
+      return `<span style="left:${x}%;width:${s}px;height:${s}px;--dur:${dur}s;--del:${del}s;--sway:${sway}px;--rot:${Math.random() < .5 ? -1 : 1}">${shapes[i % shapes.length]}</span>`;
+    }).join('');
+  }
+</script>
+<style is:global>
+  /* 時間的顏色：非常淡，只是讓畫面有一點氣氛 */
+  .sea-tint { position: fixed; inset: 0; z-index: 48; pointer-events: none; mix-blend-mode: multiply; transition: background .6s; }
+  html[data-when="morning"] .sea-tint { background: rgba(255, 238, 200, .16); }
+  html[data-when="evening"] .sea-tint { background: rgba(255, 205, 150, .14); }
+  html[data-when="night"] .sea-tint { background: rgba(140, 150, 200, .16); }
+  html[data-when="night"] header .glow { opacity: .55; }
+  html[data-when="evening"] header .glow { opacity: .4; }
+  /* 首頁問候語 */
+  .greet { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+  .greet[hidden] { display: none; }
+  .greet .g1 { font-size: 16px; color: var(--ink); }
+  .greet .g1 a { color: var(--terracotta-ink); border-bottom: 1.5px solid currentColor; white-space: nowrap; }
+  .greet .g2 { font-size: 13px; color: var(--olive-ink); }
+  .greet .g2::before { content: "❀ "; color: var(--season-c, var(--olive)); }
+  html[data-season="jacaranda"] { --season-c: #9F86D8; }
+  html[data-season="wattle"] { --season-c: #E0B020; }
+  html[data-season="frangipani"] { --season-c: #E0B84A; }
+  html[data-season="autumn"] { --season-c: #D97A3A; }
+  html[data-season="winter"] { --season-c: #7FA3C9; }
+  /* 飄落的花瓣／葉子（只有首頁） */
+  .sea-fall { position: fixed; inset: 0; z-index: 46; pointer-events: none; overflow: hidden; }
+  .sea-fall span { position: absolute; top: -40px; opacity: .85; animation: seaFall var(--dur) linear var(--del) infinite; }
+  .sea-fall span svg { width: 100%; height: 100%; display: block; animation: seaSpin calc(var(--dur) / 3) ease-in-out infinite alternate; }
+  @keyframes seaFall { 0% { transform: translate(0, 0); } 25% { transform: translate(var(--sway), 27vh); } 50% { transform: translate(0, 55vh); } 75% { transform: translate(calc(var(--sway) * -1), 82vh); } 100% { transform: translate(0, 112vh); } }
+  @keyframes seaSpin { from { transform: rotate(calc(var(--rot) * -30deg)) rotateY(0deg); } to { transform: rotate(calc(var(--rot) * 70deg)) rotateY(55deg); } }
+  /* 頁首節日裝飾 */
+  header { position: relative; }
+  .sea-garnish { position: absolute; top: 40px; left: 0; right: 0; height: 0; z-index: 6; pointer-events: none; }
+  .sea-garnish .lantern { position: absolute; top: 0; transform: translateX(-50%); transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; animation: swing 3.2s ease-in-out var(--d) infinite alternate; }
+  .sea-garnish .lantern i { width: 1.2px; height: var(--len); background: #4A4536; }
+  .sea-garnish .lantern.sm { top: -16px; }
+  .sea-garnish .lantern.sm svg { width: 15px; height: 21px; }
+  @media (min-width: 761px) { .sea-garnish .lantern.sm { top: -20px; } .sea-garnish .lantern.sm svg { width: 19px; height: 27px; } }
+  @keyframes swing { from { transform: translateX(-50%) rotate(-5deg); } to { transform: translateX(-50%) rotate(5deg); } }
+  .sea-garnish .wire { position: absolute; top: 0; left: 0; width: 100%; height: 24px; }
+  .sea-garnish .bulb { position: absolute; top: 13px; width: 8px; height: 11px; margin-left: -4px; border-radius: 50% 50% 45% 45%; background: var(--c); box-shadow: 0 0 8px var(--c); animation: twinkle 1.6s ease-in-out var(--d) infinite alternate; }
+  @keyframes twinkle { from { opacity: .45; } to { opacity: 1; } }
+  .sea-garnish .moon { position: absolute; top: 2px; left: 36%; filter: drop-shadow(0 0 12px rgba(246, 227, 161, .9)); animation: moonGlow 4s ease-in-out infinite alternate; }
+  @keyframes moonGlow { to { filter: drop-shadow(0 0 22px rgba(246, 227, 161, 1)); } }
+  @media (max-width: 760px) { .sea-garnish .moon { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .sea-garnish .lantern, .sea-garnish .bulb, .sea-garnish .moon { animation: none; } }
+  @media print { .sea-garnish, .sea-tint, .sea-fall { display: none !important; } }
+</style>
