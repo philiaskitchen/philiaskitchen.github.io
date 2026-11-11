@@ -29,7 +29,7 @@ export const TRIVIA: Record<string, Trivia> = {
     src: { label: 'Wikipedia: Apple pie', url: 'https://en.wikipedia.org/wiki/Apple_pie' },
   },
   'classic-banana-cake': {
-    zh: { q: '香蕉蛋糕是什麼時候開始流行的？', a: '1930 年代，泡打粉開始在超市買得到，香蕉蛋糕（banana bread）的食譜也在這時出現在北美各地的食譜書裡。有人認為它和經濟大蕭條有關——主婦們捨不得丟掉熟過頭的香蕉；也有人認為，是麵粉和泡打粉公司為了推銷產品而發明的。' },
+    zh: { q: '香蕉麵包是什麼時候開始流行的？', a: '1930 年代，泡打粉開始在超市買得到，香蕉麵包（banana bread）的食譜也在這時出現在北美各地的食譜書裡。有人認為它和經濟大蕭條有關——主婦們捨不得丟掉熟過頭的香蕉；也有人認為，是麵粉和泡打粉公司為了推銷產品而發明的。' },
     en: { q: 'When did banana bread become popular?', a: 'In the 1930s, when baking powder became easy to buy in shops, banana bread recipes started to appear in cookbooks across North America. Some say it came from the Great Depression, when people did not want to waste overripe bananas. Others think flour and baking powder companies created it to sell their products.' },
     src: { label: 'Wikipedia: Banana bread', url: 'https://en.wikipedia.org/wiki/Banana_bread' },
   },
