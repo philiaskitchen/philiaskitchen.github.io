@@ -92,10 +92,13 @@ p { margin: 0; }
 }
 /* 列印：拿掉頁首、頁尾、廣告、紙張紋理，白底 */
 @media print {
-  @page { margin: 12mm; }
+  @page { margin: 8mm 10mm 11mm; }
   body { background: #fff; }
   body::after, header, footer, .ad, .pin-progress, .egg-bread { display: none !important; }
-  .wrap { padding-left: 8mm; padding-right: 8mm; max-width: none; }
+  .wrap { padding-left: 0; padding-right: 0; max-width: none; }
+  /* 鉛筆框：框住內容，每一頁都重複框線和內距（內容離框線遠一點） */
+  main { border: 1.5px solid #4A4536; border-radius: 10px 6px 12px 8px; outline: 1px solid #CFC4AA; outline-offset: -6px;
+    padding: 9mm 11mm 5mm; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 /* logo 彩蛋：跳出來的麵包 */
