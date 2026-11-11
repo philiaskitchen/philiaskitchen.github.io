@@ -1,0 +1,65 @@
+---
+// 「我想做的食譜」頁（中英文共用）：先把所有食譜卡放好，再用這台裝置存的愛心清單決定顯示哪些
+import Base from '../layouts/Base.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import ScallopButton from '../components/ScallopButton.astro';
+import { allRecipes } from '../site';
+import { getLang, lp, t } from '../i18n';
+const lang = getLang(Astro.url);
+const u = t(lang);
+const recipes = await allRecipes(lang);
+---
+<Base title={u.fav.nav} description={u.fav.desc}>
+  <meta name="robots" content="noindex" slot="head" />
+  <section class="wrap favpage">
+    <div class="fr eyebrow">{u.fav.fr} —</div>
+    <h1 class="display">{u.fav.nav}</h1>
+    <p class="muted lead">{u.fav.desc}</p>
+    <div class="empty paper" hidden>
+      <svg viewBox="0 0 24 22" width="46" height="42" aria-hidden="true"><path d="M12 20.5C6.2 16.4 1.8 12.6 1.8 7.4 1.8 4.3 4.1 2 7 2c2.1 0 3.8 1.1 5 3 1.2-1.9 2.9-3 5-3 2.9 0 5.2 2.3 5.2 5.4 0 5.2-4.4 9-10.2 13.1Z" fill="none" stroke="var(--terracotta)" stroke-width="1.6"/></svg>
+      <p>{u.fav.empty}</p>
+      <ScallopButton href={lp(lang, '/') + '#menu'} label={u.fav.browse} width={200} />
+    </div>
+    <div class="card-grid list">
+      {recipes.map((r, i) => (
+        <div class="item" data-id={r.id} hidden>
+          <RecipeCard recipe={r} index={i} />
+          <button type="button" class="x" aria-label={`${u.fav.remove}：${r.data.title}`}>×</button>
+        </div>
+      ))}
+    </div>
+    <p class="soft note">{u.fav.note}</p>
+  </section>
+</Base>
+<script>
+  const get = (): string[] => { try { return JSON.parse(localStorage.getItem('pk-favs') || '[]'); } catch { return []; } };
+  const items = [...document.querySelectorAll<HTMLElement>('.favpage .item')];
+  const empty = document.querySelector<HTMLElement>('.favpage .empty')!;
+  const draw = () => {
+    const ids = get(); let shown = 0;
+    items.forEach((el) => { const k = ids.indexOf(el.dataset.id!); el.hidden = k < 0; el.style.order = String(k); if (k >= 0) shown++; });
+    empty.hidden = shown > 0;
+  };
+  items.forEach((el) => el.querySelector('.x')!.addEventListener('click', () => {
+    try { localStorage.setItem('pk-favs', JSON.stringify(get().filter((v) => v !== el.dataset.id))); } catch {}
+    draw(); dispatchEvent(new Event('pk-favs'));
+  }));
+  draw(); addEventListener('pageshow', draw);
+</script>
+<style>
+  .favpage { padding-top: 40px; padding-bottom: 70px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 46px; line-height: 1.25; margin-top: 4px; }
+  .lead { margin: 10px 0 36px; font-size: 16px; }
+  .item { position: relative; }
+  .item[hidden] { display: none; }
+  .item :global(.card) { height: 100%; }
+  .x { position: absolute; top: 10px; right: 10px; z-index: 2; width: 32px; height: 32px; border-radius: 50%; border: 1.2px solid var(--pencil);
+    background: var(--paper); color: var(--ink-soft); font-size: 20px; line-height: 1; cursor: pointer; }
+  .x:hover { color: var(--terracotta-ink); border-color: var(--terracotta-ink); }
+  .empty { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding: 36px 24px; max-width: 520px; margin: 0 auto 30px; }
+  .empty[hidden] { display: none; }
+  .empty p { font-size: 16px; line-height: 1.8; }
+  .note { font-size: 13px; margin-top: 40px; text-align: center; }
+  @media (max-width: 600px) { h1 { font-size: 36px; } }
+</style>

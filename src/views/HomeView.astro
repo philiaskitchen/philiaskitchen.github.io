@@ -5,6 +5,7 @@ import RecipeCard from '../components/RecipeCard.astro';
 import RecipeMenu from '../components/RecipeMenu.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import SteamyStillLife from '../components/SteamyStillLife.astro';
+import FortuneDraw from '../components/FortuneDraw.astro';
 import { allRecipes, featuredRecipe, recipeUrl, smallImage } from '../site';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
@@ -45,7 +46,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
 
   <section class="wrap favs" hidden>
-    <div class="section-title"><h2>{u.fav.title}</h2><span class="fr">{u.fav.fr}</span></div>
+    <div class="section-title"><h2>{u.fav.title}</h2><span class="fr">{u.fav.fr}</span><a class="link seeall" href={lp(lang, '/favorites/')}>{u.fav.seeAll} →</a></div>
     <ul class="fav-list"></ul>
     <script type="application/json" class="fav-data" set:html={JSON.stringify({ r: favData, remove: u.fav.remove })} />
   </section>
@@ -54,6 +55,8 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
     <div class="section-title"><h2>{u.latest}</h2><span class="fr">les dernières recettes</span></div>
     <div class="card-grid">{latest.map((r, i) => <RecipeCard recipe={r} index={i} />)}</div>
   </section>
+
+  <FortuneDraw recipes={recipes} />
 
   <div class="band" id="menu">
     <section class="wrap duo">
@@ -83,7 +86,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
         if (r.i) { const img = document.createElement('img'); img.src = r.i; img.alt = ''; img.loading = 'lazy'; a.append(img); }
         const t = document.createElement('span'); t.className = 'display'; t.textContent = r.t; a.append(t);
         const x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '×'; x.setAttribute('aria-label', `${D.remove}：${r.t}`);
-        x.addEventListener('click', () => { try { localStorage.setItem('pk-favs', JSON.stringify(get().filter((v) => v !== id))); } catch {} draw(); });
+        x.addEventListener('click', () => { try { localStorage.setItem('pk-favs', JSON.stringify(get().filter((v) => v !== id))); } catch {} draw(); dispatchEvent(new Event('pk-favs')); });
         li.append(a, x); list.append(li);
       });
       sec.hidden = ids.length === 0;
@@ -94,6 +97,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
 </script>
 <style>
   .favs { padding-top: 34px; }
+  .seeall { margin-left: auto; }
   .fav-list { list-style: none; margin: 22px 0 0; padding: 0; display: flex; gap: 22px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
   :global(.fav-list li) { position: relative; flex: none; width: 170px; scroll-snap-align: start; transform: rotate(var(--tilt)); }
   :global(.fav-list a) { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 12px 12px; background: var(--paper); box-shadow: var(--shadow-paper); text-align: center; transition: transform .2s; }

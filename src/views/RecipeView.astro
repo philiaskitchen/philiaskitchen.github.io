@@ -76,6 +76,7 @@ const ld = {
       </dl>
       <div class="actions"><ScallopButton href="#cook" label={u.start} width={170} />
         <button type="button" class="fav" data-id={recipe.id} aria-pressed="false" aria-label={u.fav.aria}><svg class="heart" viewBox="0 0 24 22" width="22" height="20" aria-hidden="true"><path d="M12 20.5C6.2 16.4 1.8 12.6 1.8 7.4 1.8 4.3 4.1 2 7 2c2.1 0 3.8 1.1 5 3 1.2-1.9 2.9-3 5-3 2.9 0 5.2 2.3 5.2 5.4 0 5.2-4.4 9-10.2 13.1Z" /></svg><span class="off">{u.fav.add}</span><span class="on">{u.fav.on}</span></button>
+        <button type="button" class="print-btn" onclick="window.print()"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 9V3h10v6 M7 17H4v-7h16v7h-3 M7 14h10v7H7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>{u.print}</span></button>
       </div>
     </div>
     {d.image && <img class="art" src={d.image} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="(max-width: 600px) 100vw, 600px" alt={u.illus(d.title)} width="1100" height="720" fetchpriority="high" />}
@@ -173,6 +174,8 @@ const ld = {
     )}
   </div>
 
+  <div class="print-frame" aria-hidden="true"></div>
+  <p class="print-foot">{u.siteName} · {pageUrl.replace(/^https?:\/\//, '')}</p>
   <div class="timerbar" aria-live="polite"></div>
   <RollingPinProgress />
   <button type="button" class="cookmode" aria-pressed="false" hidden>
@@ -182,7 +185,7 @@ const ld = {
   </button>
   <script type="application/json" id="ui-timer" set:html={JSON.stringify(u.timer)} />
   <script type="application/json" id="ui-b" set:html={JSON.stringify({ toast: u.cookToast, now: u.nowHere, ding: u.ding, gotIt: u.gotIt, copied: u.shop.copied, empty: u.shop.empty,
-    head: u.shop.head(d.title), url: pageUrl, c1: u.shop.count(1), cn: u.shop.count(999).replace('999', '{n}'), favOn: u.fav.on, soundTip: u.soundTip })} />
+    head: u.shop.head(d.title), url: pageUrl, c1: u.shop.count(1), cn: u.shop.count(999).replace('999', '{n}'), favOn: u.fav.on, favList: u.fav.seeList, favUrl: lp(lang, '/favorites/'), soundTip: u.soundTip })} />
   <div class="toast" role="status" aria-live="polite"></div>
   <div class="soundtip paper" role="dialog" aria-label={u.soundTest} hidden>
     <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v4.5L5 16h14l-2-3.5V8a5 5 0 0 0-5-5Z M10 19a2 2 0 0 0 4 0" fill="#EBC25F" stroke="#4A4536" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -454,7 +457,9 @@ const ld = {
       fav.addEventListener('click', () => {
         const a = get(); const on = !a.includes(id);
         set(on ? [id, ...a] : a.filter((x) => x !== id)); show();
-        if (on) { fav.classList.remove('beat'); void fav.offsetWidth; fav.classList.add('beat'); toast(B.favOn, 2200); }
+        dispatchEvent(new Event('pk-favs'));
+        if (on) { fav.classList.remove('beat'); void fav.offsetWidth; fav.classList.add('beat');
+          toast(B.favOn, 4000); const a = document.createElement('a'); a.href = B.favUrl; a.textContent = B.favList + ' →'; toastEl?.append(' ', a); }
       });
     }
   }
@@ -475,6 +480,14 @@ const ld = {
   .meta div:first-child { border-left: 0; }
   dt { font-size: 13px; color: var(--olive-ink); }
   dd { margin: 2px 0 0; font-size: 20px; }
+  /* 平板橫放（861–1180px）：資訊框可以換行，不要超出畫面 */
+  @media (min-width: 861px) and (max-width: 1180px) {
+    .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .copy { min-width: 0; }
+    .meta { max-width: 100%; }
+    .meta div { padding: 0 10px; min-width: 0; }
+    dd { white-space: normal; font-size: 17px; line-height: 1.35; text-wrap: balance; }
+  }
   .actions { margin-top: 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .art { justify-self: center; width: 100%; max-width: 600px; }
   .body { display: grid; grid-template-columns: 360px 1fr; gap: 56px; align-items: start; padding-top: 34px; padding-bottom: 50px; }
@@ -577,7 +590,8 @@ const ld = {
   .toast { position: fixed; z-index: 80; left: 50%; bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
     width: max-content; max-width: min(420px, calc(100vw - 36px)); padding: 12px 18px; background: var(--paper-cream); color: var(--ink); font-size: 15px; line-height: 1.6;
     border: 1.5px solid var(--pencil); border-radius: 18px 14px 20px 16px; box-shadow: var(--shadow-paper); transition: opacity .3s, transform .3s; }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .toast :global(a) { color: var(--terracotta-ink); border-bottom: 1.5px solid currentColor; margin-left: 4px; white-space: nowrap; }
   /* 現在做到這裡（只有烹飪模式開著時） */
   .steps li.now { position: relative; background: var(--paper); box-shadow: var(--shadow-paper); border-radius: 6px; border-bottom-color: transparent;
     margin: 18px -14px 8px; padding: 0 14px 4px; }
@@ -629,6 +643,37 @@ const ld = {
   @keyframes dingPop { from { transform: translateX(-50%) scale(.6); opacity: 0; } }
   @keyframes ovenShake { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 40% { transform: rotate(5deg); } 60% { transform: rotate(-3deg); } 80% { transform: rotate(0); } }
   @keyframes winGlow { to { fill: #FFE08A; } }
+  .print-btn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 15px; color: var(--ink-muted); background: none; border: 0; padding: 8px 6px; cursor: pointer; }
+  .print-btn:hover { color: var(--terracotta-ink); }
+  .print-frame, .print-foot { display: none; }
+  @media (max-width: 760px) { .print-btn { display: none; } }
+  /* 列印成手繪食譜卡：只留標題、插圖、材料、步驟、小提醒，加上鉛筆框和網址 */
+  @media print {
+    .crumbs, .actions, .hint, .timers, .tmsg, .shop-open, .shop-hint, .scaler, .more, .divider, .nutri, .cookmode, .timerbar, .toast, .ding, .soundtip, dialog.shop { display: none !important; }
+    .print-frame { display: block; position: fixed; inset: 0; border: 1.5px solid #4A4536; border-radius: 10px 6px 12px 8px; outline: 1px solid #CFC4AA; outline-offset: -6px; }
+    .print-foot { display: block; text-align: center; font-size: 11px; color: var(--ink-soft); margin-top: 14px; }
+    .hero { grid-template-columns: 1fr auto !important; gap: 16px; padding-top: 6px; }
+    .art { order: 0 !important; max-height: 150px !important; width: auto !important; }
+    h1, h1.long { font-size: 34px !important; }
+    .intro { font-size: 13px; line-height: 1.7; }
+    .meta { box-shadow: none; border: 1px solid #D3CBB5; display: flex !important; flex-wrap: nowrap; width: auto !important; max-width: 100% !important; padding: 8px 4px !important; }
+    .meta div { max-width: none !important; min-width: 0; padding: 0 10px !important; border-left: 1px solid #D3CBB5 !important; }
+    .meta div:first-child { border-left: 0 !important; }
+    .meta dt { font-size: 10.5px !important; } .meta dd { font-size: 13px !important; line-height: 1.4 !important; white-space: normal; text-wrap: balance; }
+    .art { max-height: 130px !important; }
+    .body { grid-template-columns: 1fr 1.5fr !important; gap: 24px; padding-top: 10px; padding-bottom: 0; }
+    .ingredients { transform: none; box-shadow: none; border: 1px solid #D3CBB5; padding: 16px; }
+    .ingredients .tape { display: none; }
+    .group label { padding: 4px 0; font-size: 12.5px; }
+    .steps label { padding: 6px 0; gap: 10px; }
+    .steps li, .steps li.now { break-inside: avoid; background: none; box-shadow: none; margin: 0; padding: 0; }
+    .steps li.now::before { display: none; }
+    .st { font-size: 16px !important; } .sp { font-size: 12.5px !important; line-height: 1.6; }
+    .num { width: 30px; height: 30px; font-size: 15px; }
+    .steps input:checked ~ .txt { opacity: 1; }
+    .lower { background: none; padding: 10px 0 0; }
+    .notes { gap: 14px; break-inside: avoid; }
+  }
   /* 我想做（愛心） */
   .fav { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 15px; color: var(--ink-muted); background: none; border: 0; padding: 8px 6px; cursor: pointer; }
   .fav .heart path { fill: transparent; stroke: var(--terracotta); stroke-width: 1.8; transition: fill .2s; }
