@@ -2,6 +2,7 @@
 // 首頁「今天做什麼？」抽籤：搖一搖籤筒，抽出一支籤＝一道食譜＋一句籤詩
 import { recipeUrl, smallImage, type Recipe } from '../site';
 import { getLang, t } from '../i18n';
+import { GIFT_BOX } from '../data/xmasArt';
 interface Props { recipes: Recipe[] }
 const lang = getLang(Astro.url);
 const u = t(lang);
@@ -30,11 +31,12 @@ const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 
         <rect x="47" y="96" width="26" height="34" rx="3" fill="#B5552B" stroke="#4A4536" stroke-width="1.2" />
         <text x="60" y="118" text-anchor="middle" font-size="16" fill="#FFF8EE" font-family="Cream, serif">籤</text>
       </svg>
+      <Fragment set:html={GIFT_BOX} />
     </div>
     <div class="copy">
-      <div class="section-title"><h2>{u.fortune.title}</h2><span class="fr">la recette du jour</span></div>
-      <p class="muted">{u.fortune.lead}</p>
-      <button type="button" class="draw">{u.fortune.draw}</button>
+      <div class="section-title"><h2><span class="n">{u.fortune.title}</span><span class="x">{u.fortune.xTitle}</span></h2><span class="fr"><span class="n">la recette du jour</span><span class="x">un cadeau pour toi</span></span></div>
+      <p class="muted"><span class="n">{u.fortune.lead}</span><span class="x">{u.fortune.xLead}</span></p>
+      <button type="button" class="draw"><span class="n">{u.fortune.draw}</span><span class="x">{u.fortune.xDraw}</span></button>
     </div>
     <div class="slip" hidden aria-live="polite">
       <div class="grade display"></div>
@@ -42,17 +44,18 @@ const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 
         <img alt="" />
         <a class="name display"></a>
         <p class="line"></p>
-        <div class="slip-btns"><a class="go"></a><button type="button" class="again">{u.fortune.again}</button></div>
+        <div class="slip-btns"><a class="go"></a><button type="button" class="again"><span class="n">{u.fortune.again}</span><span class="x">{u.fortune.xAgain}</span></button></div>
       </div>
     </div>
   </div>
-  <script type="application/json" class="fortune-data" set:html={JSON.stringify({ list, grades: u.fortune.grades, lines: u.fortune.lines, go: u.fortune.go })} />
+  <script type="application/json" class="fortune-data" set:html={JSON.stringify({ list, grades: u.fortune.grades, xGrades: u.fortune.xGrades, lines: u.fortune.lines, go: u.fortune.go })} />
 </section>
 <script>
   const root = document.querySelector<HTMLElement>('.fortune');
   if (root) {
     const D = JSON.parse(root.querySelector('.fortune-data')!.textContent!);
-    const tube = root.querySelector<SVGElement>('.tube')!, slip = root.querySelector<HTMLElement>('.slip')!;
+    const xmas = document.documentElement.dataset.fest === 'xmas';
+    const tube = root.querySelector<SVGElement>(xmas ? '.gift' : '.tube')!, slip = root.querySelector<HTMLElement>('.slip')!;
     const btn = root.querySelector<HTMLButtonElement>('.draw')!, again = root.querySelector<HTMLButtonElement>('.again')!;
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let last = -1;
@@ -65,7 +68,7 @@ const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 
         tube.classList.remove('shake'); tube.classList.add('out');
         let k; do { k = Math.floor(Math.random() * D.list.length); } while (D.list.length > 1 && k === last); last = k;
         const r = D.list[k];
-        slip.querySelector('.grade')!.textContent = pick(D.grades as string[]);
+        slip.querySelector('.grade')!.textContent = pick((xmas ? D.xGrades : D.grades) as string[]);
         const img = slip.querySelector('img')!; if (r.i) { img.src = r.i; img.hidden = false; } else img.hidden = true;
         const name = slip.querySelector<HTMLAnchorElement>('.name')!; name.textContent = r.t; name.href = r.u;
         slip.querySelector('.line')!.textContent = pick(D.lines as string[]);
@@ -81,7 +84,18 @@ const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 
   .fortune { padding-top: 10px; padding-bottom: 50px; }
   .box { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; padding: 28px 34px; }
   .tube-wrap { width: 120px; }
-  .tube { overflow: visible; transform-origin: 50% 95%; }
+  .tube, .fortune :global(.gift) { overflow: visible; transform-origin: 50% 95%; }
+  /* 聖誕節：籤筒換成禮物盒、文字換成聖誕版 */
+  .fortune .x, .fortune :global(.gift) { display: none; }
+  :global(html[data-fest="xmas"]) .fortune .x { display: inline; }
+  :global(html[data-fest="xmas"]) .fortune .n, :global(html[data-fest="xmas"]) .fortune .tube { display: none; }
+  :global(html[data-fest="xmas"]) .fortune :global(.gift) { display: block; }
+  .fortune :global(.gift .lid) { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); }
+  .fortune :global(.gift .pop) { transition: opacity .3s .2s; }
+  .fortune :global(.gift.shake) { animation: shake .25s ease-in-out 4; }
+  .fortune :global(.gift.out .lid) { transform: translate(-14px, -34px) rotate(-28deg); }
+  .fortune :global(.gift.out .pop) { opacity: 1; }
+  :global(html[data-fest="xmas"]) .grade { background: #5F8B4C; }
   .tube .pick { transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); }
   .tube.shake { animation: shake .25s ease-in-out 4; }
   .tube.out .pick { transform: translateY(-46px); }
@@ -108,6 +122,6 @@ const list = Astro.props.recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 
     .box { grid-template-columns: auto 1fr; padding: 24px 20px; gap: 16px 18px; }
     .slip { grid-column: 1 / -1; width: 100%; max-width: 380px; justify-self: center; }
   }
-  @media (max-width: 480px) { .tube-wrap { width: 84px; } .tube { width: 84px; height: 119px; } .copy .section-title h2 { font-size: 26px; } }
+  @media (max-width: 480px) { .tube-wrap { width: 84px; } .tube, .fortune :global(.gift) { width: 84px; height: 119px; } .copy .section-title h2 { font-size: 26px; } }
   @media (prefers-reduced-motion: reduce) { .tube.shake, .slip { animation: none; } .tube .pick { transition: none; } }
 </style>

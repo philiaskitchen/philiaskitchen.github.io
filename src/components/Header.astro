@@ -18,7 +18,7 @@ const items = [
 <header>
   <img class="awning" src="/images/ui/awning.svg" alt="" aria-hidden="true" />
   <div class:list={['wrap', 'bar', { home }]}>
-    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`} data-fresh={u.egg.fresh} data-burnt={u.egg.burnt}>
+    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`} data-fresh={u.egg.fresh} data-burnt={u.egg.burnt} data-xfresh={u.egg.xFresh} data-xburnt={u.egg.xBurnt}>
       {home && <span class="issue fr">N° 01 · automne 2026</span>}
       <span class="logo-box"><img class="logo" src={u.logo} alt={u.siteName} /><span class="glow" style={lang === 'en' ? 'left:4.73%;width:7.65%' : 'left:4.47%;width:7.23%'}></span></span>
       <span class="fr tagline">la cuisine de Philia</span>
@@ -112,6 +112,7 @@ const items = [
   }
 </style>
 <script>
+  import { gingerbread } from '../data/xmasArt';
   // 桌機：選單永遠打開；手機：點漢堡才打開
   const d = document.querySelector('header .menu') as HTMLDetailsElement | null;
   const mq = matchMedia('(min-width: 761px)');
@@ -137,10 +138,53 @@ const items = [
     brand.addEventListener('click', (e) => {
       if (new URL(brand.href).pathname !== location.pathname) return; // 不在首頁：照常回首頁
       e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' });
+      if (document.documentElement.dataset.fest === 'xmas') { popGinger(); return; } // 聖誕節：每點一下就跳出一個薑餅人
       n++; clearTimeout(resetT); resetT = window.setTimeout(() => (n = 0), 1500);
       if (n === 5) pop(false);
       if (n === 10) { pop(true); n = 0; }
     });
+    // 聖誕節：每點一下，烤箱跳出一個不同表情／形狀的薑餅人（有時候會烤焦），走到 logo 左邊排成一排
+    const SHAPES = ['man', 'girl', 'kid', 'man', 'girl', 'round'] as const;
+    const FACES = ['smile', 'wink', 'o', 'happy', 'tongue', 'sleepy'] as const;
+    const ICING = ['#C8352B', '#5F8B4C', '#E2859A', '#7FA3C9', '#E8B33A'];
+    const row: HTMLElement[] = []; let made = 0;
+    const leftMode0 = (r: DOMRect) => r.left - 14 > Math.max(21, r.height * .5) * 2.5;
+    const layout = () => {
+      const r = box.getBoundingClientRect(); const h = r.height; const sy = scrollY;
+      const W = leftMode0(r) ? Math.max(21, h * .5) : 19, H = W * 1.15;
+      const roomLeft = r.left - 14;
+      const leftMode = leftMode0(r); // 桌機首頁：排在 logo 左邊；手機：站在頁首下面的波浪線上（從 la cuisine de Philia 右邊開始，不擋到按鈕）
+      const tl = brand.querySelector<HTMLElement>('.tagline')!.getBoundingClientRect();
+      const start = tl.right + 8;
+      const max = leftMode ? Math.floor(roomLeft / (W * .92)) : Math.max(1, Math.floor((innerWidth - 12 - start) / (W * .92)));
+      const dv = document.querySelector<HTMLElement>('header .divider')?.getBoundingClientRect();
+      const base = leftMode ? r.bottom + sy : (dv ? dv.top + sy + dv.height * .55 : tl.bottom + sy);
+      return { r, W, H, sy, leftMode, max, base, slot: (i: number) => leftMode ? r.left - 14 - (i + .5) * W * .92 : start + (i + .5) * W * .92 };
+    };
+    const place = (el: HTMLElement, i: number, L = layout()) => { el.style.left = L.slot(i) + 'px'; el.style.top = (L.base - L.H) + 'px'; };
+    const popGinger = () => {
+      const L = layout(); const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (row.length >= L.max) { const old = row.shift()!; old.classList.add('bye'); setTimeout(() => old.remove(), 600); row.forEach((g, i) => place(g, i, L)); }
+      const burnt = made > 0 && Math.random() < .25; made++;
+      const el = document.createElement('div'); el.className = 'ginger' + (burnt ? ' burnt' : '');
+      el.style.width = L.W + 'px'; el.style.height = L.H + 'px';
+      el.innerHTML = gingerbread({ shape: SHAPES[Math.floor(Math.random() * SHAPES.length)], face: FACES[Math.floor(Math.random() * FACES.length)], icing: ICING[Math.floor(Math.random() * ICING.length)], burnt });
+      if (burnt || made === 1) { const t = document.createElement('span'); t.className = 'ginger-tag'; t.textContent = burnt ? brand.dataset.xburnt! : brand.dataset.xfresh!; el.append(t); }
+      if (burnt) { const sm = document.createElement('span'); sm.className = 'egg-smoke'; el.append(sm); }
+      document.body.append(el); row.push(el);
+      const i = row.length - 1; place(el, i, L);
+      // 從烤箱窗戶跳出來，在空中翻一圈，落到自己的位置再彈兩下
+      const ox = L.r.left + L.r.height * .5 - L.slot(i), oy = L.r.top + L.sy + L.r.height * .55 - (L.base - L.H / 2);
+      if (!still) el.animate([
+        { transform: `translate(${ox}px, ${oy}px) scale(.2)`, opacity: 0 },
+        { transform: `translate(${ox * .55}px, ${oy - 70}px) scale(1) rotate(-200deg)`, opacity: 1, offset: .45 },
+        { transform: 'translate(0, 0) rotate(-360deg) scale(1.15, .8)', offset: .75 },
+        { transform: 'translate(0, -10px) rotate(-360deg) scale(.95, 1.05)', offset: .87 },
+        { transform: 'translate(0, 0) rotate(-360deg)' },
+      ], { duration: 1100, easing: 'ease-out' });
+      setTimeout(() => el.querySelector('.ginger-tag')?.classList.add('gone'), 2600);
+    };
+    addEventListener('resize', () => { const L = layout(); row.forEach((g, i) => place(g, i, L)); });
     const pop = (burnt: boolean) => {
       const r = box.getBoundingClientRect(); const h = r.height;
       const x = r.left + h * 0.5, y = r.top + h * 0.5;

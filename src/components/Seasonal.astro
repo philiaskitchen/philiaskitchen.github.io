@@ -17,28 +17,29 @@ const FEST = {
   moon: ['2027-09-15', '2028-10-03', '2029-09-22', '2030-09-12'],
   dongzhi: ['2026-12-22', '2027-12-22', '2028-12-21', '2029-12-21', '2030-12-22'],
 };
-const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/sesame-tangyuan/') };
+const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/sesame-tangyuan/'), xmasPick: lp(lang, '/recipes/strawberry-watermelon-cake/') };
 ---
 <div class="sea-garnish" aria-hidden="true"></div>
 <div class="sea-tint" aria-hidden="true"></div>
 {home && <div class="sea-fall" aria-hidden="true"></div>}
 <script type="application/json" id="sea-data" set:html={JSON.stringify(data)} />
-<script>
-  const D = JSON.parse(document.getElementById('sea-data')!.textContent!);
+<script is:inline>
+  // 先決定時間／季節／節日，寫在 <html> 上（data-when、data-season、data-fest），其他元件就能照著換樣子
+  (function () {
+  var D = JSON.parse(document.getElementById('sea-data').textContent);
   const P = new URLSearchParams(location.search);
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // 雪梨今天的日期（季節和節日都用雪梨的日期）
   const syd = (() => { const f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit' }); return P.get('date') || f.format(new Date()); })();
   const [, M, Dd] = syd.split('-').map(Number);
   const md = M * 100 + Dd;
-  const dayDiff = (a: string, b: string) => Math.round((Date.parse(a) - Date.parse(b)) / 864e5);
+  const dayDiff = (a, b) => Math.round((Date.parse(a) - Date.parse(b)) / 864e5);
   // 1) 一天的時間（讀者自己的時間）
   const h = new Date().getHours();
   const when = P.get('when') || (h >= 5 && h < 11 ? 'morning' : h >= 11 && h < 17 ? 'afternoon' : h >= 17 && h < 22 ? 'evening' : 'night');
   // 2) 雪梨的季節：金合歡（8/15–10/9）→ 藍花楹（10/10–12/10）→ 雞蛋花（12/11–2/28）→ 秋天落葉（3–5 月）→ 冬天（6/1–8/14）
   const season = P.get('season') || (md >= 815 && md <= 1009 ? 'wattle' : md >= 1010 && md <= 1210 ? 'jacaranda' : (md >= 1211 || md <= 228) ? 'frangipani' : md >= 301 && md <= 531 ? 'autumn' : 'winter');
   // 3) 節日
-  const near = (list: string[], before: number, after: number) => list.some((d) => { const k = dayDiff(syd, d); return k >= -before && k <= after; });
+  const near = (list, before, after) => list.some((d) => { const k = dayDiff(syd, d); return k >= -before && k <= after; });
   let fest = P.get('fest') || '';
   if (!fest) {
     if (near(D.fest.lantern, 1, 0)) fest = 'lantern';
@@ -51,6 +52,16 @@ const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/ses
   if (fest === 'none') fest = '';
   const root = document.documentElement;
   root.dataset.when = when; root.dataset.season = season; if (fest) root.dataset.fest = fest;
+    if (P.get('snow') === '1') root.dataset.snow = '1';
+  })();
+</script>
+<script>
+  import { ORNAMENTS, SANTA_HAT, BOW } from '../data/xmasArt';
+  const D = JSON.parse(document.getElementById('sea-data')!.textContent!);
+  const P = new URLSearchParams(location.search);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  const when = root.dataset.when!, season = root.dataset.season!, fest = root.dataset.fest || '';
 
   // 首頁問候語
   const greet = document.querySelector<HTMLElement>('.greet');
@@ -59,6 +70,10 @@ const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/ses
     const g1 = greet.querySelector<HTMLElement>('.g1')!, g2 = greet.querySelector<HTMLElement>('.g2')!;
     g1.textContent = fest ? S.fest[fest] : S.time[when];
     if (fest === 'lantern' || fest === 'dongzhi') { const a = document.createElement('a'); a.href = D.tangyuan; a.textContent = S.tangyuanLink; g1.append(' ', a); }
+    if (fest === 'xmas') {
+      if (root.dataset.snow) g1.textContent = S.xmasSnow;
+      const a = document.createElement('a'); a.href = D.xmasPick; a.textContent = S.xmasPick; g1.append(' ', a);
+    }
     g2.textContent = S.season[season];
     greet.hidden = false;
   }
@@ -72,10 +87,34 @@ const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/ses
     const lens = small ? [0, 0, 0, 0] : [18, 34, 30, 16];
     gar.innerHTML = pos.map((x, i) => `<span class="lantern${small ? ' sm' : ''}" style="left:${x}%;--d:${(i % 3) * -0.7}s;--len:${lens[i]}px"><i></i><svg viewBox="0 0 30 42" width="26" height="36"><rect x="10" y="0" width="10" height="5" rx="1.5" fill="#D9A43A" stroke="#4A4536" stroke-width="1.2"/><ellipse cx="15" cy="19" rx="13" ry="14" fill="#C8352B" stroke="#4A4536" stroke-width="1.4"/><path d="M15 5v28 M8 7q-5 12 0 24 M22 7q5 12 0 24" fill="none" stroke="#E86A55" stroke-width="1.2"/><rect x="10" y="31" width="10" height="4" rx="1.5" fill="#D9A43A" stroke="#4A4536" stroke-width="1.2"/><path d="M15 35v6" stroke="#D9A43A" stroke-width="2.4" stroke-linecap="round"/></svg></span>`).join('');
   } else if (fest === 'xmas') {
-    const n = Math.round(innerWidth / 46); const cols = ['#C8352B', '#D9A43A', '#5F8B4C', '#7FA3C9', '#E2859A'];
-    let path = 'M0 6'; for (let i = 0; i < n; i++) path += ` Q${(i + 0.5) * 100 / n} 16 ${(i + 1) * 100 / n} 6`;
-    gar.innerHTML = `<svg class="wire" viewBox="0 0 100 24" preserveAspectRatio="none"><path d="${path}" fill="none" stroke="#4A4536" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>` +
-      Array.from({ length: n }, (_, i) => `<span class="bulb" style="left:${(i + 0.5) * 100 / n}%;--c:${cols[i % 5]};--d:${(i % 4) * 0.4}s"></span>`).join('');
+    // 聖誕吊飾：從遮陽棚垂下來，上面一個小紅蝴蝶結；自動找空位，不會碰到 logo、選單和按鈕
+    const hang = () => {
+      const small = innerWidth < 761;
+      const ow = small ? 22 : 30, oh = small ? 27 : 36, bowH = small ? 10 : 13, top0 = gar.getBoundingClientRect().top + scrollY;
+      const obs = [...document.querySelectorAll<HTMLElement>('header .brand, header nav li a, header .tools a, header .tools, header summary, header .issue')]
+        .map((e) => e.getBoundingClientRect()).filter((b) => b.width > 0).map((b) => ({ l: b.left - 10, r: b.right + 10, t: b.top + scrollY - 6, b: b.bottom + scrollY + 6 }));
+      const hits = (x: number, y1: number, y2: number) => obs.some((o) => x + 15 > o.l && x - 15 < o.r && y2 > o.t && y1 < o.b);
+      const step = small ? 62 : 96, picks: string[] = []; let k = 0;
+      for (let x = step * .55; x < innerWidth - ow / 2; x += step) {
+        const lens = [34, 24, 14, 6, 0].map((v) => v * (small ? .55 : 1));
+        let len = lens.find((v) => !hits(x, top0, top0 + bowH + v + oh)), up = 0;
+        // 下面沒空位（例如手機）：整個往上提，掛在遮陽棚的波浪邊上
+        let w2 = ow, h2 = oh;
+        if (len === undefined && !hits(x, top0 - 22, top0 - 22 + 10 + 27)) { len = 0; up = 22; w2 = 22; h2 = 27; }
+        if (len === undefined) continue;
+        picks.push(`<span class="orn" style="left:${x}px;--d:${(k % 3) * -0.7}s;--len:${len}px;--ow:${w2}px;--oh:${h2}px;--up:${up}px"><b>${BOW}</b><i></i>${ORNAMENTS[k % ORNAMENTS.length]}</span>`); k++;
+      }
+      gar.innerHTML = picks.join('');
+    };
+    hang(); addEventListener('resize', hang); document.fonts?.ready.then(hang);
+    // logo 烤箱戴一頂胖胖的聖誕帽（斜戴在右上角的圓角上）
+    const box = document.querySelector<HTMLElement>('header .logo-box');
+    const img = box?.querySelector<HTMLImageElement>('img.logo');
+    if (box && img) {
+      const hat = document.createElement('span'); hat.className = 'x-hat'; hat.innerHTML = SANTA_HAT; box.append(hat);
+      const place = () => { const h = img.getBoundingClientRect().height; if (h) box.style.setProperty('--lh', h + 'px'); };
+      place(); img.addEventListener('load', place); addEventListener('resize', place);
+    }
   } else if (fest === 'moon') {
     gar.innerHTML = `<span class="moon"><svg viewBox="0 0 60 60" width="40" height="40"><circle cx="30" cy="30" r="24" fill="#F6E3A1" stroke="#4A4536" stroke-width="1.4"/><circle cx="22" cy="24" r="4" fill="#EBD083"/><circle cx="36" cy="36" r="5.5" fill="#EBD083"/><circle cx="38" cy="20" r="2.6" fill="#EBD083"/></svg></span>`;
   }
@@ -94,8 +133,12 @@ const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/ses
       '<svg viewBox="0 0 24 24"><path d="M12 2c5 4 7 9 4 15-1 2-3 4-4 5-1-1-3-3-4-5-3-6-1-11 4-15Z" fill="#C9963A" stroke="#7D5A1F" stroke-width="1"/><path d="M12 5v17" stroke="#7D5A1F" stroke-width="1"/></svg>',
     ],
   };
+  const STARS = ['<svg viewBox="0 0 20 20"><path d="M10 1l2.4 6.2L19 8l-5 4.4 1.6 6.6L10 15.4 4.4 19 6 12.4 1 8l6.6-.8Z" fill="#E8B33A" stroke="#B8862A" stroke-width=".8"/></svg>',
+    '<svg viewBox="0 0 12 12"><rect x="2" y="3" width="8" height="5" rx="1" fill="#C8352B"/></svg>', '<svg viewBox="0 0 12 12"><rect x="2" y="3" width="8" height="5" rx="1" fill="#5F8B4C"/></svg>'];
+  const SNOW = ['<svg viewBox="0 0 24 24"><g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M12 2v20 M3.3 7l17.4 10 M3.3 17l17.4-10"/><path d="M12 5l-2-2 M12 5l2-2 M12 19l-2 2 M12 19l2 2"/></g><circle cx="12" cy="12" r="2" fill="#FFFFFF"/></svg>', '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#FFFFFF"/></svg>'];
+  if (fest === 'xmas') { if (root.dataset.snow) SHAPES[season] = SNOW; else SHAPES[season] = [...(SHAPES[season] || []), ...STARS]; }
   if (fall && !still && SHAPES[season]) {
-    const shapes = SHAPES[season]; const n = innerWidth < 700 ? 9 : 16;
+    const shapes = SHAPES[season]; const n = innerWidth < 700 ? (fest === 'xmas' ? 13 : 9) : (fest === 'xmas' ? 24 : 16);
     fall.innerHTML = Array.from({ length: n }, (_, i) => {
       const s = 12 + Math.random() * 12, dur = 11 + Math.random() * 9, del = -Math.random() * dur, x = Math.random() * 100, sway = 30 + Math.random() * 50;
       return `<span style="left:${x}%;width:${s}px;height:${s}px;--dur:${dur}s;--del:${del}s;--sway:${sway}px;--rot:${Math.random() < .5 ? -1 : 1}">${shapes[i % shapes.length]}</span>`;
@@ -137,12 +180,21 @@ const data = { home, fest: FEST, s: u.seasonal, tangyuan: lp(lang, '/recipes/ses
   .sea-garnish .lantern.sm svg { width: 15px; height: 21px; }
   @media (min-width: 761px) { .sea-garnish .lantern.sm { top: -20px; } .sea-garnish .lantern.sm svg { width: 19px; height: 27px; } }
   @keyframes swing { from { transform: translateX(-50%) rotate(-5deg); } to { transform: translateX(-50%) rotate(5deg); } }
-  .sea-garnish .wire { position: absolute; top: 0; left: 0; width: 100%; height: 24px; }
-  .sea-garnish .bulb { position: absolute; top: 13px; width: 8px; height: 11px; margin-left: -4px; border-radius: 50% 50% 45% 45%; background: var(--c); box-shadow: 0 0 8px var(--c); animation: twinkle 1.6s ease-in-out var(--d) infinite alternate; }
-  @keyframes twinkle { from { opacity: .45; } to { opacity: 1; } }
   .sea-garnish .moon { position: absolute; top: 2px; left: 36%; filter: drop-shadow(0 0 12px rgba(246, 227, 161, .9)); animation: moonGlow 4s ease-in-out infinite alternate; }
   @keyframes moonGlow { to { filter: drop-shadow(0 0 22px rgba(246, 227, 161, 1)); } }
   @media (max-width: 760px) { .sea-garnish .moon { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .sea-garnish .lantern, .sea-garnish .bulb, .sea-garnish .moon { animation: none; } }
+  /* 聖誕吊飾：蝴蝶結＋細繩＋吊飾，輕輕擺動 */
+  .sea-garnish .orn { position: absolute; top: calc(-6px - var(--up, 0px)); transform: translateX(-50%); transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; animation: swing 3s ease-in-out var(--d) infinite alternate; }
+  .sea-garnish .orn b { display: block; width: calc(var(--ow) * .8); height: calc(var(--ow) * .48); margin-bottom: -2px; position: relative; z-index: 1; }
+  .sea-garnish .orn b svg { width: 100%; height: 100%; display: block; }
+  .sea-garnish .orn i { width: 1.2px; height: var(--len); background: #4A4536; }
+  .sea-garnish .orn > svg { width: var(--ow); height: var(--oh); }
+  html[data-snow] .sea-fall span { opacity: 1; filter: drop-shadow(0 0 1.5px rgba(70, 85, 110, .75)) drop-shadow(0 1px 2px rgba(70, 85, 110, .35)); }
+  /* logo 烤箱：胖胖的聖誕帽，斜戴在右上角的圓角上（位置用 logo 高度 --lh 來算，中英 logo 一樣） */
+  header .logo-box .x-hat { position: absolute; z-index: 2; width: calc(var(--lh) * .72); height: calc(var(--lh) * .6); left: calc(var(--lh) * .6); top: calc(var(--lh) * -.36); transform: rotate(24deg); transform-origin: 30% 80%; pointer-events: none; }
+  header .logo-box .x-hat svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  header .logo-box .x-hat .pom { transform-box: fill-box; transform-origin: 30% 0; animation: pom 1.8s ease-in-out infinite alternate; }
+  @keyframes pom { from { transform: rotate(-10deg); } to { transform: rotate(12deg); } }
+  @media (prefers-reduced-motion: reduce) { .sea-garnish .lantern, .sea-garnish .bulb, .sea-garnish .moon, .sea-garnish .orn, header .logo-box .x-hat .pom { animation: none; } }
   @media print { .sea-garnish, .sea-tint, .sea-fall { display: none !important; } }
 </style>
