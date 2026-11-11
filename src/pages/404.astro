@@ -1,6 +1,7 @@
 ---
 // 找不到頁面：「這一頁還在烤箱裡」——烤箱窗戶發光、麵包慢慢膨脹、上面冒蒸氣，下面隨機推薦 3 道食譜
 import Base from '../layouts/Base.astro';
+import GingerWorkshop from '../components/GingerWorkshop.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import { allRecipes, recipeUrl, smallImage } from '../site';
 import { GINGERBREAD, SANTA_HAT } from '../data/xmasArt';
@@ -12,6 +13,7 @@ const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.
 ---
 <Base title="找不到這一頁 · Page not found" alt={null}>
   <section class="wrap nf">
+    <GingerWorkshop compact />
     <svg class="oven" viewBox="0 0 220 230" width="220" height="230" aria-hidden="true">
       <g class="steam" fill="none" stroke="#8E8A7E" stroke-width="3" stroke-linecap="round">
         <path class="s1" pathLength="100" d="M80 44 C70 32 90 24 80 10" />
@@ -70,6 +72,9 @@ const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.
   :global(html[data-fest="xmas"]) .ginger, :global(html[data-fest="xmas"]) .xhat { display: inline; }
   :global(html[data-fest="xmas"]) .xline { display: block; }
   :global(html[data-fest="xmas"]) .bread { display: none; }
+  /* 聖誕節：換成可以玩的薑餅人工坊 */
+  :global(html[data-fest="xmas"]) .nf > .oven { display: none; }
+  .nf :global(.gw) { width: 100%; }
   .ginger { transform-origin: 110px 170px; animation: rise 3.2s ease-in-out infinite; }
   p { margin-top: 10px; }
   .try { margin: 30px 0 26px; width: 100%; max-width: 680px; }
