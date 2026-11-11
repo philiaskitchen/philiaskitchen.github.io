@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ADS, GA_ID } from '../site';
+import Seasonal from '../components/Seasonal.astro';
+import { ADS } from '../site';
 import { getLang, lp, stripLang, t, HTML_LANG } from '../i18n';
 // alt：另一個語言的同一頁路徑（中文頁就是英文路徑，反之亦然）。
 // 不傳就自動用同一個路徑；傳 null 表示另一個語言沒有這頁（例如還沒翻譯的食譜）。
@@ -19,7 +20,6 @@ const zhUrl = lang === 'zh' ? Astro.url.pathname : alt;
 const enUrl = lang === 'en' ? Astro.url.pathname : alt;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
-const gaOn = Boolean(GA_ID) && import.meta.env.PROD;
 ---
 <!doctype html>
 <html lang={HTML_LANG[lang]}>
@@ -44,14 +44,13 @@ const gaOn = Boolean(GA_ID) && import.meta.env.PROD;
   <meta property="og:locale" content={lang === 'en' ? 'en_AU' : 'zh_TW'} />
   <meta property="og:site_name" content={u.siteName} />
   <meta name="theme-color" content="#DDE3D2" />
-  {gaOn && <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>}
-  {gaOn && <script is:inline define:vars={{ GA_ID }}>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); gtag('config', GA_ID);</script>}
   {ADS.client && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
   <script is:inline>if (/[?&]ads=preview/.test(location.search)) document.documentElement.classList.add('show-ad-preview');</script>
   <slot name="head" />
 </head>
 <body>
   <Header active={active} home={home} altHref={altHref} />
+  <Seasonal home={home} />
   <main><slot /></main>
   <Footer />
   <script is:inline>
