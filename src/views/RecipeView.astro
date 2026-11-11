@@ -221,6 +221,7 @@ const ld = {
   </dialog>
 </Base>
 <script>
+  import { SANTA_HAT } from '../data/xmasArt';
   // 1. 烹飪模式：讓螢幕保持亮著（手機、iPad、電腦瀏覽器都支援；不支援的瀏覽器就不顯示按鈕）
   const B = JSON.parse(document.getElementById('ui-b')?.textContent || '{}');
   const toastEl = document.querySelector<HTMLElement>('.toast');
@@ -291,11 +292,18 @@ const ld = {
       if (!running && tLock && !tLock.released) { try { await tLock.release(); } catch {} tLock = null; }
     };
     let ringing: number | null = null;
-    const beep = () => { if (!ctx) return; const t0 = ctx.currentTime;
+    // 聖誕節：鈴聲換成叮叮噹的鈴鐺（Jingle Bells 開頭三個音），跳出來的烤箱戴聖誕帽
+    const xmasBell = document.documentElement.dataset.fest === 'xmas';
+    const bell = () => { if (!ctx) return; const t0 = ctx.currentTime;
+      [0, 0.22, 0.44].forEach((dt) => { [1, 2.76, 5.4].forEach((m, k) => { const o = ctx!.createOscillator(), g = ctx!.createGain(); o.type = 'sine'; o.frequency.value = 1318.5 * m;
+        const v = [0.35, 0.12, 0.05][k]; g.gain.setValueAtTime(0.0001, t0 + dt); g.gain.exponentialRampToValueAtTime(v, t0 + dt + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.5 - k * 0.12);
+        o.connect(g).connect(ctx!.destination); o.start(t0 + dt); o.stop(t0 + dt + 0.55); }); }); };
+    const beep = () => { if (!ctx) return; if (xmasBell) return bell(); const t0 = ctx.currentTime;
       for (let k = 0; k < 3; k++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = 880;
         g.gain.setValueAtTime(0.0001, t0 + k * 0.35); g.gain.exponentialRampToValueAtTime(0.4, t0 + k * 0.35 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + k * 0.35 + 0.25);
         o.connect(g).connect(ctx.destination); o.start(t0 + k * 0.35); o.stop(t0 + k * 0.35 + 0.3); } };
     const dingEl = document.querySelector<HTMLElement>('.ding');
+    if (xmasBell && dingEl) { const hat = document.createElement('span'); hat.className = 'ding-hat'; hat.innerHTML = SANTA_HAT; dingEl.querySelector('.oven')!.after(hat); dingEl.classList.add('xmas'); }
     const showDing = () => { if (!dingEl) return; const done = btns.filter((b) => state[b.dataset.id!]?.done).map((b) => b.dataset.label);
       if (!done.length) { dingEl.hidden = true; return; }
       dingEl.querySelector('.ding-t')!.textContent = B.ding; dingEl.querySelector('.ding-m')!.textContent = done.map((l) => fill(L.barDone, { label: l! })).join('　');
@@ -641,6 +649,9 @@ const ld = {
   .ding[hidden] { display: none; }
   .ding.pop { animation: dingPop .6s cubic-bezier(.3, 1.6, .5, 1); }
   .ding .oven { flex: none; animation: ovenShake 1s ease-in-out infinite; }
+  .ding.xmas { position: fixed; }
+  .ding :global(.ding-hat) { position: absolute; left: 50px; top: 0px; width: 40px; height: 34px; transform: rotate(16deg); pointer-events: none; }
+  .ding :global(.ding-hat svg) { width: 100%; height: 100%; }
   .ding .oven .win { animation: winGlow 1s ease-in-out infinite alternate; }
   .ding strong { display: block; font-size: 30px; line-height: 1.1; color: var(--terracotta-ink); }
   .ding p { font-size: 15px; }
