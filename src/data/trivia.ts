@@ -3,6 +3,11 @@
 export type Trivia = { zh: { q: string; a: string }; en: { q: string; a: string }; src: { label: string; url: string } };
 
 export const TRIVIA: Record<string, Trivia> = {
+  'sesame-egg-rolls': {
+    zh: { q: '蛋捲是台灣原創的嗎？', a: '不是喔！蛋捲的祖先是西班牙的威化捲餅（barquillo），後來傳到亞洲，在香港特別流行。1977 年以前，台灣市面上幾乎買不到蛋捲，後來才有台灣的烘焙點心公司從香港引進手工煎製蛋捲的技術，再調整成台灣人喜歡的口味，慢慢變成過年送禮的經典伴手禮。' },
+    en: { q: 'Are egg rolls originally from Taiwan?', a: 'No! Their ancestor is the Spanish rolled wafer called barquillo. It later spread to Asia and became very popular in Hong Kong. Before 1977 you could hardly buy egg rolls in Taiwan. Then a Taiwanese bakery company brought in the Hong Kong way of making them by hand, adjusted the taste for local people, and they slowly became a classic Lunar New Year gift.' },
+    src: { label: '維基百科：蛋捲', url: 'https://zh.wikipedia.org/zh-tw/%E8%9B%8B%E5%8D%B7' },
+  },
   canele: {
     zh: { q: '可麗露是從哪裡來的？', a: '可麗露來自法國波爾多。一般認為最早出自當地的安農西亞修道院（Couvent des Annonciades），不過是 15 世紀還是 18 世紀，說法不一，確切的由來到現在還沒有定論。' },
     en: { q: 'Where do canelés come from?', a: 'Canelés come from Bordeaux, France. They are believed to have started at a convent there, the Couvent des Annonciades — but whether that was in the 15th or the 18th century is not clear, and the true origin is still unknown.' },
