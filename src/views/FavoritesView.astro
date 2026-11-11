@@ -28,10 +28,21 @@ const recipes = await allRecipes(lang);
         </div>
       ))}
     </div>
+    <div class="send-wrap" hidden><button type="button" class="send"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>{u.fav.send}</button></div>
     <p class="soft note">{u.fav.note}</p>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <dialog class="sendbox paper" aria-labelledby="send-title" tabindex="-1">
+      <h2 class="display" id="send-title">{u.fav.sendTitle}</h2>
+      <p class="muted">{u.fav.sendHow}</p>
+      <div class="qr" aria-hidden="true"></div>
+      <input class="link-in" type="text" readonly aria-label="link" />
+      <div class="btns"><button type="button" class="copy">{u.fav.copy}</button><button type="button" class="share" hidden>{u.fav.share}</button><button type="button" class="close">{u.fav.close}</button></div>
+    </dialog>
+    <script type="application/json" class="fav-i18n" set:html={JSON.stringify({ copied: u.fav.copied, added: [u.fav.added(1), u.fav.added(999)], none: u.fav.none, title: u.fav.sendTitle, ids: recipes.map((r) => r.id) })} />
   </section>
 </Base>
 <script>
+  import qrcode from 'qrcode-generator';
   const get = (): string[] => { try { return JSON.parse(localStorage.getItem('pk-favs') || '[]'); } catch { return []; } };
   const items = [...document.querySelectorAll<HTMLElement>('.favpage .item')];
   const empty = document.querySelector<HTMLElement>('.favpage .empty')!;
@@ -44,7 +55,38 @@ const recipes = await allRecipes(lang);
     try { localStorage.setItem('pk-favs', JSON.stringify(get().filter((v) => v !== el.dataset.id))); } catch {}
     draw(); dispatchEvent(new Event('pk-favs'));
   }));
-  draw(); addEventListener('pageshow', draw);
+  // 用連結帶走清單：網址 ?add=id1,id2 → 加進這台裝置的清單
+  const T = JSON.parse(document.querySelector('.fav-i18n')!.textContent!);
+  const toastEl = document.querySelector<HTMLElement>('.favpage .toast')!;
+  const toast = (m: string) => { toastEl.textContent = m; toastEl.classList.add('show'); setTimeout(() => toastEl.classList.remove('show'), 4000); };
+  const params = new URLSearchParams(location.search);
+  if (params.has('add')) {
+    const want = (params.get('add') || '').split(',').map((x) => x.trim()).filter((x) => T.ids.includes(x));
+    const cur = get(); const fresh = want.filter((x) => !cur.includes(x));
+    try { localStorage.setItem('pk-favs', JSON.stringify([...cur, ...fresh])); } catch {}
+    history.replaceState(null, '', location.pathname);
+    dispatchEvent(new Event('pk-favs'));
+    toast(fresh.length ? (fresh.length === 1 ? T.added[0] : T.added[1].replace('999', String(fresh.length))) : T.none);
+  }
+  const sendWrap = document.querySelector<HTMLElement>('.send-wrap')!;
+  const dlg = document.querySelector<HTMLDialogElement>('dialog.sendbox')!;
+  const linkIn = dlg.querySelector<HTMLInputElement>('.link-in')!, copyBtn = dlg.querySelector<HTMLButtonElement>('.copy')!, shareBtn = dlg.querySelector<HTMLButtonElement>('.share')!;
+  const makeLink = () => `${location.origin}${location.pathname}?add=${get().join(',')}`;
+  document.querySelector('.send')!.addEventListener('click', () => {
+    const url = makeLink(); linkIn.value = url;
+    const q = qrcode(0, 'M'); q.addData(url); q.make();
+    dlg.querySelector('.qr')!.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+    shareBtn.hidden = !navigator.share;
+    dlg.showModal(); dlg.focus();
+  });
+  copyBtn.addEventListener('click', async () => { try { await navigator.clipboard.writeText(linkIn.value); } catch { linkIn.select(); document.execCommand('copy'); }
+    const o = copyBtn.textContent; copyBtn.textContent = T.copied; setTimeout(() => (copyBtn.textContent = o), 1800); });
+  shareBtn.addEventListener('click', () => navigator.share({ title: T.title, url: linkIn.value }).catch(() => {}));
+  dlg.querySelector('.close')!.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  const drawAll = () => { draw(); sendWrap.hidden = get().length === 0; };
+  drawAll(); addEventListener('pageshow', drawAll);
+  items.forEach((el) => el.querySelector('.x')!.addEventListener('click', drawAll));
 </script>
 <style>
   .favpage { padding-top: 40px; padding-bottom: 70px; }
@@ -60,6 +102,25 @@ const recipes = await allRecipes(lang);
   .empty { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding: 36px 24px; max-width: 520px; margin: 0 auto 30px; }
   .empty[hidden] { display: none; }
   .empty p { font-size: 16px; line-height: 1.8; }
-  .note { font-size: 13px; margin-top: 40px; text-align: center; }
+  .note { font-size: 13px; margin-top: 18px; text-align: center; }
+  .send-wrap { text-align: center; margin-top: 40px; }
+  .send-wrap[hidden] { display: none; }
+  .send { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; padding: 9px 18px; cursor: pointer; color: var(--olive-ink);
+    background: var(--paper); border: 1.5px solid var(--olive); border-radius: 20px 16px 22px 18px; }
+  .send:hover { background: var(--sage-band); }
+  dialog.sendbox { border: 0; padding: 28px 26px 22px; width: min(400px, calc(100vw - 32px)); color: var(--ink); text-align: center; }
+  dialog.sendbox::backdrop { background: rgba(62, 58, 48, .35); }
+  .sendbox h2 { font-size: 26px; line-height: 1.3; }
+  .sendbox p { font-size: 14px; line-height: 1.7; margin: 8px 0 14px; }
+  .qr { width: 200px; height: 200px; margin: 0 auto 14px; padding: 6px; background: #fff; border: 1.5px solid var(--pencil); border-radius: 8px; }
+  .qr :global(svg) { width: 100%; height: 100%; display: block; }
+  .link-in { width: 100%; font: inherit; font-size: 13px; padding: 7px 10px; color: var(--ink-soft); border: 1px solid var(--line-dashed); border-radius: 6px; background: var(--paper-cream); }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+  .btns button { font: inherit; font-size: 15px; padding: 8px 16px; cursor: pointer; border-radius: 20px 16px 22px 18px; border: 1.5px solid var(--pencil); background: var(--paper); color: var(--ink); }
+  .btns .copy { background: var(--olive); border-color: var(--olive-ink); color: var(--on-terracotta); }
+  .toast { position: fixed; z-index: 80; left: 50%; bottom: max(30px, calc(env(safe-area-inset-bottom) + 20px)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+    max-width: min(420px, calc(100vw - 36px)); padding: 12px 18px; background: var(--paper-cream); border: 1.5px solid var(--pencil); border-radius: 18px 14px 20px 16px;
+    box-shadow: var(--shadow-paper); font-size: 15px; transition: opacity .3s, transform .3s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
   @media (max-width: 600px) { h1 { font-size: 36px; } }
 </style>

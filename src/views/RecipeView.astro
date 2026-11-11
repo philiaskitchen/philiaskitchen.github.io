@@ -1,6 +1,8 @@
 ---
 // 食譜內頁（中文 /recipes/xxx/ 和英文 /en/recipes/xxx/ 共用）
 import RollingPinProgress from '../components/RollingPinProgress.astro';
+import TriviaCard from '../components/TriviaCard.astro';
+import { TRIVIA } from '../data/trivia';
 import Base from '../layouts/Base.astro';
 import Tag from '../components/Tag.astro';
 import Note from '../components/Note.astro';
@@ -158,11 +160,12 @@ const ld = {
   </section>
 
   <div class="band lower">
-    {(d.tips.length > 0 || d.fails.length > 0 || d.storage.length > 0) && (
+    {(d.tips.length > 0 || d.fails.length > 0 || d.storage.length > 0 || TRIVIA[recipe.id]) && (
       <section class="wrap notes">
         {d.tips.length > 0 && <Note title={u.tips} items={d.tips} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={-1} />}
         {d.fails.length > 0 && <Note title={u.fails} items={d.fails} tape="var(--tape-rose)" tilt={0.8} />}
         {d.storage.length > 0 && <Note title={u.storage} items={d.storage} tape="var(--dusty-blue)" tilt={-0.6} />}
+        {TRIVIA[recipe.id] && <TriviaCard trivia={TRIVIA[recipe.id]} />}
       </section>
     )}
     <AdSlot name="recipeBottom" />
@@ -175,6 +178,8 @@ const ld = {
   </div>
 
   <div class="print-frame" aria-hidden="true"></div>
+  {/* 列印時頁尾顯示「第 1 頁／共 2 頁」（Chrome、Edge 支援；Safari 目前不會顯示） */}
+  <style is:inline set:html={`@media print { @page { margin-bottom: 11mm; @bottom-center { content: ${lang === 'en' ? '"Page " counter(page) " of " counter(pages)' : '"第 " counter(page) " 頁／共 " counter(pages) " 頁"'}; font-size: 9pt; color: #6B6553; font-family: Huninn, "PingFang TC", "Microsoft JhengHei", sans-serif; } } }`} />
   <p class="print-foot">{u.siteName} · {pageUrl.replace(/^https?:\/\//, '')}</p>
   <div class="timerbar" aria-live="polite"></div>
   <RollingPinProgress />
@@ -650,8 +655,8 @@ const ld = {
   /* 列印成手繪食譜卡：只留標題、插圖、材料、步驟、小提醒，加上鉛筆框和網址 */
   @media print {
     .crumbs, .actions, .hint, .timers, .tmsg, .shop-open, .shop-hint, .scaler, .more, .divider, .nutri, .cookmode, .timerbar, .toast, .ding, .soundtip, dialog.shop { display: none !important; }
-    .print-frame { display: block; position: fixed; inset: 0; border: 1.5px solid #4A4536; border-radius: 10px 6px 12px 8px; outline: 1px solid #CFC4AA; outline-offset: -6px; }
-    .print-foot { display: block; text-align: center; font-size: 11px; color: var(--ink-soft); margin-top: 14px; }
+    .print-frame { display: none !important; }
+    .print-foot { display: block; text-align: center; font-size: 10px; color: var(--ink-soft); margin-top: 6px; break-before: avoid; }
     .hero { grid-template-columns: 1fr auto !important; gap: 16px; padding-top: 6px; }
     .art { order: 0 !important; max-height: 150px !important; width: auto !important; }
     h1, h1.long { font-size: 34px !important; }
@@ -662,16 +667,19 @@ const ld = {
     .meta dt { font-size: 10.5px !important; } .meta dd { font-size: 13px !important; line-height: 1.4 !important; white-space: normal; text-wrap: balance; }
     .art { max-height: 130px !important; }
     .body { grid-template-columns: 1fr 1.5fr !important; gap: 24px; padding-top: 10px; padding-bottom: 0; }
-    .ingredients { transform: none; box-shadow: none; border: 1px solid #D3CBB5; padding: 16px; }
+    .ingredients { transform: none; box-shadow: none; border: 1px solid #D3CBB5; padding: 16px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    /* 跨頁時：一個材料、一個步驟不要被切成兩半，整個移到下一頁；分組標題不要單獨留在頁尾 */
+    .group li, .steps li, .notes > * { break-inside: avoid; }
+    .gname, .ingredients .head, .steps .section-title { break-after: avoid; }
     .ingredients .tape { display: none; }
     .group label { padding: 4px 0; font-size: 12.5px; }
-    .steps label { padding: 6px 0; gap: 10px; }
+    .steps label { padding: 5px 0; gap: 10px; }
     .steps li, .steps li.now { break-inside: avoid; background: none; box-shadow: none; margin: 0; padding: 0; }
     .steps li.now::before { display: none; }
-    .st { font-size: 16px !important; } .sp { font-size: 12.5px !important; line-height: 1.6; }
+    .st { font-size: 15.5px !important; line-height: 1.4; } .sp { font-size: 12px !important; line-height: 1.55; }
     .num { width: 30px; height: 30px; font-size: 15px; }
     .steps input:checked ~ .txt { opacity: 1; }
-    .lower { background: none; padding: 10px 0 0; }
+    .lower { background: none; padding: 4px 0 0; }
     .notes { gap: 14px; break-inside: avoid; }
   }
   /* 我想做（愛心） */
@@ -690,7 +698,7 @@ const ld = {
   :global(body.cooking) .steps .st { font-size: 27px; }
   :global(body.cooking) .steps .sp { font-size: 18px; }
   :global(body.cooking) .group label { font-size: 18px; }
-  .notes { display: flex; gap: 40px; }
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; align-items: start; }
   .more { margin-top: 44px; }
   .more .card-grid { margin-top: 30px; }
   @media (max-width: 860px) {
