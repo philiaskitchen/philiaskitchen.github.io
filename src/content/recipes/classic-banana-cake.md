@@ -1,9 +1,9 @@
 ---
 slug: classic-banana-cake
-title: 經典香蕉蛋糕
-titleFr: cake à la banane
-category: sweets
-intro: 經典的香蕉蛋糕（Banana Bread），口感濕潤、步驟簡單，最適合用來消耗表皮長滿黑斑的熟透香蕉。用一個長條烤模就能做好一整條。
+title: 經典香蕉麵包
+titleFr: pain à la banane
+category: bread
+intro: 經典的香蕉麵包（Banana Bread），口感濕潤、步驟簡單，最適合用來消耗表皮長滿黑斑的熟透香蕉。用一個長條烤模就能做好一整條。
 image: /images/recipes/classic-banana-cake.webp
 date: 2026-11-01
 featured: false
@@ -67,7 +67,7 @@ steps:
     text: 麵糊倒進烤模，用刮刀把表面抹平，放在烤箱中層烘烤。烤到約 40 分鐘時看一下表面，如果顏色太深，在上面輕輕蓋一張鋁箔紙。
     timer: 175°C 烤 50–60 分鐘
   - title: 測試與放涼
-    text: 用竹籤或細筷子插進蛋糕中心，拔出來沒有沾到濕麵糊就可以出爐。先在烤模裡放涼 10 分鐘，再拿出來放到網架上完全放涼，切片享用。
+    text: 用竹籤或細筷子插進麵包中心，拔出來沒有沾到濕麵糊就可以出爐。先在烤模裡放涼 10 分鐘，再拿出來放到網架上完全放涼，切片享用。
     timer: 模內放涼 10 分鐘
 tips:
   - 香蕉越熟越好，表皮長滿黑斑的最甜最香。
