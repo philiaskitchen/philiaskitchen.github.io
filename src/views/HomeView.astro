@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import RecipeCard from '../components/RecipeCard.astro';
 import RecipeMenu from '../components/RecipeMenu.astro';
 import ScallopButton from '../components/ScallopButton.astro';
+import SteamyStillLife from '../components/SteamyStillLife.astro';
 import { allRecipes, featuredRecipe, recipeUrl, smallImage } from '../site';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
@@ -51,7 +52,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
     <section class="wrap duo">
       <div class="menu-col"><RecipeMenu recipes={recipes} /></div>
       <div class="about-col">
-        <img src="/images/site/stilllife-teapot.webp" alt={u.stillAlt} loading="lazy" width="1000" height="647" />
+        <SteamyStillLife alt={u.stillAlt} />
         <h2 class="display">{u.whoWrites}</h2>
         <p class="muted">{u.aboutShort}</p>
         <a class="link" href={lp(lang, '/about/')}>{u.moreAbout}</a>
@@ -77,7 +78,6 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   .latest .card-grid { margin-top: 32px; }
   .band { padding: 44px 0 50px; scroll-margin-top: 20px; }
   .duo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; }
-  .about-col img { max-height: 270px; width: auto; margin: 0 auto; }
   .about-col h2 { font-size: 28px; margin-top: 6px; }
   .about-col p { font-size: 15px; line-height: 1.9; margin: 6px 0 12px; }
   @media (max-width: 860px) {
