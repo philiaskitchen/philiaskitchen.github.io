@@ -1,0 +1,313 @@
+---
+// 聖誕薑餅人工坊（只在聖誕期間出現：首頁、404）
+// 點烤箱 → 薑餅人從烤箱後面出來（走路／又跑又跳／滾出來／舉小旗子）→ 一個一個疊成聖誕樹（4-3-2-1）
+// → 小幫手爬上去掛聖誕球 → 最後一個放樹頂星星 → 之後再點，薑餅人圍著樹跳舞；「再疊一棵」可以重來
+// 偶爾：聖誕老人背禮物袋走出來揮手，往左走掉；馴鹿雪橇從右邊飛過聖誕樹到左邊
+import { getLang, t } from '../i18n';
+import { SANTA_HAT } from '../data/xmasArt';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+const lang = getLang(Astro.url);
+const u = t(lang);
+const hat = SANTA_HAT.replace('<svg viewBox="0 0 84 70" aria-hidden="true">', '<svg x="138" y="-16" width="112" height="93" viewBox="0 0 84 70">');
+const oven = `<svg viewBox="0 0 220 230" aria-hidden="true"><rect x="24" y="52" width="172" height="150" rx="22" fill="#F7EFD6" stroke="#4A4536" stroke-width="3"/><circle cx="52" cy="80" r="8" fill="#B5552B"/><circle cx="78" cy="80" r="8" fill="#B5552B"/><circle cx="164" cy="80" r="11" fill="#9FB3C6" stroke="#4A4536" stroke-width="2"/><path d="M164 80 L164 72" stroke="#4A4536" stroke-width="2.4" stroke-linecap="round"/><rect class="win" x="44" y="102" width="132" height="80" rx="14" fill="#EBC25F" stroke="#4A4536" stroke-width="2.4"/><path d="M72 170 C72 140 90 126 110 126 C130 126 148 140 148 170 Z" fill="#C0642E" stroke="#4A4536" stroke-width="2"/><path d="M92 146 l8-8 M106 142 l8-8 M120 146 l8-8" stroke="#F7EFD6" stroke-width="3" stroke-linecap="round"/><rect x="40" y="200" width="18" height="12" rx="3" fill="#9A4420"/><rect x="162" y="200" width="18" height="12" rx="3" fill="#9A4420"/><g transform="rotate(26 190 56)">${hat}</g></svg>`;
+---
+<section class:list={['gw', { compact }]} aria-label={u.gw.title}>
+  {!compact && (
+    <div class="wrap gw-head">
+      <div class="section-title"><h2>{u.gw.title}</h2><span class="fr">l'atelier de Noël</span></div>
+      <p class="muted gw-hint">{u.gw.hint}</p>
+    </div>
+  )}
+  <div class="gw-stage">
+    <svg class="gw-ground" viewBox="0 0 1000 12" preserveAspectRatio="none" aria-hidden="true"><path d="M0 6 Q 25 0 50 6 T 100 6 T 150 6 T 200 6 T 250 6 T 300 6 T 350 6 T 400 6 T 450 6 T 500 6 T 550 6 T 600 6 T 650 6 T 700 6 T 750 6 T 800 6 T 850 6 T 900 6 T 950 6 T 1000 6" fill="none" stroke="#6B6553" stroke-width="1.4" vector-effect="non-scaling-stroke"/></svg>
+    <button type="button" class="gw-oven" aria-label={u.gw.oven} set:html={oven} />
+  </div>
+  <div class="gw-foot">
+    <span class="gw-count soft" aria-live="polite"></span>
+    <button type="button" class="gw-reset" hidden>{u.gw.reset}</button>
+  </div>
+  <script type="application/json" class="gw-i18n" set:html={JSON.stringify({ hint: u.gw.hint, hintDance: u.gw.hintDance, c1: u.gw.count(1), cn: u.gw.count(999) })} />
+</section>
+<script>
+  import { gingerbread, SANTA_WALKER, SLEIGH, FLAG, TOP_STAR } from '../data/xmasArt';
+  type Pt = { x: number; y: number };
+  const SHAPES = ['man', 'girl', 'man', 'girl', 'kid'] as const;
+  const FACES = ['smile', 'wink', 'o', 'happy', 'tongue', 'sleepy'] as const;
+  const ICING = ['#C8352B', '#5F8B4C', '#E2859A', '#7FA3C9', '#E8B33A'];
+  const BALLS = ['#C8352B', '#E8B33A', '#7FA3C9', '#E2859A', '#5F8B4C', '#FFF8EE'];
+  const pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  document.querySelectorAll<HTMLElement>('.gw').forEach((root) => {
+    if (document.documentElement.dataset.fest !== 'xmas') return;
+    const stage = root.querySelector<HTMLElement>('.gw-stage')!, oven = root.querySelector<HTMLButtonElement>('.gw-oven')!;
+    const countEl = root.querySelector<HTMLElement>('.gw-count')!, resetBtn = root.querySelector<HTMLButtonElement>('.gw-reset')!;
+    const hintEl = root.querySelector<HTMLElement>('.gw-hint');
+    const T = JSON.parse(root.querySelector('.gw-i18n')!.textContent!);
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ROWS = [4, 3, 2, 1], TOTAL = 10;
+    let phase: 'build' | 'decor' | 'done' | 'reset' = 'build';
+    let reserved = 0, placed = 0, baked = 0, lastSanta = 0;
+    const treeEls: HTMLElement[] = [], extras: HTMLElement[] = [];
+
+    // 尺寸：依舞台寬度算（手機小一點）
+    const D = () => {
+      const w = stage.clientWidth, h = stage.clientHeight, small = w < 600;
+      const W = small ? 32 : 50, H = W * 1.15, ground = h - 10;
+      const content = Math.min(w, 1100), left = (w - content) / 2;
+      const ox = oven.offsetLeft, ow = oven.offsetWidth;
+      const treeX = left + content * (small ? .3 : .3);
+      return { w, h, W, H, ground, ox, ow, ovenCx: ox + ow / 2, treeX, small };
+    };
+    const slot = (k: number): Pt => {
+      const d = D(); let r = 0, kk = k; while (kk >= ROWS[r]) { kk -= ROWS[r]; r++; }
+      const n = ROWS[r];
+      return { x: d.treeX + (kk - (n - 1) / 2) * d.W * .86 - d.W / 2, y: d.ground - d.H - r * d.H * .7 };
+    };
+    // 掛完球的小幫手：左右兩邊輪流站在樹旁邊（不會走出畫面）
+    const standSpot = (i: number): Pt => { const d = D(); const n = Math.floor(i / 2);
+      const x = i % 2 === 0 ? d.treeX - d.W * 2.5 - n * d.W * .85 : d.treeX + d.W * 1.6 + n * d.W * .85;
+      return { x: Math.max(2, Math.min(x, d.ox - d.W - 4)), y: d.ground - d.H }; };
+    const rowOf = (k: number) => { let r = 0, kk = k; while (kk >= ROWS[r]) { kk -= ROWS[r]; r++; } return r; };
+
+    // 角色：絕對定位，用 transform 移動（x、y 是左上角）
+    const actor = (html: string, w: number, h: number, z = 3) => {
+      const el = document.createElement('div'); el.className = 'gw-actor'; el.innerHTML = html;
+      el.style.width = w + 'px'; el.style.height = h + 'px'; el.style.zIndex = String(z); stage.append(el); return el;
+    };
+    const at = (el: HTMLElement, p: Pt, rot = 0) => { el.dataset.x = String(p.x); el.dataset.y = String(p.y); el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${rot}deg)`; };
+    const pos = (el: HTMLElement): Pt => ({ x: +el.dataset.x!, y: +el.dataset.y! });
+    // 移動：walk 走路（小小上下晃）、hop 又跑又跳、roll 滾、climb 爬、glide 平移
+    const move = async (el: HTMLElement, to: Pt, style: 'walk' | 'hop' | 'roll' | 'climb' | 'glide' = 'walk', speed = 1) => {
+      const from = pos(el); const dist = Math.hypot(to.x - from.x, to.y - from.y);
+      if (dist < 1) return;
+      const dir = Math.sign(to.x - from.x) || 1;
+      const stepLen = style === 'hop' ? 22 : style === 'roll' ? 10 : style === 'climb' ? 7 : 11;
+      const n = Math.max(2, Math.round(dist / stepLen));
+      const frames: Keyframe[] = [];
+      for (let i = 0; i <= n; i++) {
+        const f = i / n, x = from.x + (to.x - from.x) * f, y = from.y + (to.y - from.y) * f;
+        let dy = 0, rot = 0, dx = 0;
+        if (style === 'walk') { dy = i % 2 ? -3 : 0; rot = i % 2 ? 4 : -4; }
+        if (style === 'hop') { dy = i % 2 ? -18 : 0; rot = i % 2 ? -8 * dir : 0; }
+        if (style === 'roll') rot = -dir * (dist * f) / (D().W * 3.1) * 360;
+        if (style === 'climb') { dx = i % 2 ? 3 : -3; rot = i % 2 ? 6 : -6; }
+        if (i === n) { dy = 0; rot = 0; dx = 0; }
+        frames.push({ transform: `translate(${x + dx}px, ${y + dy}px) rotate(${rot}deg)` });
+      }
+      const ms = still ? 1 : (dist / ((style === 'hop' ? 170 : style === 'roll' ? 150 : style === 'climb' ? 55 : 95) * speed)) * 1000;
+      await el.animate(frames, { duration: ms, easing: 'linear', fill: 'forwards' }).finished;
+      at(el, to);
+    };
+    const bounce = (el: HTMLElement, times = 2) => still ? Promise.resolve() : el.animate([
+      { transform: el.style.transform }, { transform: el.style.transform + ' translateY(-14px)' }, { transform: el.style.transform }], { duration: 360, iterations: times }).finished;
+
+    const updateCount = () => { countEl.textContent = baked === 1 ? T.c1 : T.cn.replace('999', String(baked)); };
+    const ovenPop = () => { if (!still) oven.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-3deg) scale(1.03)' }, { transform: 'rotate(2deg)' }, { transform: 'rotate(0)' }], { duration: 420 }); };
+    const makeGinger = (shape?: typeof SHAPES[number]) => {
+      const d = D(); const burnt = Math.random() < .12;
+      const el = actor(gingerbread({ shape: shape || pick(SHAPES), face: pick(FACES), icing: pick(ICING), burnt }), d.W, d.H, 3);
+      at(el, { x: d.ovenCx - d.W / 2, y: d.ground - d.H }); return el;
+    };
+    // 從烤箱後面出來（烤箱擋在前面，所以看起來是從後面走出來）
+    const emerge = async (el: HTMLElement, style: 'walk' | 'hop' | 'roll' | 'flag') => {
+      const d = D(); const out = { x: d.ox - d.W - 6, y: d.ground - d.H };
+      if (style === 'flag') { const f = document.createElement('span'); f.className = 'gw-flag'; f.innerHTML = FLAG(); el.append(f); }
+      await move(el, out, style === 'flag' ? 'hop' : style, style === 'roll' ? 1.1 : 1);
+      el.style.zIndex = '6';
+    };
+
+    // 蓋樹：走到樹下，往上爬到自己的位置
+    const toTree = async (el: HTMLElement, k: number, style: 'walk' | 'hop' | 'roll' | 'flag') => {
+      const s = slot(k), d = D(), r = rowOf(k);
+      await move(el, { x: s.x, y: d.ground - d.H }, style === 'flag' ? 'hop' : style === 'roll' ? 'roll' : style, style === 'hop' || style === 'flag' ? 1.3 : 1);
+      el.querySelector('.gw-flag')?.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-10px) rotate(30deg)' }], { duration: 400, fill: 'forwards' });
+      if (r > 0) { el.style.zIndex = String(10 + r); await move(el, s, 'climb'); } else el.style.zIndex = '10';
+      setTimeout(() => el.querySelector('.gw-flag')?.remove(), 450);
+      await bounce(el, 1);
+    };
+
+    // 小幫手掛聖誕球、最後一個放星星
+    const decorate = async () => {
+      phase = 'decor'; const d = D();
+      const spots: Pt[] = [slot(0), slot(2), slot(5), slot(7), slot(4)].map((p, i) => ({ x: p.x + d.W * (i % 2 ? .78 : .05), y: p.y + d.H * .45 }));
+      const helpers = spots.slice(0, 4).map(async (spot, i) => {
+        await sleep(i * 700);
+        const el = makeGinger('kid'); const ball = document.createElement('span'); ball.className = 'gw-ball held'; ball.style.background = pick(BALLS); el.append(ball);
+        await emerge(el, 'walk');
+        const side = { x: d.treeX - d.W * 2.4 - (i % 2) * d.W * .2, y: d.ground - d.H };
+        await move(el, side, 'hop', 1.3);
+        el.style.zIndex = '30';
+        await move(el, { x: side.x + d.W * .9, y: spot.y - d.H * .4 }, 'climb');
+        await move(el, { x: spot.x - d.W * .3, y: spot.y - d.H * .4 }, 'climb', 1.4);
+        // 掛上去
+        const b = document.createElement('span'); b.className = 'gw-ball'; b.style.background = ball.style.background;
+        b.style.left = spot.x + 'px'; b.style.top = spot.y + 'px'; b.style.width = b.style.height = d.W * .34 + 'px'; stage.append(b); extras.push(b);
+        ball.remove(); if (!still) b.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 400 });
+        await sleep(250);
+        await move(el, { x: Math.max(2, side.x + d.W * .9), y: d.ground - d.H }, 'climb', 1.6);
+        await move(el, standSpot(i), 'walk', 1.4);
+        el.style.zIndex = '8'; extras.push(el); await bounce(el, 1);
+      });
+      await Promise.all(helpers);
+      // 星星
+      const top = slot(9); const el = makeGinger('kid');
+      const st = document.createElement('span'); st.className = 'gw-carry'; st.innerHTML = TOP_STAR; el.append(st);
+      await emerge(el, 'hop'); const side = { x: d.treeX + d.W * 2.1, y: d.ground - d.H };
+      await move(el, side, 'hop', 1.3); el.style.zIndex = '30';
+      await move(el, { x: top.x + d.W * .9, y: top.y - d.H * .2 }, 'climb', 1.2);
+      st.remove();
+      const star = document.createElement('span'); star.className = 'gw-star'; star.innerHTML = TOP_STAR;
+      star.style.left = top.x + d.W * .5 - d.W * .45 + 'px'; star.style.top = top.y - d.W * .78 + 'px'; star.style.width = star.style.height = d.W * .9 + 'px';
+      stage.append(star); extras.push(star);
+      if (!still) star.animate([{ transform: 'scale(0) rotate(-90deg)' }, { transform: 'scale(1.4) rotate(10deg)' }, { transform: 'scale(1) rotate(0)' }], { duration: 600 });
+      await sleep(300);
+      await move(el, { x: top.x + d.W * .9, y: d.ground - d.H }, 'climb', 1.6); await move(el, standSpot(4), 'walk', 1.4); el.style.zIndex = '8'; extras.push(el); await bounce(el, 2);
+      phase = 'done'; resetBtn.hidden = false; if (hintEl) hintEl.textContent = T.hintDance;
+      setTimeout(sleigh, 800);
+    };
+
+    // 樹完成後：圍著樹跳舞，跳完往左邊跑走
+    const dance = async () => {
+      const d = D(); const el = makeGinger(); await emerge(el, pick(['walk', 'hop', 'roll'] as const));
+      const cx = d.treeX - d.W / 2, cy = d.ground - d.H, rx = d.W * 2.6;
+      await move(el, { x: cx + rx, y: cy }, 'hop', 1.3);
+      const frames: Keyframe[] = []; const N = 32;
+      for (let i = 0; i <= N; i++) {
+        const a = (i / N) * Math.PI * 4, x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * 6 - Math.abs(Math.sin(a * 2)) * 12;
+        frames.push({ transform: `translate(${x}px, ${y}px) rotate(${Math.sin(a * 3) * 12}deg)`, zIndex: Math.sin(a) > 0 ? 40 : 2 });
+      }
+      if (!still) await el.animate(frames, { duration: 3600, easing: 'linear', fill: 'forwards' }).finished;
+      at(el, { x: cx + rx, y: cy }); el.style.zIndex = '40';
+      await move(el, { x: -d.W * 2, y: cy }, 'hop', 1.4); el.remove();
+    };
+    // 裝飾中再點：出來跳兩下、揮揮手，再回烤箱後面
+    const cheer = async () => {
+      const d = D(); const el = makeGinger(); await emerge(el, 'hop'); await bounce(el, 2);
+      el.style.zIndex = '2'; await move(el, { x: d.ovenCx - d.W / 2, y: d.ground - d.H }, 'walk', 1.4); el.remove();
+    };
+
+    // 聖誕老人：背著禮物袋走出來，走到中間揮手，再往左走到看不見
+    const santa = async () => {
+      lastSanta = Date.now(); const d = D(); const sw = d.W * 2, sh = d.W * 2.4;
+      const el = actor(SANTA_WALKER, sw, sh, 4); el.classList.add('santa');
+      at(el, { x: d.ovenCx - sw / 2, y: d.ground - sh });
+      await move(el, { x: d.ox - sw - 4, y: d.ground - sh }, 'walk', .55); el.style.zIndex = '45';
+      const mid = (d.treeX + d.ox) / 2 - sw / 2;
+      await move(el, { x: mid, y: d.ground - sh }, 'walk', .55);
+      el.classList.add('wave'); await sleep(still ? 300 : 2200); el.classList.remove('wave');
+      await move(el, { x: -sw - 30, y: d.ground - sh }, 'walk', .55); el.remove();
+    };
+    // 馴鹿雪橇：從右邊飛越聖誕樹到左邊
+    let flying = false;
+    const sleigh = async () => {
+      if (flying || still) return; flying = true; const d = D();
+      const sw = d.small ? 250 : 380, sh = sw * 96 / 406, sc = sw / 406;
+      const el = actor(SLEIGH, sw, sh, 50); el.classList.add('sleigh');
+      const parts = [...el.querySelectorAll<SVGGElement>('.part')].map((g, i) => ({ g, i, cx: +g.dataset.cx!, cy: +g.dataset.cy! }));
+      const reins = el.querySelector<SVGPathElement>('.reins')!;
+      // 波浪軌跡固定在畫面上（像雲霄飛車的軌道），每一隻都沿著它走，所以整串會自然彎曲
+      const amp = d.small ? 15 : 24, y0 = amp + (d.small ? 8 : 12), lam = Math.max(d.w / 1.6, 260);
+      const wave = (X: number) => amp * Math.sin((X / lam) * Math.PI * 2);
+      const slope = (X: number) => (amp * Math.PI * 2 / lam) * Math.cos((X / lam) * Math.PI * 2);
+      const dist = d.w + sw + 60, dur = dist / (d.small ? 75 : 160) * 1000; // 固定速度，畫面寬窄都一樣順
+      const t0 = performance.now();
+      await new Promise<void>((done) => {
+        const frame = (now: number) => {
+          const f = Math.min(1, (now - t0) / dur), bx = d.w + 20 - dist * f, tt = (now - t0) / 1000;
+          el.style.transform = `translate(${bx}px, ${y0}px)`;
+          const pos: { x: number; y: number }[] = [];
+          for (const p of parts) {
+            const X = bx + p.cx * sc, last = p.i === parts.length - 1;
+            // 每隻馴鹿輕輕上下跳（錯開節拍，像在空中奔跑）；雪橇只隨軌道起伏
+            const bob = last ? 0 : Math.sin(tt * 11 - p.i * .9) * 1.6;
+            const dy = wave(X) / sc + bob, ang = Math.atan(slope(X)) * 180 / Math.PI;
+            p.g.setAttribute('transform', `translate(0 ${dy.toFixed(2)}) rotate(${ang.toFixed(2)} ${p.cx} ${p.cy})`);
+            pos.push({ x: p.cx, y: dy });
+          }
+          // 韁繩：從魯道夫一路串到聖誕老人的手，跟著曲線彎
+          const pts = parts.map((p, i) => [i === parts.length - 1 ? 324 : p.cx - 6, (i === parts.length - 1 ? 30 : 26) + pos[i].y]);
+          let dd = `M${pts[0][0]} ${pts[0][1]}`;
+          for (let i = 1; i < pts.length; i++) { const [x0, y0_] = pts[i - 1], [x1, y1] = pts[i]; const mx = (x0 + x1) / 2; dd += ` C${mx} ${y0_} ${mx} ${y1} ${x1} ${y1}`; }
+          reins.setAttribute('d', dd);
+          if (f < 1) requestAnimationFrame(frame); else done();
+        };
+        requestAnimationFrame(frame);
+      });
+      el.remove(); flying = false;
+    };
+    // 偶爾自己飛過（看得到工坊時，大約每 40–80 秒有機會一次）
+    let visible = false;
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(stage);
+    const tick = () => { if (visible && Math.random() < .5) sleigh(); setTimeout(tick, 40000 + Math.random() * 40000); };
+    setTimeout(tick, 15000);
+    // 預覽用：網址加 &gw=santa（第一次點就出現聖誕老人）、&gw=sleigh（馬上飛過一次）
+    const GW = new URLSearchParams(location.search).get('gw');
+    if (GW === 'sleigh') setTimeout(sleigh, 1200);
+    let forceSanta = GW === 'santa';
+
+    oven.addEventListener('click', () => {
+      ovenPop();
+      if (phase === 'reset') return;
+      if (forceSanta || (Date.now() - lastSanta > 20000 && baked >= 3 && Math.random() < .1)) { forceSanta = false; santa(); return; } // 很偶爾才有聖誕老人
+      baked++; updateCount();
+      if (phase === 'build' && reserved < TOTAL) {
+        const k = reserved++; const style = pick(['walk', 'hop', 'roll', 'flag'] as const);
+        const el = makeGinger(); treeEls[k] = el;
+        (async () => { await emerge(el, style); await toTree(el, k, style); placed++; if (placed === TOTAL) decorate(); })();
+      } else if (phase === 'done') dance();
+      else cheer();
+    });
+
+    resetBtn.addEventListener('click', async () => {
+      if (phase !== 'done') return; phase = 'reset'; resetBtn.hidden = true; const d = D();
+      extras.filter((e) => !e.classList.contains('gw-actor')).forEach((e) => e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 400, fill: 'forwards' }));
+      const leaving = [...extras.filter((e) => e.classList.contains('gw-actor')), ...treeEls.slice().reverse()];
+      await Promise.all(leaving.map(async (el, i) => { await sleep(i * 160); el.style.zIndex = '40'; await move(el, { x: pos(el).x, y: d.ground - d.H }, 'climb', 3); await move(el, { x: -d.W * 2 - i * 4, y: d.ground - d.H }, 'hop', 1.6); el.remove(); }));
+      extras.forEach((e) => e.remove()); extras.length = 0; treeEls.length = 0;
+      reserved = 0; placed = 0; phase = 'build'; if (hintEl) hintEl.textContent = T.hint;
+    });
+    addEventListener('resize', () => { if (phase === 'build' || phase === 'done') treeEls.forEach((el, k) => { if (k < placed) at(el, slot(k)); }); });
+  });
+</script>
+<style>
+  .gw { display: none; padding: 10px 0 40px; }
+  :global(html[data-fest="xmas"]) .gw { display: block; }
+  .gw-hint { font-size: 15px; margin-top: 4px; }
+  .gw-stage { position: relative; height: 330px; overflow: hidden; margin-top: 8px; }
+  .compact .gw-stage { height: 270px; max-width: 760px; margin: 0 auto; }
+  .gw-ground { position: absolute; left: 0; right: 0; bottom: 4px; width: 100%; height: 12px; }
+  .gw-oven { position: absolute; z-index: 5; bottom: 6px; left: calc(50% + min(550px, 50%) * .3); width: 170px; height: 178px; padding: 0; border: 0; background: none; cursor: pointer; transform-origin: 50% 100%; }
+  .compact .gw-oven { left: 58%; }
+  .gw-oven :global(svg) { width: 100%; height: 100%; display: block; overflow: visible; }
+  .gw-oven:hover :global(.win) { fill: #FFDD8A; }
+  .gw-oven:focus-visible { outline: 2px dashed var(--terracotta-ink); outline-offset: 4px; border-radius: 16px; }
+  .gw-foot { display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 38px; margin-top: 6px; }
+  .gw-count { font-size: 14px; }
+  .gw-reset { font: inherit; font-size: 15px; padding: 7px 16px; cursor: pointer; color: var(--on-terracotta); background: #5F8B4C; border: 0; border-radius: 20px 16px 22px 18px; box-shadow: var(--shadow-paper); }
+  .gw-reset[hidden] { display: none; }
+  :global(.gw-actor) { position: absolute; left: 0; top: 0; pointer-events: none; will-change: transform; }
+  :global(.gw-actor > svg) { width: 100%; height: 100%; display: block; overflow: visible; }
+  :global(.gw-flag) { position: absolute; left: 70%; top: -38%; width: 62%; height: 88%; }
+  :global(.gw-flag svg) { width: 100%; height: 100%; }
+  :global(.gw-flag .cloth) { transform-box: fill-box; transform-origin: 0 50%; animation: gwFlag .5s ease-in-out infinite alternate; }
+  :global(.sleigh .wave-arm) { transform-box: fill-box; transform-origin: 10% 95%; animation: gwWave .45s ease-in-out infinite alternate; }
+  @keyframes gwWave { from { transform: rotate(-14deg); } to { transform: rotate(12deg); } }
+  @keyframes gwFlag { to { transform: skewY(-10deg) scaleX(.9); } }
+  :global(.gw-ball) { position: absolute; z-index: 25; border-radius: 50%; border: 1.5px solid #4A4536; box-shadow: inset -2px -2px 0 rgba(0, 0, 0, .15), inset 2px 2px 0 rgba(255, 255, 255, .5); }
+  :global(.gw-ball.held) { width: 30%; height: 26%; left: 72%; top: 40%; }
+  :global(.gw-carry) { position: absolute; left: 60%; top: -30%; width: 70%; height: 60%; }
+  :global(.gw-carry svg), :global(.gw-star svg) { width: 100%; height: 100%; display: block; }
+  :global(.gw-star) { position: absolute; z-index: 26; filter: drop-shadow(0 0 6px rgba(244, 200, 74, .9)); animation: gwGlow 1.6s ease-in-out infinite alternate; }
+  @keyframes gwGlow { to { filter: drop-shadow(0 0 14px rgba(255, 220, 120, 1)); } }
+  :global(.santa .arm) { transform-box: fill-box; transform-origin: 90% 95%; }
+  :global(.santa.wave .arm) { animation: gwWave .35s ease-in-out infinite alternate; }
+  @keyframes gwWave { from { transform: rotate(-20deg); } to { transform: rotate(18deg); } }
+  :global(.sleigh .legs) { transform-box: fill-box; transform-origin: 50% 0; animation: gwGallop .32s ease-in-out infinite alternate; }
+  :global(.sleigh .part:nth-child(odd) .legs) { animation-delay: -.16s; }
+  @keyframes gwGallop { from { transform: skewX(14deg); } to { transform: skewX(-14deg); } }
+  @media (max-width: 600px) { .gw-stage { height: 240px; } .gw-oven { width: 120px; height: 126px; left: auto; right: 6%; } .compact .gw-oven { left: auto; right: 8%; } }
+  @media (prefers-reduced-motion: reduce) { :global(.gw-flag .cloth), :global(.gw-star), :global(.santa.wave .arm), :global(.sleigh .legs), :global(.sleigh .wave-arm) { animation: none; } }
+  @media print { .gw { display: none !important; } }
+</style>
