@@ -1,12 +1,72 @@
 ---
+// 找不到頁面：「這一頁還在烤箱裡」——烤箱窗戶發光、麵包慢慢膨脹、上面冒蒸氣，下面隨機推薦 3 道食譜
 import Base from '../layouts/Base.astro';
 import ScallopButton from '../components/ScallopButton.astro';
+import { allRecipes, recipeUrl, smallImage } from '../site';
+const recipes = await allRecipes('zh');
+const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.data.image ? smallImage(r.data.image) : '' }));
 ---
 <Base title="找不到這一頁 · Page not found" alt={null}>
-  <section class="wrap" style="padding:60px 30px 80px;text-align:center">
-    <h1 class="display" style="font-size:44px">這一頁還在烤箱裡</h1>
-    <p class="muted" style="margin:12px 0 6px">找不到你要的頁面，回首頁看看別的食譜吧。</p>
-    <p class="muted" lang="en" style="margin:0 0 22px">This page is still in the oven — I couldn't find it. <a class="link" href="/en/">Back to the English site</a></p>
+  <section class="wrap nf">
+    <svg class="oven" viewBox="0 0 220 230" width="220" height="230" aria-hidden="true">
+      <g class="steam" fill="none" stroke="#8E8A7E" stroke-width="3" stroke-linecap="round">
+        <path class="s1" pathLength="100" d="M80 44 C70 32 90 24 80 10" />
+        <path class="s2" pathLength="100" d="M110 40 C100 28 120 20 110 4" />
+        <path class="s3" pathLength="100" d="M140 44 C130 32 150 24 140 10" />
+      </g>
+      <rect x="24" y="52" width="172" height="150" rx="22" fill="#F7EFD6" stroke="#4A4536" stroke-width="3" />
+      <circle cx="52" cy="80" r="8" fill="#B5552B" /><circle cx="78" cy="80" r="8" fill="#B5552B" />
+      <g class="dial"><circle cx="164" cy="80" r="11" fill="#9FB3C6" stroke="#4A4536" stroke-width="2" /><path d="M164 80 L164 72" stroke="#4A4536" stroke-width="2.4" stroke-linecap="round" /></g>
+      <rect x="44" y="102" width="132" height="80" rx="14" fill="#EBC25F" stroke="#4A4536" stroke-width="2.4" class="win" />
+      <g class="bread"><path d="M72 170 C72 140 90 126 110 126 C130 126 148 140 148 170 Z" fill="#C0642E" stroke="#4A4536" stroke-width="2" />
+        <path d="M92 146 l8-8 M106 142 l8-8 M120 146 l8-8" stroke="#F7EFD6" stroke-width="3" stroke-linecap="round" /></g>
+      <rect x="40" y="200" width="18" height="12" rx="3" fill="#9A4420" /><rect x="162" y="200" width="18" height="12" rx="3" fill="#9A4420" />
+    </svg>
+    <h1 class="display">這一頁還在烤箱裡</h1>
+    <p class="muted">找不到你要的頁面，可能還沒烤好。先看看別的食譜吧！</p>
+    <p class="muted" lang="en">This page is still in the oven — I couldn't find it. <a class="link" href="/en/">Back to the English site</a></p>
+    <div class="try" hidden>
+      <div class="fr">en attendant…</div>
+      <ul></ul>
+    </div>
     <ScallopButton href="/" label="回到首頁" width={170} />
+    <script type="application/json" class="nf-data" set:html={JSON.stringify(list)} />
   </section>
 </Base>
+<script>
+  const sec = document.querySelector<HTMLElement>('.nf');
+  const list = JSON.parse(sec?.querySelector('.nf-data')?.textContent || '[]') as { t: string; u: string; i: string }[];
+  const box = sec?.querySelector<HTMLElement>('.try'); const ul = box?.querySelector('ul');
+  if (box && ul && list.length) {
+    const pick = [...list].sort(() => Math.random() - 0.5).slice(0, 3);
+    pick.forEach((r) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = r.u;
+      if (r.i) { const img = document.createElement('img'); img.src = r.i; img.alt = ''; a.append(img); }
+      const s = document.createElement('span'); s.className = 'display'; s.textContent = r.t; a.append(s); li.append(a); ul.append(li); });
+    box.hidden = false;
+  }
+</script>
+<style>
+  .nf { padding: 40px 30px 80px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .oven { overflow: visible; margin-bottom: 8px; }
+  .win { animation: winGlow 2.4s ease-in-out infinite alternate; }
+  .bread { transform-origin: 110px 170px; animation: rise 3.2s ease-in-out infinite; }
+  .dial path { transform-origin: 164px 80px; animation: tick 4s steps(8) infinite; }
+  .steam path { stroke-dasharray: 40 100; stroke-dashoffset: 40; opacity: 0; animation: steam 3s ease-in-out infinite; }
+  .steam .s2 { animation-delay: 1s; } .steam .s3 { animation-delay: 2s; }
+  @keyframes winGlow { to { fill: #FFDD8A; } }
+  @keyframes rise { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.06, 1.14); } }
+  @keyframes tick { to { transform: rotate(360deg); } }
+  @keyframes steam { 0% { stroke-dashoffset: 40; opacity: 0; } 30% { opacity: .8; } 100% { stroke-dashoffset: -60; opacity: 0; } }
+  h1 { font-size: 44px; line-height: 1.3; }
+  p { margin-top: 10px; }
+  .try { margin: 30px 0 26px; width: 100%; max-width: 680px; }
+  .try .fr { color: var(--terracotta-ink); font-size: 20px; margin-bottom: 14px; }
+  .try ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  :global(.try li a) { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 10px; background: var(--paper); box-shadow: var(--shadow-paper); transition: transform .2s; }
+  :global(.try li:nth-child(1) a) { transform: rotate(-1.2deg); } :global(.try li:nth-child(3) a) { transform: rotate(1deg); }
+  :global(.try li a:hover) { transform: translateY(-3px); }
+  :global(.try li img) { height: 80px; width: 100%; object-fit: contain; }
+  :global(.try li .display) { font-size: 18px; line-height: 1.3; }
+  @media (max-width: 600px) { h1 { font-size: 34px; } .oven { width: 170px; height: 178px; } .try ul { gap: 10px; } :global(.try li .display) { font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { .win, .bread, .dial path, .steam path { animation: none; } .steam path { stroke-dasharray: none; opacity: .7; } }
+</style>
