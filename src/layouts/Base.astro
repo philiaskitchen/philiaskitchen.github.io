@@ -21,18 +21,41 @@ const enUrl = lang === 'en' ? Astro.url.pathname : alt;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
 const gaOn = Boolean(GA_ID) && import.meta.env.PROD;
+// 自動語言：給下方 script 用的另一個語言網址（沒有對應頁面時是空字串，就不跳轉）
+const langAlt = hasAlt && alt ? alt : '';
 ---
 <!doctype html>
 <html lang={HTML_LANG[lang]}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  {/* 自動語言：中文瀏覽器看中文，其他語言看英文；讀者按過語言切換就照他選的；搜尋引擎爬蟲不跳轉 */}
+  <script is:inline define:vars={{ PAGE_LANG: lang, LANG_ALT: langAlt }}>
+    (function () {
+      var KEY = 'pk-lang';
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a.lang');
+        if (a) try { localStorage.setItem(KEY, PAGE_LANG === 'zh' ? 'en' : 'zh'); } catch (err) {}
+      });
+      if (!LANG_ALT || /bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent)) return;
+      var want = null;
+      try { want = localStorage.getItem(KEY); } catch (err) {}
+      if (want !== 'zh' && want !== 'en') {
+        var b = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+        want = b.indexOf('zh') === 0 ? 'zh' : 'en';
+      }
+      if (want !== PAGE_LANG) {
+        document.documentElement.style.visibility = 'hidden';
+        location.replace(LANG_ALT + location.search + location.hash);
+      }
+    })();
+  </script>
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
   {hasAlt && zhUrl && <link rel="alternate" hreflang="zh-Hant" href={new URL(zhUrl, Astro.site)} />}
   {hasAlt && enUrl && <link rel="alternate" hreflang="en" href={new URL(enUrl, Astro.site)} />}
-  {hasAlt && zhUrl && <link rel="alternate" hreflang="x-default" href={new URL(zhUrl, Astro.site)} />}
+  {hasAlt && zhUrl && <link rel="alternate" hreflang="x-default" href={new URL(enUrl ?? zhUrl, Astro.site)} />}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-v3.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v3.png" />
