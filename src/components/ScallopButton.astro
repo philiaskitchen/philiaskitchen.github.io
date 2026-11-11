@@ -6,5 +6,11 @@ const { href, label, width = 200 } = Astro.props;
 <style>
   .scallop { display: inline-flex; align-items: center; justify-content: center; height: 62px; background: no-repeat center / 100% 100%;
     color: var(--on-terracotta); font-size: 17px; letter-spacing: .04em; transition: transform .15s ease; }
-  .scallop:hover { transform: rotate(-1.5deg); }
+  /* 滑過去：像果凍一樣輕輕彈一下；按下去：往下壓 */
+  .scallop:hover { animation: jelly .55s ease; }
+  .scallop:active { transform: translateY(2px) scale(.97); animation: none; }
+  @keyframes jelly {
+    0% { transform: scale(1, 1); } 30% { transform: scale(1.06, .94) rotate(-1deg); } 55% { transform: scale(.97, 1.03) rotate(-1.5deg); }
+    75% { transform: scale(1.02, .98) rotate(-1.5deg); } 100% { transform: scale(1, 1) rotate(-1.5deg); } }
+  @media (prefers-reduced-motion: reduce) { .scallop:hover { animation: none; transform: rotate(-1.5deg); } }
 </style>

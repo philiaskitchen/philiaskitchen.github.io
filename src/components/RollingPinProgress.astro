@@ -1,0 +1,52 @@
+---
+// 食譜頁的閱讀進度條：往下捲時，一根擀麵棍從左往右把麵皮擀開。
+// 只在食譜頁使用。不擋點擊（pointer-events: none）。
+// 「減少動態效果」時仍顯示進度，但擀麵棍不會左右搖晃。
+---
+<div class="pin-progress" aria-hidden="true">
+  <div class="dough"></div>
+  <svg class="pin" viewBox="0 0 20 46" width="20" height="46">
+    <g stroke="#4A4536" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="7.5" y="1" width="5" height="9" rx="2.5" fill="#9A6A45" />
+      <rect x="7.5" y="36" width="5" height="9" rx="2.5" fill="#9A6A45" />
+      <rect x="3" y="9" width="14" height="28" rx="4" fill="#E2BE86" />
+      <path d="M6,14 L6.6,32 M10,13 L10.4,33 M14,14 L13.6,32" stroke="#B88A55" stroke-width="1" fill="none" />
+    </g>
+  </svg>
+</div>
+<style>
+  .pin-progress { --p: 0; position: fixed; top: 0; left: 0; right: 0; height: 46px; z-index: 70; pointer-events: none;
+    opacity: 0; transition: opacity .3s ease; }
+  .pin-progress.on { opacity: 1; }
+  /* 擀開的麵皮：奶油色＋一點麵粉顆粒，下緣一條鉛筆線 */
+  .dough { position: absolute; top: 0; left: 0; height: 12px; width: calc(var(--p) * (100% - 20px) + 10px);
+    background-color: var(--paper-cream);
+    background-image: radial-gradient(rgba(255,255,255,.9) 1px, transparent 1.6px), radial-gradient(rgba(154,106,69,.25) .8px, transparent 1.4px);
+    background-size: 13px 9px, 19px 10px; background-position: 0 2px, 7px 4px;
+    border-bottom: 1.5px solid rgba(74, 69, 54, .55); border-radius: 0 0 8px 0; }
+  .pin { position: absolute; top: -4px; left: calc(var(--p) * (100% - 20px));
+    transform: rotate(var(--wob, 0deg)); transition: transform .25s ease-out; filter: drop-shadow(1px 2px 0 rgba(62,58,48,.15)); }
+  @media (max-width: 600px) { .dough { height: 8px; } .pin { width: 16px; height: 37px; top: -7px; left: calc(var(--p) * (100% - 16px)); } }
+</style>
+<script>
+  const box = document.querySelector<HTMLElement>('.pin-progress');
+  if (box) {
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let last = 0, ticking = false, rest = 0;
+    const update = () => {
+      ticking = false;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const y = scrollY;
+      const p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+      box.style.setProperty('--p', p.toFixed(4));
+      box.classList.toggle('on', y > 40);
+      // 捲動時擀麵棍輕輕左右搖，像真的在推
+      if (!still.matches) box.style.setProperty('--wob', `${Math.max(-8, Math.min(8, (y - last) * 0.6)).toFixed(1)}deg`);
+      last = y;
+      clearTimeout(rest); rest = setTimeout(() => box.style.setProperty('--wob', '0deg'), 160);
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+</script>

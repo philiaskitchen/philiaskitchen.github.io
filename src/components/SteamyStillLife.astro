@@ -1,0 +1,34 @@
+---
+// 首頁「寫食譜的人」插圖：蒸籠上方的蒸氣會慢慢往上飄（SVG 動畫疊在插圖上）
+// 插圖本身已經把畫好的蒸氣線拿掉（stilllife-steamer.webp），蒸氣改由這裡的 SVG 畫。
+// 讀者若在系統開啟「減少動態效果」，蒸氣會靜止顯示，看起來跟原本的插圖一樣。
+interface Props { alt: string }
+const { alt } = Astro.props;
+---
+<div class="steamy">
+  <img src="/images/site/stilllife-steamer.webp" alt={alt} loading="lazy" width="1000" height="647" />
+  <svg viewBox="0 0 1000 647" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="#7F7A6C" stroke-width="5" stroke-linecap="round">
+      <path class="s s1" pathLength="100" d="M352,250 C330,222 372,205 350,176 S330,128 352,100 S372,62 352,34" />
+      <path class="s s2" pathLength="100" d="M440,214 C420,186 460,168 440,138 S420,92 442,64 S462,28 442,6" />
+      <path class="s s3" pathLength="100" d="M530,236 C510,208 550,190 530,162 S510,116 532,88 S552,52 532,26" />
+    </g>
+  </svg>
+</div>
+<style>
+  .steamy { position: relative; width: fit-content; margin: 0 auto; }
+  .steamy img { max-height: 270px; width: auto; }
+  .steamy svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .s { stroke-dasharray: 55 120; stroke-dashoffset: 55; opacity: 0; animation: steam 4.2s ease-in-out infinite; }
+  .s2 { animation-delay: 1.4s; }
+  .s3 { animation-delay: 2.8s; }
+  @keyframes steam {
+    0%   { stroke-dashoffset: 55;  opacity: 0;   transform: translateX(0); }
+    25%  { opacity: .85; }
+    60%  { transform: translateX(4px); }
+    100% { stroke-dashoffset: -78; opacity: 0;   transform: translateX(-3px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .s { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; opacity: .75; }
+  }
+</style>
