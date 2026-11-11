@@ -4,11 +4,11 @@ import { ADS } from '../../site';
 import EmailLink from '../../components/EmailLink.astro';
 const adsLive = Boolean(ADS.client);
 ---
-<Base title="Privacy policy" description="How Philia's Kitchen handles your data: no sign-up, your ticks stay on your own device, and how ads and cookies work.">
+<Base title="Privacy policy" description="How Philia's Kitchen handles your data: no sign-up, your ticks stay on your own device, and how analytics, ads and cookies work.">
   <article class="wrap policy">
     <div class="fr eyebrow">confidentialité —</div>
     <h1 class="display">Privacy policy</h1>
-    <p class="soft updated">Last updated: 29 October 2026</p>
+    <p class="soft updated">Last updated: 11 November 2026</p>
 
     <section class="paper sheet">
       <h2 class="display">About this site</h2>
@@ -20,6 +20,11 @@ const adsLive = Boolean(ADS.client);
 
       <h2 class="display">Hosting</h2>
       <p>This site is hosted on GitHub Pages. To keep the service secure and running, GitHub may log technical information such as visitors' IP addresses. See the <a class="link" href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub General Privacy Statement</a> for details.</p>
+
+      <h2 class="display">Analytics (Google Analytics)</h2>
+      <p>To understand how many people visit and which recipes are most useful, this site uses Google Analytics 4. It uses cookies to collect anonymous usage data, such as which pages you view, how long you stay, your approximate country or city, your device and browser, and which site linked you here.</p>
+      <p>This data is only used to understand overall reading trends. I cannot see who you are, and it is not used to identify you. Google Analytics 4 does not log or store full IP addresses.</p>
+      <p>If you prefer not to be counted, you can install the <a class="link" href="https://tools.google.com/dlpage/gaoptout?hl=en" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a> or block cookies for this site in your browser. To learn more, see <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=en" target="_blank" rel="noopener">How Google uses information from sites or apps that use our services</a>.</p>
 
       <h2 class="display">Ads and cookies</h2>
       {adsLive ? (
