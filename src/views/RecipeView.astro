@@ -74,7 +74,9 @@ const ld = {
       <dl class="meta paper">
         {meta.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
-      <div class="actions"><ScallopButton href="#cook" label={u.start} width={170} /></div>
+      <div class="actions"><ScallopButton href="#cook" label={u.start} width={170} />
+        <button type="button" class="fav" data-id={recipe.id} aria-pressed="false" aria-label={u.fav.aria}><svg class="heart" viewBox="0 0 24 22" width="22" height="20" aria-hidden="true"><path d="M12 20.5C6.2 16.4 1.8 12.6 1.8 7.4 1.8 4.3 4.1 2 7 2c2.1 0 3.8 1.1 5 3 1.2-1.9 2.9-3 5-3 2.9 0 5.2 2.3 5.2 5.4 0 5.2-4.4 9-10.2 13.1Z" /></svg><span class="off">{u.fav.add}</span><span class="on">{u.fav.on}</span></button>
+      </div>
     </div>
     {d.image && <img class="art" src={d.image} srcset={`${smallImage(d.image)} 720w, ${d.image} 1100w`} sizes="(max-width: 600px) 100vw, 600px" alt={u.illus(d.title)} width="1100" height="720" fetchpriority="high" />}
   </section>
@@ -117,6 +119,8 @@ const ld = {
           ))}</ul>
         </div>
       ))}
+      <button type="button" class="shop-open"><svg viewBox="0 0 24 22" width="22" height="20" aria-hidden="true"><path d="M3 7h18l-2 11.5H5L3 7Z M8 7l3-5 M16 7l-3-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 11v4 M12 11v4 M16 11v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>{u.shop.btn}</span></button>
+      <p class="shop-hint soft">{u.shop.hint}</p>
       {nu && (
         <details class="nutri">
           <summary><span>{u.nutri.title}</span><span class="kc">{u.nutri.per(nu.count)} · {u.nutri.about(nu.calories)}</span></summary>
@@ -173,22 +177,67 @@ const ld = {
   <RollingPinProgress />
   <button type="button" class="cookmode" aria-pressed="false" hidden>
     <span class="dot" aria-hidden="true"></span>
+    <svg class="sun" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.8v3 M12 19.2v3 M1.8 12h3 M19.2 12h3 M4.8 4.8l2.1 2.1 M17.1 17.1l2.1 2.1 M4.8 19.2l2.1-2.1 M17.1 6.9l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     <span><strong>{u.cook}</strong><small class="off">{u.cookOff}</small><small class="on">{u.cookOn}</small></span>
   </button>
   <script type="application/json" id="ui-timer" set:html={JSON.stringify(u.timer)} />
+  <script type="application/json" id="ui-b" set:html={JSON.stringify({ toast: u.cookToast, now: u.nowHere, ding: u.ding, gotIt: u.gotIt, copied: u.shop.copied, empty: u.shop.empty,
+    head: u.shop.head(d.title), url: pageUrl, c1: u.shop.count(1), cn: u.shop.count(999).replace('999', '{n}'), favOn: u.fav.on, soundTip: u.soundTip })} />
+  <div class="toast" role="status" aria-live="polite"></div>
+  <div class="soundtip paper" role="dialog" aria-label={u.soundTest} hidden>
+    <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v4.5L5 16h14l-2-3.5V8a5 5 0 0 0-5-5Z M10 19a2 2 0 0 0 4 0" fill="#EBC25F" stroke="#4A4536" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    <p></p>
+    <div class="st-btns"><button type="button" class="st-test">{u.soundTest}</button><button type="button" class="st-ok">{u.gotIt}</button></div>
+  </div>
+  <div class="ding paper" role="alertdialog" aria-live="assertive" hidden>
+    <svg class="oven" viewBox="0 0 64 64" width="72" height="72" aria-hidden="true">
+      <rect x="6" y="6" width="52" height="50" rx="8" fill="#F7EFD6" stroke="#4A4536" stroke-width="2"/>
+      <circle cx="16" cy="15" r="3" fill="#B5552B"/><circle cx="25" cy="15" r="3" fill="#B5552B"/><rect x="36" y="12" width="15" height="6" rx="3" fill="#B5552B"/>
+      <rect x="12" y="24" width="40" height="25" rx="5" fill="#EBC25F" stroke="#4A4536" stroke-width="1.6" class="win"/>
+      <path d="M21 44c0-7 5-11 11-11s11 4 11 11Z" fill="#B5552B"/><path d="M27 37l2-2 M31 37l2-2 M35 37l2-2" stroke="#F7EFD6" stroke-width="1.4" stroke-linecap="round"/>
+      <rect x="12" y="56" width="6" height="4" rx="1" fill="#9A4420"/><rect x="46" y="56" width="6" height="4" rx="1" fill="#9A4420"/>
+    </svg>
+    <div><strong class="display ding-t"></strong><p class="ding-m"></p></div>
+    <button type="button" class="ding-ok">{u.gotIt}</button>
+  </div>
+  <dialog class="shop paper" aria-labelledby="shop-title" tabindex="-1">
+    <span class="tape" style="background:var(--tape-sage)"></span>
+    <h2 class="display" id="shop-title">{u.shop.title}</h2>
+    <p class="shop-count soft"></p>
+    <ul class="shop-list"></ul>
+    <div class="shop-actions">
+      <button type="button" class="shop-copy">{u.shop.copy}</button>
+      <button type="button" class="shop-share" hidden>{u.shop.share}</button>
+      <button type="button" class="shop-close">{u.shop.close}</button>
+    </div>
+  </dialog>
 </Base>
 <script>
   // 1. 烹飪模式：讓螢幕保持亮著（手機、iPad、電腦瀏覽器都支援；不支援的瀏覽器就不顯示按鈕）
+  const B = JSON.parse(document.getElementById('ui-b')?.textContent || '{}');
+  const toastEl = document.querySelector<HTMLElement>('.toast');
+  let toastT = 0;
+  const toast = (msg: string, ms = 4500) => { if (!toastEl) return; toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastT); toastT = window.setTimeout(() => toastEl.classList.remove('show'), ms); };
+  // 烹飪模式開著時，標出「現在做到這裡」：第一個還沒打勾的步驟
+  const stepLis = [...document.querySelectorAll<HTMLLIElement>('.steps ol > li')];
+  const markNow = (scroll = false) => {
+    const on = document.body.classList.contains('cooking');
+    const cur = on ? stepLis.find((li) => !li.querySelector<HTMLInputElement>('input[type=checkbox]')!.checked) : undefined;
+    stepLis.forEach((li) => { li.classList.toggle('now', li === cur); if (li === cur) li.dataset.now = B.now; });
+    if (scroll && cur) { const r = cur.getBoundingClientRect(); if (r.top > innerHeight * 0.7 || r.bottom < 0) cur.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  };
+  document.querySelector('.steps ol')?.addEventListener('change', () => markNow(true));
   const btn = document.querySelector<HTMLButtonElement>('.cookmode');
   let lock: any = null;
   const wl = (navigator as any).wakeLock;
   if (btn && wl) {
     btn.hidden = false;
-    const setOn = (on: boolean) => { btn.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('cooking', on); };
+    const setOn = (on: boolean) => { btn.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('cooking', on); markNow(); };
     const request = async () => { try { lock = await wl.request('screen'); lock.addEventListener('release', () => { if (document.visibilityState === 'visible') setOn(false); }); setOn(true); } catch { setOn(false); } };
     btn.addEventListener('click', async () => {
-      if (btn.getAttribute('aria-pressed') === 'true') { await lock?.release(); lock = null; setOn(false); }
-      else await request();
+      if (btn.getAttribute('aria-pressed') === 'true') { await lock?.release(); lock = null; setOn(false); toastEl?.classList.remove('show'); }
+      else { await request(); if (btn.getAttribute('aria-pressed') === 'true') { toast(B.toast); markNow(true); } }
     });
     // 捲到材料和步驟時才出現，不會擋住上面的標題和按鈕；開著的時候一直顯示
     const cook = document.querySelector('#cook');
@@ -215,13 +264,38 @@ const ld = {
     const fmt = (sec: number) => { sec = Math.max(0, Math.ceil(sec)); const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
       return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0'); };
     let ctx: AudioContext | null = null;
-    const unlock = () => { try { ctx = ctx || new (window.AudioContext || (window as any).webkitAudioContext)(); ctx.resume(); } catch {} };
+    const unlock = () => {
+      // iPhone：設成「播放」模式，靜音鍵打開時鈴聲也會響（Safari 17 以上）
+      try { const as = (navigator as any).audioSession; if (as && as.type !== 'playback') as.type = 'playback'; } catch {}
+      try { ctx = ctx || new (window.AudioContext || (window as any).webkitAudioContext)(); ctx.resume(); } catch {} };
+    // 第一次按計時器：提醒會響鈴、可以試聽（每台裝置只提醒一次）
+    const tip = document.querySelector<HTMLElement>('.soundtip');
+    const showTip = () => {
+      if (!tip) return; try { if (localStorage.getItem('pk-sound-tip')) return; localStorage.setItem('pk-sound-tip', '1'); } catch {}
+      tip.querySelector('p')!.textContent = B.soundTip; tip.hidden = false; };
+    tip?.querySelector('.st-test')?.addEventListener('click', () => { unlock(); beep(); });
+    tip?.querySelector('.st-ok')?.addEventListener('click', () => { tip.hidden = true; });
+    // 計時中讓螢幕保持亮著（螢幕自動鎖定時，網頁會被暫停，就不會響）
+    const wl2 = (navigator as any).wakeLock; let tLock: any = null;
+    const syncLock = async () => {
+      const running = Object.values(state).some((t) => !t.done);
+      if (running && wl2 && (!tLock || tLock.released) && document.visibilityState === 'visible') { try { tLock = await wl2.request('screen'); } catch {} }
+      if (!running && tLock && !tLock.released) { try { await tLock.release(); } catch {} tLock = null; }
+    };
     let ringing: number | null = null;
     const beep = () => { if (!ctx) return; const t0 = ctx.currentTime;
       for (let k = 0; k < 3; k++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = 880;
         g.gain.setValueAtTime(0.0001, t0 + k * 0.35); g.gain.exponentialRampToValueAtTime(0.4, t0 + k * 0.35 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + k * 0.35 + 0.25);
         o.connect(g).connect(ctx.destination); o.start(t0 + k * 0.35); o.stop(t0 + k * 0.35 + 0.3); } };
-    const ring = () => { if (ringing) return; let n = 0; beep(); try { navigator.vibrate?.([400, 200, 400, 200, 400]); } catch {}
+    const dingEl = document.querySelector<HTMLElement>('.ding');
+    const showDing = () => { if (!dingEl) return; const done = btns.filter((b) => state[b.dataset.id!]?.done).map((b) => b.dataset.label);
+      if (!done.length) { dingEl.hidden = true; return; }
+      dingEl.querySelector('.ding-t')!.textContent = B.ding; dingEl.querySelector('.ding-m')!.textContent = done.map((l) => fill(L.barDone, { label: l! })).join('　');
+      dingEl.hidden = false; dingEl.classList.remove('pop'); void dingEl.offsetWidth; dingEl.classList.add('pop'); };
+    dingEl?.querySelector('.ding-ok')?.addEventListener('click', () => {
+      for (const [id, t] of Object.entries(state)) if (t.done) delete state[id];
+      save(); render(); dingEl.hidden = true; syncLock(); });
+    const ring = () => { showDing(); if (ringing) return; let n = 0; beep(); try { navigator.vibrate?.([400, 200, 400, 200, 400]); } catch {}
       ringing = window.setInterval(() => { if (++n >= 15 || !Object.values(state).some((t) => t.done)) stopRing(); else beep(); }, 2000); };
     const stopRing = () => { if (ringing) clearInterval(ringing); ringing = null; };
     const title = document.title;
@@ -246,29 +320,30 @@ const ld = {
       }
       bar.innerHTML = rows.join(''); bar.classList.toggle('show', rows.length > 0);
       document.title = anyDone ? L.titlePrefix + title : title;
-      if (!anyDone) stopRing();
+      if (!anyDone) { stopRing(); if (dingEl) dingEl.hidden = true; }
     };
     const tick = () => { const now = Date.now(); let fired = false;
       for (const [id, t] of Object.entries(state)) if (!t.done && t.end <= now) { t.done = true; fired = true; }
-      if (fired) { save(); ring(); } render(); };
+      if (fired) { save(); ring(); syncLock(); } render(); };
     let armed: string | null = null, armTimer = 0;
     btns.forEach((b) => b.addEventListener('click', () => {
       unlock(); const id = b.dataset.id!, t = state[id];
-      if (!t) { state[id] = { end: Date.now() + +b.dataset.min! * 1000 }; save(); tick(); return; }
-      if (t.done) { delete state[id]; save(); render(); return; }
+      if (!t) { state[id] = { end: Date.now() + +b.dataset.min! * 1000 }; save(); tick(); showTip(); syncLock(); return; }
+      if (t.done) { delete state[id]; save(); render(); syncLock(); return; }
       // 倒數中：連點兩下才取消，避免手忙腳亂時不小心按掉
-      if (armed === id) { delete state[id]; armed = null; save(); render(); return; }
+      if (armed === id) { delete state[id]; armed = null; save(); render(); syncLock(); return; }
       armed = id; clearTimeout(armTimer); b.querySelector<HTMLElement>('.cd')!.textContent = L.cancel;
       armTimer = window.setTimeout(() => { armed = null; render(); }, 2500);
     }));
     document.querySelectorAll<HTMLButtonElement>('.plus').forEach((p) => p.addEventListener('click', () => {
-      unlock(); const id = p.dataset.for!; state[id] = { end: Date.now() + 5 * 60 * 1000, extra: true }; save(); tick(); }));
+      unlock(); const id = p.dataset.for!; state[id] = { end: Date.now() + 5 * 60 * 1000, extra: true }; save(); tick(); syncLock(); }));
     bar.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]'); if (!go) return;
       byId(go.dataset.go!).closest('li')!.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
     // 重新整理後，已經過了的計時直接顯示「時間到」
     for (const t of Object.values(state)) if (!t.done && t.end <= Date.now()) t.done = true;
     render(); setInterval(tick, 1000);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { tick(); syncLock(); } });
+    syncLock();
   }
 
   // 4. 份量調整：輸入要做幾份（和每份容量），材料份量自動換算
@@ -327,7 +402,61 @@ const ld = {
     try { const saved = JSON.parse(localStorage.getItem(key) || '[]'); boxes.forEach((b, i) => (b.checked = !!saved[i])); } catch {}
     sync();
     root.addEventListener('change', () => { try { localStorage.setItem(key, JSON.stringify(boxes.map((b) => b.checked))); } catch {} sync(); });
-    reset?.addEventListener('click', () => { boxes.forEach((b) => (b.checked = false)); try { localStorage.removeItem(key); } catch {} sync(); });
+    reset?.addEventListener('click', () => { boxes.forEach((b) => (b.checked = false)); try { localStorage.removeItem(key); } catch {} sync(); markNow(); });
+  }
+  markNow();
+
+  // 5. 購物清單：還沒打勾的材料（份量照「要做多少」換算後的數字）
+  {
+    const dlg = document.querySelector<HTMLDialogElement>('dialog.shop');
+    const open = document.querySelector<HTMLButtonElement>('.shop-open');
+    if (dlg && open) {
+      const list = dlg.querySelector<HTMLElement>('.shop-list')!, count = dlg.querySelector<HTMLElement>('.shop-count')!;
+      const copyBtn = dlg.querySelector<HTMLButtonElement>('.shop-copy')!, shareBtn = dlg.querySelector<HTMLButtonElement>('.shop-share')!;
+      let text = '';
+      const build = () => {
+        const groups = [...document.querySelectorAll<HTMLElement>('.ingredients .group')];
+        const lines: string[] = []; let html = ''; let n = 0;
+        groups.forEach((g) => {
+          const gname = g.querySelector('.gname')?.textContent?.trim();
+          const items = [...g.querySelectorAll('li')].filter((li) => !li.querySelector<HTMLInputElement>('input')!.checked)
+            .map((li) => ({ name: li.querySelector('.name')!.textContent!.trim(), amt: li.querySelector('.amt')!.textContent!.trim() }));
+          if (!items.length) return;
+          if (gname) { const h = document.createElement('li'); h.className = 'g'; h.textContent = gname; html += h.outerHTML; lines.push('', `【${gname}】`); }
+          items.forEach((i) => { n++; const li = document.createElement('li'); li.innerHTML = '<span></span><span class="a"></span>';
+            li.children[0].textContent = i.name; li.children[1].textContent = i.amt; html += li.outerHTML; lines.push(`□ ${i.name}　${i.amt}`); });
+        });
+        list.innerHTML = html || `<li class="empty">${B.empty}</li>`;
+        count.textContent = n ? (n === 1 ? B.c1 : B.cn.replace('{n}', String(n))) : '';
+        copyBtn.hidden = !n; shareBtn.hidden = !n || !navigator.share;
+        text = [B.head, ...lines, '', B.url].join('\n').replace(/\n\n\n/g, '\n\n');
+      };
+      open.addEventListener('click', () => { build(); dlg.showModal(); dlg.scrollTop = 0; dlg.focus(); });
+      dlg.querySelector('.shop-close')!.addEventListener('click', () => dlg.close());
+      dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+      copyBtn.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(text); } catch { const ta = document.createElement('textarea'); ta.value = text; dlg.append(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+        const old = copyBtn.textContent; copyBtn.textContent = B.copied; setTimeout(() => (copyBtn.textContent = old), 1800);
+      });
+      shareBtn.addEventListener('click', () => { navigator.share({ title: B.head, text }).catch(() => {}); });
+    }
+  }
+
+  // 6. 我想做：按愛心把食譜存到這台裝置（首頁會出現「我想做的食譜」）
+  {
+    const fav = document.querySelector<HTMLButtonElement>('button.fav');
+    if (fav) {
+      const id = fav.dataset.id!;
+      const get = (): string[] => { try { return JSON.parse(localStorage.getItem('pk-favs') || '[]'); } catch { return []; } };
+      const set = (a: string[]) => { try { localStorage.setItem('pk-favs', JSON.stringify(a)); } catch {} };
+      const show = () => fav.setAttribute('aria-pressed', String(get().includes(id)));
+      show();
+      fav.addEventListener('click', () => {
+        const a = get(); const on = !a.includes(id);
+        set(on ? [id, ...a] : a.filter((x) => x !== id)); show();
+        if (on) { fav.classList.remove('beat'); void fav.offsetWidth; fav.classList.add('beat'); toast(B.favOn, 2200); }
+      });
+    }
   }
 </script>
 <style>
@@ -346,7 +475,7 @@ const ld = {
   .meta div:first-child { border-left: 0; }
   dt { font-size: 13px; color: var(--olive-ink); }
   dd { margin: 2px 0 0; font-size: 20px; }
-  .actions { margin-top: 18px; }
+  .actions { margin-top: 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .art { justify-self: center; width: 100%; max-width: 600px; }
   .body { display: grid; grid-template-columns: 360px 1fr; gap: 56px; align-items: start; padding-top: 34px; padding-bottom: 50px; }
   .ingredients { position: relative; padding: 30px 28px 24px; transform: rotate(-0.8deg); }
@@ -441,6 +570,77 @@ const ld = {
   .cookmode[aria-pressed="true"] { background: var(--olive); border-color: var(--olive-ink); color: var(--on-terracotta); }
   .cookmode[aria-pressed="true"] .dot { background: var(--on-terracotta); }
   .cookmode[aria-pressed="true"] .dot::after { left: 16px; background: var(--olive); }
+  .cookmode .sun { flex: none; color: var(--mustard); margin-left: -2px; }
+  .cookmode[aria-pressed="true"] .sun { color: #FFE08A; animation: sunSpin 8s linear infinite; }
+  @keyframes sunSpin { to { transform: rotate(360deg); } }
+  /* 提示小紙條（烹飪模式打開、加入我想做） */
+  .toast { position: fixed; z-index: 80; left: 50%; bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+    width: max-content; max-width: min(420px, calc(100vw - 36px)); padding: 12px 18px; background: var(--paper-cream); color: var(--ink); font-size: 15px; line-height: 1.6;
+    border: 1.5px solid var(--pencil); border-radius: 18px 14px 20px 16px; box-shadow: var(--shadow-paper); transition: opacity .3s, transform .3s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  /* 現在做到這裡（只有烹飪模式開著時） */
+  .steps li.now { position: relative; background: var(--paper); box-shadow: var(--shadow-paper); border-radius: 6px; border-bottom-color: transparent;
+    margin: 18px -14px 8px; padding: 0 14px 4px; }
+  .steps li.now::before { content: attr(data-now); position: absolute; top: -12px; left: 12px; padding: 1px 10px; font-size: 12px; letter-spacing: .06em;
+    color: var(--on-terracotta); background: var(--terracotta); border-radius: 10px 8px 11px 9px; }
+  .steps li.now .num { animation: nowPulse 1.8s ease-in-out infinite; border-radius: 50%; }
+  @keyframes nowPulse { 50% { box-shadow: 0 0 0 6px rgba(217, 164, 58, .28); } }
+  /* 購物清單 */
+  .shop-open { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 8px 16px; font: inherit; font-size: 15px; color: var(--olive-ink); cursor: pointer;
+    background: var(--paper); border: 1.5px solid var(--olive); border-radius: 20px 16px 22px 18px; }
+  .shop-open:hover { background: var(--sage); }
+  .shop-hint { font-size: 12px; margin-top: 6px; }
+  dialog.shop { border: 0; padding: 30px 28px 22px; width: min(420px, calc(100vw - 32px)); max-height: 82vh; color: var(--ink); overflow: auto; overflow-x: hidden; }
+  dialog.shop::backdrop { background: rgba(62, 58, 48, .35); }
+  dialog.shop[open] { animation: shopIn .25s ease; }
+  @keyframes shopIn { from { opacity: 0; transform: translateY(14px) rotate(-1deg); } }
+  dialog.shop h2 { font-size: 28px; line-height: 1.3; }
+  .shop-count { font-size: 14px; margin-top: 2px; }
+  .shop-list { list-style: none; margin: 14px 0 18px; padding: 0; }
+  :global(.shop-list li) { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; align-items: baseline; font-size: 16px; line-height: 1.5; border-bottom: 1px solid var(--rule-blue); }
+  :global(.shop-list li::before) { content: ""; flex: none; width: 14px; height: 14px; border: 1.5px solid var(--pencil); border-radius: 3px; margin-right: -2px; transform: translateY(2px); }
+  :global(.shop-list li span:first-of-type) { flex: 1; }
+  :global(.shop-list li .a) { color: var(--terracotta-ink); white-space: nowrap; }
+  :global(.shop-list li.g) { color: var(--terracotta-ink); font-size: 13px; letter-spacing: .06em; border-bottom: 0; padding: 14px 0 0; }
+  :global(.shop-list li.g::before), :global(.shop-list li.empty::before) { display: none; }
+  .shop-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .shop-actions button { font: inherit; font-size: 15px; padding: 8px 16px; cursor: pointer; border-radius: 20px 16px 22px 18px; border: 1.5px solid var(--pencil); background: var(--paper); color: var(--ink); }
+  .shop-actions .shop-copy { background: var(--olive); border-color: var(--olive-ink); color: var(--on-terracotta); }
+  .shop-actions .shop-close { margin-left: auto; }
+  /* 第一次計時：響鈴提醒 */
+  .soundtip { position: fixed; z-index: 85; left: 50%; bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px)); transform: translateX(-50%);
+    display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: start; width: min(440px, calc(100vw - 32px)); padding: 14px 16px;
+    border: 1.5px solid var(--pencil); border-radius: 20px 16px 22px 18px; animation: shopIn .3s ease; }
+  .soundtip[hidden] { display: none; }
+  .soundtip p { font-size: 15px; line-height: 1.6; }
+  .st-btns { grid-column: 1 / -1; display: flex; gap: 10px; justify-content: flex-end; }
+  .st-btns button { font: inherit; font-size: 15px; padding: 7px 15px; cursor: pointer; border-radius: 20px 16px 22px 18px; border: 1.5px solid var(--pencil); background: var(--paper); color: var(--ink); }
+  .st-btns .st-ok { background: var(--olive); border-color: var(--olive-ink); color: var(--on-terracotta); }
+  /* 計時器時間到：烤箱跳出來 */
+  .ding { position: fixed; z-index: 90; left: 50%; top: 18vh; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+    width: max-content; max-width: calc(100vw - 32px); border: 1.5px solid var(--pencil); border-radius: 22px 18px 24px 20px; }
+  .ding[hidden] { display: none; }
+  .ding.pop { animation: dingPop .6s cubic-bezier(.3, 1.6, .5, 1); }
+  .ding .oven { flex: none; animation: ovenShake 1s ease-in-out infinite; }
+  .ding .oven .win { animation: winGlow 1s ease-in-out infinite alternate; }
+  .ding strong { display: block; font-size: 30px; line-height: 1.1; color: var(--terracotta-ink); }
+  .ding p { font-size: 15px; }
+  .ding-ok { flex: none; font: inherit; font-size: 15px; padding: 8px 16px; cursor: pointer; background: var(--terracotta); color: var(--on-terracotta); border: 0; border-radius: 20px 16px 22px 18px; }
+  @keyframes dingPop { from { transform: translateX(-50%) scale(.6); opacity: 0; } }
+  @keyframes ovenShake { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 40% { transform: rotate(5deg); } 60% { transform: rotate(-3deg); } 80% { transform: rotate(0); } }
+  @keyframes winGlow { to { fill: #FFE08A; } }
+  /* 我想做（愛心） */
+  .fav { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 15px; color: var(--ink-muted); background: none; border: 0; padding: 8px 6px; cursor: pointer; }
+  .fav .heart path { fill: transparent; stroke: var(--terracotta); stroke-width: 1.8; transition: fill .2s; }
+  .fav:hover .heart path { fill: rgba(181, 85, 43, .15); }
+  .fav[aria-pressed="true"] .heart path { fill: var(--terracotta); }
+  .fav .on, .fav[aria-pressed="true"] .off { display: none; }
+  .fav[aria-pressed="true"] .on { display: inline; color: var(--terracotta-ink); }
+  .fav.beat .heart { animation: beat .5s ease; }
+  @keyframes beat { 30% { transform: scale(1.35); } 60% { transform: scale(.9); } }
+  @media (prefers-reduced-motion: reduce) {
+    .cookmode[aria-pressed="true"] .sun, .steps li.now .num, .ding .oven, .ding .oven .win, .ding.pop, .fav.beat .heart, dialog.shop[open] { animation: none; }
+  }
   /* 烹飪模式開著時，步驟字放大一點，離遠一點也看得清楚 */
   :global(body.cooking) .steps .st { font-size: 27px; }
   :global(body.cooking) .steps .sp { font-size: 18px; }
