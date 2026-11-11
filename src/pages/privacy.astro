@@ -4,11 +4,11 @@ import { ADS } from '../site';
 import EmailLink from '../components/EmailLink.astro';
 const adsLive = Boolean(ADS.client);
 ---
-<Base title="隱私權政策" description="Philia的廚房料理如何處理你的資料：不需要註冊、勾選紀錄只存在你的裝置上，以及廣告和 Cookie 的說明。">
+<Base title="隱私權政策" description="Philia的廚房料理如何處理你的資料：不需要註冊、勾選紀錄只存在你的裝置上，以及流量分析、廣告和 Cookie 的說明。">
   <article class="wrap policy">
     <div class="fr eyebrow">confidentialité —</div>
     <h1 class="display">隱私權政策</h1>
-    <p class="soft updated">最後更新：2026 年 10 月 29 日</p>
+    <p class="soft updated">最後更新：2026 年 11 月 11 日</p>
 
     <section class="paper sheet">
       <h2 class="display">這個網站</h2>
@@ -20,6 +20,11 @@ const adsLive = Boolean(ADS.client);
 
       <h2 class="display">網站主機</h2>
       <p>這個網站放在 GitHub Pages 上。為了網站安全和正常運作，GitHub 可能會記錄造訪者的 IP 位址等技術資訊。詳細內容請看 <a class="link" href="https://docs.github.com/zh/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隱私權聲明</a>。</p>
+
+      <h2 class="display">流量分析（Google Analytics）</h2>
+      <p>為了知道有多少人在看、哪些食譜比較受歡迎，這個網站使用 Google Analytics 4 統計造訪情況。它會用 Cookie 記錄匿名的使用資料，例如看了哪些頁面、停留多久、大概所在的國家或城市、使用的裝置和瀏覽器，以及你是從哪裡連到這個網站的。</p>
+      <p>這些資料只用來了解整體的閱讀情況，我看不到你是誰，也不會用來找出個人。Google Analytics 4 不會記錄或儲存完整的 IP 位址。</p>
+      <p>不想被統計的話，可以安裝 <a class="link" href="https://tools.google.com/dlpage/gaoptout?hl=zh-TW" target="_blank" rel="noopener">Google Analytics 停用外掛程式</a>，或在瀏覽器封鎖這個網站的 Cookie。想了解更多，請看 <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=zh-TW" target="_blank" rel="noopener">Google 如何使用合作夥伴網站或應用程式的資訊</a>。</p>
 
       <h2 class="display">廣告與 Cookie</h2>
       {adsLive ? (
