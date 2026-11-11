@@ -6,6 +6,7 @@ import RecipeMenu from '../components/RecipeMenu.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import SteamyStillLife from '../components/SteamyStillLife.astro';
 import FortuneDraw from '../components/FortuneDraw.astro';
+import GingerWorkshop from '../components/GingerWorkshop.astro';
 import { allRecipes, featuredRecipe, recipeUrl, smallImage } from '../site';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
@@ -56,6 +57,8 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
     <div class="section-title"><h2>{u.latest}</h2><span class="fr">les dernières recettes</span></div>
     <div class="card-grid">{latest.map((r, i) => <RecipeCard recipe={r} index={i} />)}</div>
   </section>
+
+  <GingerWorkshop />
 
   <FortuneDraw recipes={recipes} />
 
