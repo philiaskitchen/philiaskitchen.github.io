@@ -3,6 +3,10 @@
 import Base from '../layouts/Base.astro';
 import ScallopButton from '../components/ScallopButton.astro';
 import { allRecipes, recipeUrl, smallImage } from '../site';
+import { GINGERBREAD, SANTA_HAT } from '../data/xmasArt';
+const ginger = GINGERBREAD.replace('<svg viewBox="0 0 40 46" aria-hidden="true">', '<svg x="86" y="110" width="48" height="66" viewBox="0 0 40 46">');
+// 聖誕帽：放大、斜斜戴在烤箱右上角的圓角上
+const hat = `<g transform="rotate(26 190 56)">${SANTA_HAT.replace('<svg viewBox="0 0 84 70" aria-hidden="true">', '<svg x="138" y="-16" width="112" height="93" viewBox="0 0 84 70">')}</g>`;
 const recipes = await allRecipes('zh');
 const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.data.image ? smallImage(r.data.image) : '' }));
 ---
@@ -20,10 +24,13 @@ const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.
       <rect x="44" y="102" width="132" height="80" rx="14" fill="#EBC25F" stroke="#4A4536" stroke-width="2.4" class="win" />
       <g class="bread"><path d="M72 170 C72 140 90 126 110 126 C130 126 148 140 148 170 Z" fill="#C0642E" stroke="#4A4536" stroke-width="2" />
         <path d="M92 146 l8-8 M106 142 l8-8 M120 146 l8-8" stroke="#F7EFD6" stroke-width="3" stroke-linecap="round" /></g>
+      <g class="ginger" set:html={ginger} />
       <rect x="40" y="200" width="18" height="12" rx="3" fill="#9A4420" /><rect x="162" y="200" width="18" height="12" rx="3" fill="#9A4420" />
+      <g class="xhat" set:html={hat} />
     </svg>
     <h1 class="display">這一頁還在烤箱裡</h1>
     <p class="muted">找不到你要的頁面，可能還沒烤好。先看看別的食譜吧！</p>
+    <p class="muted xline">聖誕老人可能把這一頁帶走了 🎅 · <span lang="en">Santa may have taken this page.</span></p>
     <p class="muted" lang="en">This page is still in the oven — I couldn't find it. <a class="link" href="/en/">Back to the English site</a></p>
     <div class="try" hidden>
       <div class="fr">en attendant…</div>
@@ -58,6 +65,12 @@ const list = recipes.map((r) => ({ t: r.data.title, u: recipeUrl(r, 'zh'), i: r.
   @keyframes tick { to { transform: rotate(360deg); } }
   @keyframes steam { 0% { stroke-dashoffset: 40; opacity: 0; } 30% { opacity: .8; } 100% { stroke-dashoffset: -60; opacity: 0; } }
   h1 { font-size: 44px; line-height: 1.3; }
+  /* 聖誕節：烤箱裡烤薑餅人、烤箱戴聖誕帽 */
+  .ginger, .xhat, .xline { display: none; }
+  :global(html[data-fest="xmas"]) .ginger, :global(html[data-fest="xmas"]) .xhat { display: inline; }
+  :global(html[data-fest="xmas"]) .xline { display: block; }
+  :global(html[data-fest="xmas"]) .bread { display: none; }
+  .ginger { transform-origin: 110px 170px; animation: rise 3.2s ease-in-out infinite; }
   p { margin-top: 10px; }
   .try { margin: 30px 0 26px; width: 100%; max-width: 680px; }
   .try .fr { color: var(--terracotta-ink); font-size: 20px; margin-bottom: 14px; }
