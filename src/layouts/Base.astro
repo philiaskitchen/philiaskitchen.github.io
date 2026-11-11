@@ -45,8 +45,30 @@ const gaOn = Boolean(GA_ID) && import.meta.env.PROD;
   <meta property="og:locale" content={lang === 'en' ? 'en_AU' : 'zh_TW'} />
   <meta property="og:site_name" content={u.siteName} />
   <meta name="theme-color" content="#DDE3D2" />
-  {gaOn && <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>}
-  {gaOn && <script is:inline define:vars={{ GA_ID }}>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); gtag('config', GA_ID);</script>}
+  {/* GA4：網址加 ?me=1 會把這個瀏覽器標記成「自己人」，之後不再計入 GA；?me=0 取消 */}
+  {gaOn && <script is:inline define:vars={{ GA_ID }}>
+    var KEY = 'pk-no-ga', me = (location.search.match(/[?&]me=([01])/) || [])[1], self = false;
+    try {
+      if (me === '1') localStorage.setItem(KEY, '1');
+      if (me === '0') localStorage.removeItem(KEY);
+      self = localStorage.getItem(KEY) === '1';
+    } catch (e) { self = me === '1'; }
+    window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} window.gtag = gtag;
+    if (self) {
+      window['ga-disable-' + GA_ID] = true;
+    } else {
+      var s = document.createElement('script'); s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      gtag('js', new Date()); gtag('config', GA_ID);
+    }
+    if (me) addEventListener('DOMContentLoaded', function () {
+      var n = document.createElement('div');
+      n.textContent = self ? '已設定：這個瀏覽器不會計入 GA 流量 ✓' : '已取消：這個瀏覽器會計入 GA 流量';
+      n.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;background:#2f3a2a;color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.2)';
+      document.body.appendChild(n); setTimeout(function () { n.remove(); }, 4000);
+    });
+  </script>}
   {ADS.client && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
   <script is:inline>if (/[?&]ads=preview/.test(location.search)) document.documentElement.classList.add('show-ad-preview');</script>
   <slot name="head" />
