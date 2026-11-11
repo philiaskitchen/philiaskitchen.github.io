@@ -90,5 +90,8 @@ export const ADS = {
   } as Record<string, string>,
 };
 
+// Google Analytics 4 評估 ID（G-…）。空白就不載入 GA4。只在正式網站（npm run build）載入，本機預覽不會算進去。
+export const GA_ID = 'G-0YKY9WF6DJ';
+
 // 聯絡信箱：拆成兩段放，網頁載入後才組起來，自動抓 email 的程式比較難抓到
 export const CONTACT = { user: 'hello', domain: 'philiaskitchen.com' };
