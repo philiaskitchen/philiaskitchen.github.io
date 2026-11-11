@@ -119,11 +119,11 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   .latest { padding-top: 30px; padding-bottom: 50px; }
   .latest .card-grid { margin-top: 32px; }
   .band { padding: 44px 0 50px; scroll-margin-top: 20px; }
-  .duo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; }
+  .duo { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 56px; align-items: start; }
   .about-col h2 { font-size: 28px; margin-top: 6px; }
   .about-col p { font-size: 15px; line-height: 1.9; margin: 6px 0 12px; }
   @media (max-width: 860px) {
-    .hero, .duo { grid-template-columns: 1fr; }
+    .hero, .duo { grid-template-columns: minmax(0, 1fr); }
     .banner { order: -1; justify-self: center; }
     .banner.feat { max-width: 380px; }
     h1 { font-size: 36px; }
