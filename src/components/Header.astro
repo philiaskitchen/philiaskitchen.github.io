@@ -18,7 +18,7 @@ const items = [
 <header>
   <img class="awning" src="/images/ui/awning.svg" alt="" aria-hidden="true" />
   <div class:list={['wrap', 'bar', { home }]}>
-    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`} data-fresh={u.egg.fresh} data-burnt={u.egg.burnt} data-xfresh={u.egg.xFresh} data-xburnt={u.egg.xBurnt}>
+    <a class="brand" href={lp(lang, '/')} aria-label={`${u.siteName} ${u.homeAria}`} data-fresh={u.egg.fresh} data-burnt={u.egg.burnt} data-xfresh={u.egg.xFresh} data-xburnt={u.egg.xBurnt} data-purr={u.egg.purr}>
       {home && <span class="issue fr">N° 01 · automne 2026</span>}
       <span class="logo-box"><img class="logo" src={u.logo} alt={u.siteName} /><span class="glow" style={lang === 'en' ? 'left:4.73%;width:7.65%' : 'left:4.47%;width:7.23%'}></span></span>
       <span class="fr tagline">la cuisine de Philia</span>
@@ -113,6 +113,11 @@ const items = [
 </style>
 <script>
   import { gingerbread } from '../data/xmasArt';
+  // 首頁：logo 的小虎斑貓（網頁載入完才開始下載貓的圖，不影響首頁速度）
+  if (document.querySelector('header .bar.home')) {
+    const go = () => import('../scripts/logoCat').then((m) => m.startLogoCat());
+    if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
+  }
   // 桌機：選單永遠打開；手機：點漢堡才打開
   const d = document.querySelector('header .menu') as HTMLDetailsElement | null;
   const mq = matchMedia('(min-width: 761px)');
