@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import Note from '../../components/Note.astro';
+import EmailLink from '../../components/EmailLink.astro';
+---
+<Base title="Contact" description="Questions about a recipe, photos of what you made, or a collaboration idea? Email Philia's Kitchen." active="contact">
+  <section class="wrap intro">
+    <div class="fr eyebrow">contact —</div>
+    <h1 class="display">Contact</h1>
+    <p class="muted">Stuck on a step in one of the recipes? Or did it turn out well and you want to show me? You are welcome to email me.</p>
+    <div class="mail paper">
+      <div class="label">Email</div>
+      <EmailLink show class="addr" label="Email me" />
+      <p class="muted small">I try to reply to every email, but sometimes it may take a little while. Thank you for your patience.</p>
+    </div>
+    <p class="muted note-privacy">I only use your email address to reply to you, and I do not share it with anyone. See the <a class="link" href="/en/privacy/">privacy policy</a>.</p>
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <section class="wrap topics">
+    <div class="section-title"><h2>What you can write about</h2><span class="fr">écris-moi</span></div>
+    <div class="notes">
+      <Note title="Recipe questions" items={['A step is not clear, or you cannot find an ingredient.', 'Please tell me which recipe you made, so I can help.']} tape="var(--mustard)" tilt={-1} />
+      <Note title="Found a mistake" items={['A wrong amount, temperature or time.', 'Typos or unclear English are welcome too.']} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={0.8} />
+      <Note title="Working together" items={['Brands, ingredients or kitchen tools.', 'Please tell me a little about your idea.']} tape="var(--dusty-blue)" tilt={-0.6} />
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { padding-top: 40px; padding-bottom: 30px; }
+  .intro > * { max-width: 680px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 52px; line-height: 1.25; margin-top: 4px; }
+  .intro > p { font-size: 17px; line-height: 2; margin-top: 16px; }
+  .mail { margin-top: 26px; padding: 26px 30px; }
+  .label { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--olive-ink); }
+  .mail :global(.addr) { display: inline-block; font-size: 24px; margin-top: 6px; border-bottom: 1px solid currentColor; word-break: break-all; }
+  .mail :global(.addr:hover) { color: var(--terracotta-ink); }
+  .small { font-size: 14px; line-height: 1.8; margin-top: 12px; }
+  .topics { padding-top: 34px; padding-bottom: 60px; }
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
+  .note-privacy { font-size: 13px; line-height: 1.8; margin-top: 14px; }
+  @media (max-width: 860px) { .notes { grid-template-columns: minmax(0, 1fr); } h1 { font-size: 40px; } .mail :global(.addr) { font-size: 20px; } }
+</style>
