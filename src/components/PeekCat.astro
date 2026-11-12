@@ -1,14 +1,14 @@
 ---
 // 菜單卡右邊偷看的黑白小貓（2026-11-13）：偶爾從菜單卡後面慢慢探頭，看一下讀者再縮回去
-// 圖：public/images/site/cat/peek.webp（Gemini 畫，328×454；圖左邊 77px 是前腳，網站上一律藏在菜單卡後面）
-// Philia 的要求：不要點了呼嚕呼嚕、不要伸手搭在菜單上、動作要慢
+// 圖：public/images/site/cat/peek.webp（Gemini 畫，328×360；手已經從圖上拿掉，只剩頭和脖子；圖左邊 77px 永遠藏在菜單卡後面）
+// Philia 的要求：不要點了呼嚕呼嚕、不要伸手（不要擬人化把手放在卡片上）、動作要慢
 ---
 <div class="peek" aria-hidden="true">
-  <div class="pk-in"><img src="/images/site/cat/peek.webp" alt="" width="164" height="227" loading="lazy" decoding="async" /></div>
+  <div class="pk-in"><img src="/images/site/cat/peek.webp" alt="" width="164" height="180" loading="lazy" decoding="async" /></div>
 </div>
 <style>
-  /* 圖左邊 38.5px（前腳）永遠被切掉，看起來前腳和身體都在菜單卡後面 */
-  .peek { --edge: 38.5px; position: absolute; left: calc(100% - var(--edge)); bottom: 40px; width: 164px; height: 227px;
+  /* 圖左邊 38.5px 永遠被切掉，看起來身體在菜單卡後面 */
+  .peek { --edge: 38.5px; position: absolute; left: calc(100% - var(--edge)); bottom: 80px; width: 164px; height: 180px;
     pointer-events: none; display: none; z-index: 2; clip-path: inset(-6px -6px 0 var(--edge)); }
   .peek.on { display: block; }
   .pk-in { width: 100%; height: 100%; transform: translateX(-80%); transition: transform 1.8s cubic-bezier(.35,.1,.25,1); }
@@ -28,8 +28,8 @@
     if (!el || !col || innerWidth <= 860) return false;
     const about = col.parentElement?.querySelector('.about-col')?.getBoundingClientRect();
     const menu = col.getBoundingClientRect();
-    // 菜單卡右邊、關於我下面要有足夠空白才出現（貓高 227px，離底部 40px）
-    return !!about && menu.bottom - 40 - 227 - 24 > about.bottom;
+    // 菜單卡右邊、關於我下面要有足夠空白才出現（貓高 180px，離底部 80px）
+    return !!about && menu.bottom - 80 - 180 - 24 > about.bottom;
   };
   if (el && col && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
