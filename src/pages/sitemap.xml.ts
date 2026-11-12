@@ -14,6 +14,7 @@ export const GET: APIRoute = async ({ site }) => {
     { zh: '/', en: '/en/', lastmod: newest },
     { zh: '/about/', en: '/en/about/' },
     { zh: '/privacy/', en: '/en/privacy/' },
+    { zh: '/contact/', en: '/en/contact/' },
     ...(Object.keys(CATEGORIES) as CategoryKey[]).map((c) => ({ zh: categoryUrl(c, 'zh'), en: categoryUrl(c, 'en'), lastmod: newest })),
     ...zh.map((r) => ({ zh: recipeUrl(r, 'zh'), en: enIds.has(r.id) ? recipeUrl(r, 'en') : undefined, lastmod: r.data.date })),
   ];
