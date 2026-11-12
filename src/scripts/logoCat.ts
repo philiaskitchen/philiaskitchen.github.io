@@ -1,5 +1,5 @@
 // ===== 首頁 logo 的小虎斑貓（逐格動畫，每一格都是畫好的完整的貓）=====
-// 從畫面右邊走進來 → 在「理」右下方停下、坐下、兩腳站起抬頭、蹲低 → 跳過「房」→ 前腳先落在「廚」左下方
+// 從畫面右邊走進來（手機：從頁首的愛心後面走出來）→ 在「理」右下方停下、坐下、兩腳站起抬頭、蹲低 → 跳過「房」→ 前腳先落在「廚」左下方
 // → 站好 → 一直慢慢走出畫面左邊。每次打開首頁演一次。
 // 點貓：貓停下來呼嚕、冒愛心，再繼續走（只跟貓互動，不會觸發烤箱彩蛋）。
 import { CAT_WALK, CAT_SEQ, CAT_SEQ_SCALE } from '../data/catFrames';
@@ -25,7 +25,10 @@ export function logoCat(box: HTMLElement, lang: 'zh' | 'en', purrText: string) {
 
   let G: { LH: number; X: (s: number) => number; sW: number; sQ: number; ground: number; vw: number; v: number; stride: number };
   const measure = () => {
-    const LH = img.clientHeight, r = img.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const LH = img.clientHeight, r = img.getBoundingClientRect();
+    // 手機：舞台右邊切在頁首愛心的左邊，貓像是從愛心後面走出來（不用穿過愛心、English、選單按鈕）
+    const heart = matchMedia('(max-width: 760px)').matches ? document.querySelector('header .favlink svg')?.getBoundingClientRect() : null;
+    const vw = heart && heart.left > r.right ? Math.round(heart.left + 1) : document.documentElement.clientWidth;
     const top = r.top + scrollY - LH * 1.8;
     Object.assign(stage.style, { top: top + 'px', width: vw + 'px', height: LH * 3.2 + 'px' });
     const sc = LH / 264, sW = (0.74 * LH) / 131;
@@ -118,6 +121,7 @@ export function logoCat(box: HTMLElement, lang: 'zh' | 'en', purrText: string) {
 // 先把每一格的圖都載好，才開始演（不然走路時會閃）
 export function startLogoCat() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (document.documentElement.dataset.fest === 'xmas') return; // 聖誕期間（12/1–12/26）先不出現，節日過後自動恢復
   const brand = document.querySelector<HTMLElement>('header .bar.home .brand');
   const box = brand?.querySelector<HTMLElement>('.logo-box');
   if (!brand || !box) return;
