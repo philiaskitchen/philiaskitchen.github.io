@@ -1,0 +1,53 @@
+---
+// 菜單卡右邊偷看的黑白小貓（2026-11-13）：偶爾從菜單卡後面慢慢探頭，看一下讀者再縮回去
+// 圖：public/images/site/cat/peek.webp（Gemini 畫，328×454；圖左邊 77px 是前腳，網站上一律藏在菜單卡後面）
+// Philia 的要求：不要點了呼嚕呼嚕、不要伸手搭在菜單上、動作要慢
+---
+<div class="peek" aria-hidden="true">
+  <div class="pk-in"><img src="/images/site/cat/peek.webp" alt="" width="164" height="227" loading="lazy" decoding="async" /></div>
+</div>
+<style>
+  /* 圖左邊 38.5px（前腳）永遠被切掉，看起來前腳和身體都在菜單卡後面 */
+  .peek { --edge: 38.5px; position: absolute; left: calc(100% - var(--edge)); bottom: 40px; width: 164px; height: 227px;
+    pointer-events: none; display: none; z-index: 2; clip-path: inset(-6px -6px 0 var(--edge)); }
+  .peek.on { display: block; }
+  .pk-in { width: 100%; height: 100%; transform: translateX(-80%); transition: transform 1.8s cubic-bezier(.35,.1,.25,1); }
+  .pk-in img { display: block; width: 100%; height: 100%; transform-origin: 40% 100%; }
+  .peek.half .pk-in { transform: translateX(-22%); }
+  .peek.out .pk-in { transform: translateX(0); transition-duration: 1.6s; }
+  .peek.back .pk-in { transition-duration: 2s; transition-timing-function: cubic-bezier(.45,0,.55,1); }
+  .peek.out .pk-in img { animation: pkBreath 3s ease-in-out infinite; }
+  @keyframes pkBreath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.006, 1.014); } }
+  @media (max-width: 860px), (prefers-reduced-motion: reduce), print { .peek { display: none !important; } }
+</style>
+<script>
+  // 菜單卡出現在畫面上才開始：等 2 秒探頭，之後每隔 10–22 秒再偷看一次
+  const el = document.querySelector<HTMLElement>('.peek');
+  const col = el?.parentElement;
+  const okSize = () => {
+    if (!el || !col || innerWidth <= 860) return false;
+    const about = col.parentElement?.querySelector('.about-col')?.getBoundingClientRect();
+    const menu = col.getBoundingClientRect();
+    // 菜單卡右邊、關於我下面要有足夠空白才出現（貓高 227px，離底部 40px）
+    return !!about && menu.bottom - 40 - 227 - 24 > about.bottom;
+  };
+  if (el && col && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    let busy = false, visible = false, timer = 0;
+    const set = (c: string) => { el.classList.remove('half', 'out', 'back'); el.classList.add(c); };
+    const peek = async () => {
+      if (busy || !visible || document.hidden || !okSize()) return schedule();
+      busy = true; el.classList.add('on'); await wait(60);
+      set('half'); await wait(1800 + 1800);            // 慢慢探出半顆頭，停一下偷看
+      set('out'); await wait(1600 + 3000 + Math.random() * 2000); // 整顆頭出來，看著讀者
+      set('back'); await wait(2000 + 100);             // 慢慢縮回菜單後面
+      el.classList.remove('on', 'back'); busy = false; schedule();
+    };
+    const schedule = (ms = 10000 + Math.random() * 12000) => { clearTimeout(timer); timer = window.setTimeout(peek, ms); };
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !busy) schedule(2000);
+      else if (!visible) clearTimeout(timer);
+    }, { threshold: 0.4 }).observe(col);
+  }
+</script>
