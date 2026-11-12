@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import Note from '../components/Note.astro';
+import EmailLink from '../components/EmailLink.astro';
+---
+<Base title="聯絡我" description="想問食譜的問題、分享你做的成果，或是合作邀約，歡迎寫信給 Philia的廚房料理。" active="contact">
+  <section class="wrap intro">
+    <div class="fr eyebrow">contact —</div>
+    <h1 class="display">聯絡我</h1>
+    <p class="muted">照著食譜做，卡在哪一步了嗎？還是做成功了、想分享給我看？歡迎寫信給我。</p>
+    <div class="mail paper">
+      <div class="label">Email</div>
+      <EmailLink show class="addr" />
+      <p class="muted small">我會盡量回覆每一封信，但有時候會晚一點，請多包涵。</p>
+    </div>
+    <p class="muted note-privacy">寄信時會用到的 email 地址，只用來回覆你，不會提供給別人。詳見 <a class="link" href="/privacy/">隱私權政策</a>。</p>
+  </section>
+  <img class="divider" src="/images/ui/divider.svg" alt="" aria-hidden="true" />
+  <section class="wrap topics">
+    <div class="section-title"><h2>可以寫信聊什麼</h2><span class="fr">écris-moi</span></div>
+    <div class="notes">
+      <Note title="食譜問題" items={['哪一步看不懂、材料買不到想換。', '寫信時附上是哪一道食譜，會比較好回答。']} tape="var(--mustard)" tilt={-1} />
+      <Note title="找到錯誤" items={['份量、溫度或時間寫錯了。', '錯字或翻譯不通順，也歡迎告訴我。']} bg="var(--paper-cream)" tape="var(--tape-sage)" tilt={0.8} />
+      <Note title="合作邀約" items={['品牌、食材或廚具合作。', '請在信裡簡單說明合作內容。']} tape="var(--dusty-blue)" tilt={-0.6} />
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { padding-top: 40px; padding-bottom: 30px; }
+  .intro > * { max-width: 680px; }
+  .eyebrow { color: var(--olive-ink); font-size: 22px; }
+  h1 { font-size: 52px; line-height: 1.25; margin-top: 4px; }
+  .intro > p { font-size: 17px; line-height: 2; margin-top: 16px; }
+  .mail { margin-top: 26px; padding: 26px 30px; }
+  .label { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--olive-ink); }
+  .mail :global(.addr) { display: inline-block; font-size: 24px; margin-top: 6px; border-bottom: 1px solid currentColor; word-break: break-all; }
+  .mail :global(.addr:hover) { color: var(--terracotta-ink); }
+  .small { font-size: 14px; line-height: 1.8; margin-top: 12px; }
+  .topics { padding-top: 34px; padding-bottom: 60px; }
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 34px; }
+  .note-privacy { font-size: 13px; line-height: 1.8; margin-top: 14px; }
+  @media (max-width: 860px) { .notes { grid-template-columns: minmax(0, 1fr); } h1 { font-size: 40px; } .mail :global(.addr) { font-size: 20px; } }
+</style>
