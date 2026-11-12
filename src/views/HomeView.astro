@@ -7,6 +7,7 @@ import ScallopButton from '../components/ScallopButton.astro';
 import SteamyStillLife from '../components/SteamyStillLife.astro';
 import FortuneDraw from '../components/FortuneDraw.astro';
 import GingerWorkshop from '../components/GingerWorkshop.astro';
+import PeekCat from '../components/PeekCat.astro';
 import { allRecipes, featuredRecipe, recipeUrl, smallImage } from '../site';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
@@ -64,7 +65,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
 
   <div class="band" id="menu">
     <section class="wrap duo">
-      <div class="menu-col"><RecipeMenu recipes={recipes} /></div>
+      <div class="menu-col"><RecipeMenu recipes={recipes} /><PeekCat /></div>
       <div class="about-col">
         <SteamyStillLife alt={u.stillAlt} />
         <h2 class="display">{u.whoWrites}</h2>
@@ -128,6 +129,7 @@ const hw = featured ? u.heroWeek(featured.data.measure || u.kind[featured.data.c
   .latest .card-grid { margin-top: 32px; }
   .band { padding: 44px 0 50px; scroll-margin-top: 20px; }
   .duo { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .menu-col { position: relative; }
   .about-col h2 { font-size: 28px; margin-top: 6px; }
   .about-col p { font-size: 15px; line-height: 1.9; margin: 6px 0 12px; }
   @media (max-width: 860px) {
