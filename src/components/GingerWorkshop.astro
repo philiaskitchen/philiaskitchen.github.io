@@ -30,7 +30,7 @@ const oven = `<svg viewBox="0 0 220 230" aria-hidden="true"><rect x="24" y="52" 
   <script type="application/json" class="gw-i18n" set:html={JSON.stringify({ hint: u.gw.hint, hintDance: u.gw.hintDance, c1: u.gw.count(1), cn: u.gw.count(999) })} />
 </section>
 <script>
-  import { gingerbread, SANTA_WALKER, SLEIGH, FLAG, TOP_STAR } from '../data/xmasArt';
+  import { gingerbread, SANTA_WALKER, SANTA_SIDE, SLEIGH, FLAG, TOP_STAR } from '../data/xmasArt';
   type Pt = { x: number; y: number };
   const SHAPES = ['man', 'girl', 'man', 'girl', 'kid'] as const;
   const FACES = ['smile', 'wink', 'o', 'happy', 'tongue', 'sleepy'] as const;
@@ -191,13 +191,16 @@ const oven = `<svg viewBox="0 0 220 230" aria-hidden="true"><rect x="24" y="52" 
     // 聖誕老人：背著禮物袋走出來，走到中間揮手，再往左走到看不見
     const santa = async () => {
       lastSanta = Date.now(); const d = D(); const sw = d.W * 2, sh = d.W * 2.4;
-      const el = actor(SANTA_WALKER, sw, sh, 4); el.classList.add('santa');
+      const el = actor(`<div class="sv side">${SANTA_SIDE}</div><div class="sv front">${SANTA_WALKER}</div>`, sw, sh, 4); el.classList.add('santa');
       at(el, { x: d.ovenCx - sw / 2, y: d.ground - sh });
-      await move(el, { x: d.ox - sw - 4, y: d.ground - sh }, 'walk', .55); el.style.zIndex = '45';
+      // 走路：身體平順前進，兩隻腳輪流往前跨、手前後擺、身體隨步伐輕輕上下（不再整個人左右搖）
+      el.classList.add('walking');
+      await move(el, { x: d.ox - sw - 4, y: d.ground - sh }, 'glide', .55); el.style.zIndex = '45';
       const mid = (d.treeX + d.ox) / 2 - sw / 2;
-      await move(el, { x: mid, y: d.ground - sh }, 'walk', .55);
-      el.classList.add('wave'); await sleep(still ? 300 : 2200); el.classList.remove('wave');
-      await move(el, { x: -sw - 30, y: d.ground - sh }, 'walk', .55); el.remove();
+      await move(el, { x: mid, y: d.ground - sh }, 'glide', .55);
+      el.classList.remove('walking'); el.classList.add('wave'); await sleep(still ? 300 : 2200); el.classList.remove('wave');
+      el.classList.add('walking');
+      await move(el, { x: -sw - 30, y: d.ground - sh }, 'glide', .55); el.remove();
     };
     // 馴鹿雪橇：從右邊飛越聖誕樹到左邊
     let flying = false;
@@ -302,12 +305,26 @@ const oven = `<svg viewBox="0 0 220 230" aria-hidden="true"><rect x="24" y="52" 
   :global(.gw-star) { position: absolute; z-index: 26; filter: drop-shadow(0 0 6px rgba(244, 200, 74, .9)); animation: gwGlow 1.6s ease-in-out infinite alternate; }
   @keyframes gwGlow { to { filter: drop-shadow(0 0 14px rgba(255, 220, 120, 1)); } }
   :global(.santa .arm) { transform-box: fill-box; transform-origin: 90% 95%; }
+  /* 走路時是側面（頭朝前進方向、手在身體側邊擺）；停下來揮手時轉成正面 */
+  :global(.santa .sv) { position: absolute; inset: 0; transition: opacity .12s; }
+  :global(.santa .sv svg) { width: 100%; height: 100%; display: block; overflow: visible; }
+  :global(.santa .front) { opacity: 0; } :global(.santa.wave .front) { opacity: 1; } :global(.santa.wave .side) { opacity: 0; }
+  :global(.santa .front .arm-down) { opacity: 0; }
+  :global(.santa .leg) { transform-box: view-box; transform-origin: 37.5px 72px; }
+  :global(.santa .arm-swing) { transform-box: view-box; transform-origin: 42px 41px; }
+  :global(.santa.walking .p1) { animation: gwStep .62s ease-in-out infinite; }
+  :global(.santa.walking .p2) { animation: gwStep .62s ease-in-out infinite -.31s; }
+  :global(.santa.walking .arm-swing) { animation: gwArm .62s ease-in-out infinite -.31s; }
+  @keyframes gwArm { 0%, 100% { transform: rotate(-16deg); } 50% { transform: rotate(18deg); } }
+  :global(.santa.walking .side svg) { animation: gwBob .31s ease-in-out infinite alternate; }
+  @keyframes gwStep { 0%, 100% { transform: rotate(-26deg); } 50% { transform: rotate(26deg); } }
+  @keyframes gwBob { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
   :global(.santa.wave .arm) { animation: gwWave .35s ease-in-out infinite alternate; }
   @keyframes gwWave { from { transform: rotate(-20deg); } to { transform: rotate(18deg); } }
   :global(.sleigh .legs) { transform-box: fill-box; transform-origin: 50% 0; animation: gwGallop .32s ease-in-out infinite alternate; }
   :global(.sleigh .part:nth-child(odd) .legs) { animation-delay: -.16s; }
   @keyframes gwGallop { from { transform: skewX(14deg); } to { transform: skewX(-14deg); } }
   @media (max-width: 600px) { .gw-stage { height: 240px; } .gw-oven { width: 120px; height: 126px; left: auto; right: 6%; } .compact .gw-oven { left: auto; right: 8%; } }
-  @media (prefers-reduced-motion: reduce) { :global(.gw-flag .cloth), :global(.gw-star), :global(.santa.wave .arm), :global(.sleigh .legs), :global(.sleigh .wave-arm) { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { :global(.gw-flag .cloth), :global(.gw-star), :global(.santa.wave .arm), :global(.santa.walking .leg), :global(.santa.walking .arm-swing), :global(.santa.walking .side svg), :global(.sleigh .legs), :global(.sleigh .wave-arm) { animation: none; } }
   @media print { .gw { display: none !important; } }
 </style>
