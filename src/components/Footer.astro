@@ -1,6 +1,5 @@
 ---
 import { categoryUrl } from '../site';
-import EmailLink from './EmailLink.astro';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
 const u = t(lang);
@@ -10,7 +9,7 @@ const u = t(lang);
     <div>
       <img src={u.logo} alt={u.siteName} class="logo" />
       <div class="fr" style="color:var(--terracotta-ink);font-size:17px">à bientôt dans la cuisine</div>
-      <p class="small muted">{u.footerLine} · © 2026 · <a class="plink" href={lp(lang, '/privacy/')}>{u.privacy}</a> · <EmailLink class="plink" label={u.contact} /></p>
+      <p class="small muted">{u.footerLine} · © 2026 · <a class="plink" href={lp(lang, '/privacy/')}>{u.privacy}</a> · <a class="plink" href={lp(lang, '/contact/')}>{u.contact}</a></p>
     </div>
     <nav aria-label={u.footerNav}>
       <a href={categoryUrl('taiwanese', lang)}>{u.nav.taiwanese}</a><a href={categoryUrl('french', lang)}>{u.nav.french}</a><a href={categoryUrl('bread', lang)}>{u.nav.bread}</a><a href={categoryUrl('sweets', lang)}>{u.nav.sweets}</a><a href={lp(lang, '/about/')}>{u.nav.about}</a>
