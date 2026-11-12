@@ -1,53 +1,72 @@
 ---
-// 菜單卡右邊偷看的黑白小貓（2026-11-13）：偶爾從菜單卡後面慢慢探頭，看一下讀者再縮回去
-// 圖：public/images/site/cat/peek.webp（Gemini 畫，328×360；手已經從圖上拿掉，只剩頭和脖子；圖左邊 77px 永遠藏在菜單卡後面）
+// 菜單卡探頭的黑白小貓（2026-11-13）：偶爾從菜單卡後面慢慢探頭，看一下讀者再縮回去
+// 電腦版：從菜單卡「右邊」探頭（peek.webp，328×360；圖左邊 77px 永遠藏在菜單卡後面）
+// 手機版：從菜單卡「上緣」右邊探頭（peek-top.webp，360×242；只露出耳朵、眼睛、鼻子）
 // Philia 的要求：不要點了呼嚕呼嚕、不要伸手（不要擬人化把手放在卡片上）、動作要慢
 ---
-<div class="peek" aria-hidden="true">
+<div class="peek side" aria-hidden="true">
   <div class="pk-in"><img src="/images/site/cat/peek.webp" alt="" width="164" height="180" loading="lazy" decoding="async" /></div>
 </div>
+<div class="peek top" aria-hidden="true">
+  <div class="pk-in"><img src="/images/site/cat/peek-top.webp" alt="" width="120" height="81" loading="lazy" decoding="async" /></div>
+</div>
 <style>
-  /* 圖左邊 38.5px 永遠被切掉，看起來身體在菜單卡後面 */
-  .peek { --edge: 38.5px; position: absolute; left: calc(100% - var(--edge)); bottom: 80px; width: 164px; height: 180px;
-    pointer-events: none; display: none; z-index: 2; clip-path: inset(-6px -6px 0 var(--edge)); }
-  .peek.on { display: block; }
-  .pk-in { width: 100%; height: 100%; transform: translateX(-80%); transition: transform 1.8s cubic-bezier(.35,.1,.25,1); }
-  .pk-in img { display: block; width: 100%; height: 100%; transform-origin: 40% 100%; }
-  .peek.half .pk-in { transform: translateX(-22%); }
-  .peek.out .pk-in { transform: translateX(0); transition-duration: 1.6s; }
+  .peek { position: absolute; pointer-events: none; z-index: 2; }
+  .pk-in { width: 100%; height: 100%; transition: transform 1.8s cubic-bezier(.35,.1,.25,1); }
+  .pk-in img { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
+  .peek.out .pk-in { transition-duration: 1.6s; }
   .peek.back .pk-in { transition-duration: 2s; transition-timing-function: cubic-bezier(.45,0,.55,1); }
   .peek.out .pk-in img { animation: pkBreath 3s ease-in-out infinite; }
   @keyframes pkBreath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.006, 1.014); } }
-  @media (max-width: 860px), (prefers-reduced-motion: reduce), print { .peek { display: none !important; } }
+
+  /* 電腦版：菜單卡右邊。圖左邊 38.5px 永遠被切掉，看起來身體在菜單卡後面 */
+  .side { --edge: 38.5px; left: calc(100% - var(--edge)); bottom: 80px; width: 164px; height: 180px; clip-path: inset(-6px -6px 0 var(--edge)); }
+  .side .pk-in { transform: translateX(-80%); }
+  .side.half .pk-in { transform: translateX(-22%); }
+  .side.out .pk-in { transform: translateX(0); }
+
+  /* 手機版：菜單卡上緣、偏右。下面切齊菜單卡上緣，看起來頭是從卡片後面冒出來 */
+  .top { display: none; bottom: 100%; right: 12%; width: 120px; height: 81px; clip-path: inset(-6px -30px 0 -30px); }
+  .top .pk-in { transform: translateY(102%); }
+  .top.half .pk-in { transform: translateY(52%); }
+  .top.out .pk-in { transform: translateY(0); }
+
+  @media (max-width: 860px) { .side { display: none; } .top { display: block; } }
+  @media (prefers-reduced-motion: reduce), print { .peek { display: none !important; } }
 </style>
 <script>
-  // 菜單卡出現在畫面上才開始：等 2 秒探頭，之後每隔 10–22 秒再偷看一次
-  const el = document.querySelector<HTMLElement>('.peek');
-  const col = el?.parentElement;
-  const okSize = () => {
-    if (!el || !col || innerWidth <= 860) return false;
-    const about = col.parentElement?.querySelector('.about-col')?.getBoundingClientRect();
-    const menu = col.getBoundingClientRect();
-    // 菜單卡右邊、關於我下面要有足夠空白才出現（貓高 180px，離底部 80px）
-    return !!about && menu.bottom - 80 - 180 - 24 > about.bottom;
-  };
-  if (el && col && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // 小貓的位置出現在畫面上才開始：等 2 秒探頭，之後每隔 10–22 秒再偷看一次
+  const col = document.querySelector<HTMLElement>('.peek')?.parentElement;
+  if (col && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const mobile = matchMedia('(max-width: 860px)');
+    const pick = () => col.querySelector<HTMLElement>(mobile.matches ? '.peek.top' : '.peek.side')!;
+    const okSize = () => {
+      if (mobile.matches) return true;
+      // 電腦版：菜單卡右邊、關於我下面要有足夠空白才出現（貓高 180px，離底部 80px）
+      const about = col.parentElement?.querySelector('.about-col')?.getBoundingClientRect();
+      return !!about && col.getBoundingClientRect().bottom - 80 - 180 - 24 > about.bottom;
+    };
     const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
     let busy = false, visible = false, timer = 0;
-    const set = (c: string) => { el.classList.remove('half', 'out', 'back'); el.classList.add(c); };
     const peek = async () => {
       if (busy || !visible || document.hidden || !okSize()) return schedule();
-      busy = true; el.classList.add('on'); await wait(60);
+      const el = pick();
+      const set = (c: string) => { el.classList.remove('half', 'out', 'back'); el.classList.add(c); };
+      busy = true;
       set('half'); await wait(1800 + 1800);            // 慢慢探出半顆頭，停一下偷看
       set('out'); await wait(1600 + 3000 + Math.random() * 2000); // 整顆頭出來，看著讀者
       set('back'); await wait(2000 + 100);             // 慢慢縮回菜單後面
-      el.classList.remove('on', 'back'); busy = false; schedule();
+      el.classList.remove('back'); busy = false; schedule();
     };
     const schedule = (ms = 10000 + Math.random() * 12000) => { clearTimeout(timer); timer = window.setTimeout(peek, ms); };
-    new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
+    const seen = new Set<Element>();
+    const io = new IntersectionObserver((es) => {
+      // 電腦版的圖左邊被 clip-path 切掉，所以看得到的比例最多約 0.77
+      es.forEach((e) => (e.intersectionRatio >= 0.7 ? seen.add(e.target) : seen.delete(e.target)));
+      visible = seen.has(pick());
       if (visible && !busy) schedule(2000);
       else if (!visible) clearTimeout(timer);
-    }, { threshold: 0.4 }).observe(col);
+    }, { threshold: [0, 0.7, 1] });
+    col.querySelectorAll('.peek').forEach((p) => io.observe(p));
   }
 </script>
