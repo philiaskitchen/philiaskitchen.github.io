@@ -90,6 +90,13 @@ export const ADS = {
   } as Record<string, string>,
 };
 
+// 電子報（Mailchimp）。到 Mailchimp：Audience → Signup forms → Embedded forms，
+// 複製表單 <form action="…"> 裡的網址貼到 action（像 https://xxx.us21.list-manage.com/subscribe/post?u=…&id=…&f_id=…）。
+// 空白時網站上不會出現訂閱欄位；想先看看長什麼樣子：在網址後面加上 ?news=preview
+export const NEWSLETTER = {
+  action: 'https://philiaskitchen.us17.list-manage.com/subscribe/post?u=91c68a2579859916f0532761f&id=893921a6fc&f_id=0039a3e0f0',
+};
+
 // Google Analytics 4 評估 ID（G-…）。空白就不載入 GA4。只在正式網站（npm run build）載入，本機預覽不會算進去。
 export const GA_ID = 'G-0YKY9WF6DJ';
 

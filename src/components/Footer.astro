@@ -1,9 +1,11 @@
 ---
 import { categoryUrl } from '../site';
+import Subscribe from './Subscribe.astro';
 import { getLang, lp, t } from '../i18n';
 const lang = getLang(Astro.url);
 const u = t(lang);
 ---
+<Subscribe />
 <footer class="band">
   <div class="wrap inner">
     <div>

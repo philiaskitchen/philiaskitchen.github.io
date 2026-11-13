@@ -96,7 +96,7 @@ p, li, dd, figcaption, blockquote { text-wrap: pretty; }
 @media print {
   @page { margin: 8mm 10mm 11mm; }
   body { background: #fff; }
-  body::after, header, footer, .ad, .pin-progress, .egg-bread { display: none !important; }
+  body::after, header, footer, .news, .ad, .pin-progress, .egg-bread { display: none !important; }
   .wrap { padding-left: 0; padding-right: 0; max-width: none; }
   /* 鉛筆框：框住內容，每一頁都重複框線和內距（內容離框線遠一點） */
   main { border: 1.5px solid #4A4536; border-radius: 10px 6px 12px 8px; outline: 1px solid #CFC4AA; outline-offset: -6px;

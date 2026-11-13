@@ -1,18 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { ADS } from '../../site';
+import { ADS, NEWSLETTER } from '../../site';
 import EmailLink from '../../components/EmailLink.astro';
 const adsLive = Boolean(ADS.client);
+const newsLive = Boolean(NEWSLETTER.action);
 ---
 <Base title="Privacy policy" description="How Philia's Kitchen handles your data: no sign-up, your ticks stay on your own device, and how analytics, ads and cookies work.">
   <article class="wrap policy">
     <div class="fr eyebrow">confidentialité —</div>
     <h1 class="display">Privacy policy</h1>
-    <p class="soft updated">Last updated: 11 November 2026</p>
+    <p class="soft updated">Last updated: 13 November 2026</p>
 
     <section class="paper sheet">
       <h2 class="display">About this site</h2>
-      <p>Philia's Kitchen is my personal recipe website. You don't need to sign up or log in to read the recipes, and the site never asks for your name, email or other personal details.</p>
+      <p>Philia's Kitchen is my personal recipe website. You don't need to sign up or log in to read the recipes, and the site never asks for your name, email or other personal details{newsLive && ' (unless you choose to subscribe to the newsletter — see below)'}.</p>
 
       <h2 class="display">Data kept on your device</h2>
       <p>The ingredients and steps you tick, and any timers you start, are saved only in your own browser's local storage (localStorage), so they are still there when you reload the page. This data is never sent to me or to anyone else.</p>
@@ -25,6 +26,12 @@ const adsLive = Boolean(ADS.client);
       <p>To understand how many people visit and which recipes are most useful, this site uses Google Analytics 4. It uses cookies to collect anonymous usage data, such as which pages you view, how long you stay, your approximate country or city, your device and browser, and which site linked you here.</p>
       <p>This data is only used to understand overall reading trends. I cannot see who you are, and it is not used to identify you. Google Analytics 4 does not log or store full IP addresses.</p>
       <p>If you prefer not to be counted, you can install the <a class="link" href="https://tools.google.com/dlpage/gaoptout?hl=en" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a> or block cookies for this site in your browser. To learn more, see <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=en" target="_blank" rel="noopener">How Google uses information from sites or apps that use our services</a>.</p>
+
+      {newsLive && (<>
+        <h2 class="display">Newsletter</h2>
+        <p>If you subscribe to the newsletter, your email address is stored by the email service Mailchimp (part of Intuit). It is only used to send you new recipes and site news, and is never sold or shared with anyone else. After you sign up you will get a confirmation email — your subscription only starts once you click the link in it.</p>
+        <p>Every email has an "Unsubscribe" link at the bottom, or you can email me and ask me to delete your address. To see how Mailchimp handles data, read the <a class="link" href="https://www.intuit.com/privacy/statement/" target="_blank" rel="noopener">Intuit privacy statement</a>.</p>
+      </>)}
 
       <h2 class="display">Ads and cookies</h2>
       {adsLive ? (

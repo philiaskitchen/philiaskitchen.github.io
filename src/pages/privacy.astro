@@ -1,18 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
-import { ADS } from '../site';
+import { ADS, NEWSLETTER } from '../site';
 import EmailLink from '../components/EmailLink.astro';
 const adsLive = Boolean(ADS.client);
+const newsLive = Boolean(NEWSLETTER.action);
 ---
 <Base title="隱私權政策" description="Philia的廚房料理如何處理你的資料：不需要註冊、勾選紀錄只存在你的裝置上，以及流量分析、廣告和 Cookie 的說明。">
   <article class="wrap policy">
     <div class="fr eyebrow">confidentialité —</div>
     <h1 class="display">隱私權政策</h1>
-    <p class="soft updated">最後更新：2026 年 11 月 11 日</p>
+    <p class="soft updated">最後更新：2026 年 11 月 13 日</p>
 
     <section class="paper sheet">
       <h2 class="display">這個網站</h2>
-      <p>「Philia的廚房料理」是我個人的食譜網站。看食譜不需要註冊或登入，網站也不會要求你留下姓名、email 等個人資料。</p>
+      <p>「Philia的廚房料理」是我個人的食譜網站。看食譜不需要註冊或登入，網站也不會要求你留下姓名、email 等個人資料{newsLive && '（除非你自己選擇訂閱電子報，見下方）'}。</p>
 
       <h2 class="display">存在你裝置上的資料</h2>
       <p>你在食譜頁勾選的材料、做完的步驟和計時器，只會存在你自己瀏覽器的本機儲存空間（localStorage），方便你重新整理後還看得到。這些資料不會傳給我，也不會傳給任何人。</p>
@@ -25,6 +26,12 @@ const adsLive = Boolean(ADS.client);
       <p>為了知道有多少人在看、哪些食譜比較受歡迎，這個網站使用 Google Analytics 4 統計造訪情況。它會用 Cookie 記錄匿名的使用資料，例如看了哪些頁面、停留多久、大概所在的國家或城市、使用的裝置和瀏覽器，以及你是從哪裡連到這個網站的。</p>
       <p>這些資料只用來了解整體的閱讀情況，我看不到你是誰，也不會用來找出個人。Google Analytics 4 不會記錄或儲存完整的 IP 位址。</p>
       <p>不想被統計的話，可以安裝 <a class="link" href="https://tools.google.com/dlpage/gaoptout?hl=zh-TW" target="_blank" rel="noopener">Google Analytics 停用外掛程式</a>，或在瀏覽器封鎖這個網站的 Cookie。想了解更多，請看 <a class="link" href="https://policies.google.com/technologies/partner-sites?hl=zh-TW" target="_blank" rel="noopener">Google 如何使用合作夥伴網站或應用程式的資訊</a>。</p>
+
+      {newsLive && (<>
+        <h2 class="display">電子報</h2>
+        <p>如果你在網站上訂閱電子報，你的 email 會交給電子報服務 Mailchimp（Intuit 旗下）保存，只用來寄新食譜和網站消息給你，不會賣給或分享給其他人。訂閱後會先收到一封確認信，按下連結才算完成訂閱。</p>
+        <p>每封信最下面都有「取消訂閱」連結，按一下就不會再收到信；也可以直接寫信給我，請我刪除你的 email。Mailchimp 怎麼處理資料，請看 <a class="link" href="https://www.intuit.com/privacy/statement/" target="_blank" rel="noopener">Intuit 隱私權聲明</a>。</p>
+      </>)}
 
       <h2 class="display">廣告與 Cookie</h2>
       {adsLive ? (
