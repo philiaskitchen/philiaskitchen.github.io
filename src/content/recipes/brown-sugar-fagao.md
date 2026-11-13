@@ -4,8 +4,9 @@ title: 台式黑糖迷你發糕
 titleFr: petits gâteaux vapeur au sucre brun
 category: taiwanese
 intro: 香氣濃郁、口感Q彈的黑糖迷你發糕，用蛋塔模或小瓷杯做，一口一個、造型討喜，大約可以做 6～8 個。主要靠酵母自然發酵，泡打粉只加一點點（也可以不加），水滾後全程大火蒸，表面就會漂亮地裂開。
+image: /images/recipes/brown-sugar-fagao.webp
 date: 2026-11-13
-featured: false
+featured: true
 measure: 幾個
 sample: false
 prepTime: 約 15 分鐘
