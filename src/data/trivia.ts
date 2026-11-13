@@ -3,6 +3,11 @@
 export type Trivia = { zh: { q: string; a: string }; en: { q: string; a: string }; src: { label: string; url: string } };
 
 export const TRIVIA: Record<string, Trivia> = {
+  'brown-sugar-fagao': {
+    zh: { q: '為什麼發糕一定要「裂開」？', a: '發糕在閩南語叫「發粿」，諧音「發財、高升」，是傳統的過年點心，也常用來拜拜或送親友。客家人把發糕上的裂痕叫做「笑」：發得越大、裂得越深，就象徵新的一年笑口常開、事事順利。' },
+    en: { q: 'Why should fa gao split open on top?', a: 'In Taiwanese Hokkien, fa gao is called huat-kué, which sounds like “getting rich and moving up”. It is a traditional Lunar New Year treat, also used as an offering or a gift for family. Hakka people call the cracks on top a “smile” — the higher it rises and the deeper it splits, the more you will smile in the new year.' },
+    src: { label: '維基百科：發糕', url: 'https://zh.wikipedia.org/zh-tw/%E7%99%BC%E7%B3%95' },
+  },
   'sesame-egg-rolls': {
     zh: { q: '蛋捲是台灣原創的嗎？', a: '不是喔！蛋捲的祖先是西班牙的威化捲餅（barquillo），後來傳到亞洲，在香港特別流行。1977 年以前，台灣市面上幾乎買不到蛋捲，後來才有台灣的烘焙點心公司從香港引進手工煎製蛋捲的技術，再調整成台灣人喜歡的口味，慢慢變成過年送禮的經典伴手禮。' },
     en: { q: 'Are egg rolls originally from Taiwan?', a: 'No! Their ancestor is the Spanish rolled wafer called barquillo. It later spread to Asia and became very popular in Hong Kong. Before 1977 you could hardly buy egg rolls in Taiwan. Then a Taiwanese bakery company brought in the Hong Kong way of making them by hand, adjusted the taste for local people, and they slowly became a classic Lunar New Year gift.' },
