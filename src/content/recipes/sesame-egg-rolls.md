@@ -6,7 +6,7 @@ category: taiwanese
 intro: 經典的台式香酥芝麻蛋捲，大約可以做 12～15 支。關鍵在於高比例的奶油和充分退冰的蛋液，再用蛋捲模「高溫快速壓烤」把水分烤乾，才會層層酥脆、一咬就碎。
 image: /images/recipes/sesame-egg-rolls.webp
 date: 2026-11-12
-featured: true
+featured: false
 measure: 幾支
 sample: false
 prepTime: 約 20 分鐘
