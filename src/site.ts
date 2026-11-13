@@ -75,8 +75,8 @@ export function isoDuration(s: string): string | undefined {
   return `PT${h ? `${h[1]}H` : ''}${m ? `${m[1]}M` : ''}`;
 }
 
-const ROMAN = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv'];
-export const roman = (n: number) => `${ROMAN[n] ?? n + 1}.`;
+// 菜單編號：用阿拉伯數字 1. 2. 3.（2026-11-13 Philia 要求；原本羅馬數字只寫到 xv）
+export const roman = (n: number) => `${n + 1}.`;
 
 // Google AdSense 設定。申請通過後，把 client（ca-pub-…）和各位置的廣告單元編號填進來，廣告才會出現。
 // 還沒填之前，網站上完全不會顯示廣告。
