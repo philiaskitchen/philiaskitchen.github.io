@@ -13,6 +13,7 @@ const recipes = defineCollection({
     image: z.string().optional(),           // 去背插圖，例如 /images/recipes/xxx.webp
     date: z.coerce.date(),                  // 發佈日期，用來排序
     featured: z.boolean().default(false),   // 本週精選：會出現在首頁大標
+    featuredFrom: z.coerce.date().optional(), // 預約本週食譜：到這一天（雪梨時間）自動換上首頁，例如 2026-12-01
     measure: z.string().default(''),        // 首頁大標用的量詞，例如「幾杯」；空白就依分類（一籠／一盤／一爐）
     sample: z.boolean().default(false),     // 範例內容：會在頁面上加一行提醒
     prepTime: z.string().default(''),       // 準備時間，例如「20 分鐘」
@@ -24,7 +25,7 @@ const recipes = defineCollection({
     servings: z.string().default(''),       // 份量，例如「6 顆」
     servingMl: z.number().optional(),        // 每份容量（ml），例如布丁每杯 120；有填才會出現「每份容量」欄位
     difficulty: z.enum(['1', '2', '3']).default('2'),
-    cuisine: z.enum(['taiwanese', 'french', 'american', 'filipino', 'australian']).optional(), // 料理類型（給 Google 的 recipeCuisine）
+    cuisine: z.enum(['taiwanese', 'french', 'american', 'filipino', 'australian', 'british']).optional(), // 料理類型（給 Google 的 recipeCuisine）
     // 營養估算（每份）：依材料用 USDA 營養資料估算，count 是全部分成幾份
     nutrition: z.object({
       count: z.number(), calories: z.number(), fat: z.number(), saturatedFat: z.number(),
