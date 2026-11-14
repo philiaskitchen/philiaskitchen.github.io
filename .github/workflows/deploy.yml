@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 每天雪梨時間 00:05 自動重新建置一次（夏令 UTC+11），讓預約的「本週食譜」(featuredFrom) 到日期就自動換上首頁
+  schedule:
+    - cron: '5 13 * * *'
 
 permissions:
   contents: read
