@@ -46,4 +46,16 @@ tips:
 storage:
   - They are crispest straight away. If you don't eat them all, it's normal for the outside to go soft as they cool.
   - Warm them briefly in the oven before eating and they'll be crisp again!
+seoTitle: Taiwanese Egg Cake Recipe (Ji Dan Gao) – Egg Cake Maker or Waffle Iron
+faq:
+- q: Can I make Taiwanese egg cakes without an egg cake mould?
+  a: Yes — a waffle maker or a mini cake maker works. The shape is different, but they are just as soft and fluffy. Adjust the time to your machine and cook until golden.
+- q: Why do egg cakes lose their crispy outside?
+  a: They are crispest straight away, and it's normal for the outside to soften as they cool. Warm them briefly in the oven or air fryer before eating and they will be crisp again.
+- q: Do I need to rest the batter?
+  a: It's recommended. Resting it in the fridge for 30–60 minutes gives the cakes a finer, smoother texture.
+buyAu:
+- 'Cake flour: Australian supermarkets rarely label it "cake flour". Coles and Woolworths both sell Lighthouse Biscuit, Pastry & Cake Plain Flour, which works well. Or for every 100 g, use 85 g plain flour + 15 g cornflour (choose the maize kind, not wheaten).'
+- 'Watch out: self-raising flour already has raising agents in it, so it is not the same as cake flour.'
+- 'Egg cake maker: not sold in supermarkets. Search online for "egg cake maker" or "mini cake maker", or simply use a waffle maker you already have.'
 ---
