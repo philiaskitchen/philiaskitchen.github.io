@@ -57,4 +57,16 @@ tips:
   - For a richer, oozing centre, mix 30 g sesame paste with 10 g icing sugar and wrap it inside as a filling.
   - The secret to a smooth surface is rolling and folding a few extra times to push all the air out — the buns will come out as smooth as classic milk buns.
   - For more sesame flavour, dry-toast the black sesame powder in a frying pan over low heat for 1–2 minutes and let it cool before adding. Older sesame powder can taste stale.
+seoTitle: Black Sesame Mantou Recipe (Soft Milk Steamed Buns)
+faq:
+- q: Why do my mantou wrinkle or collapse after steaming?
+  a: Most often the lid was opened straight after turning off the heat — the sudden cold air makes the hot buns shrink and wrinkle. Leave the lid on for 3 minutes, then open it just a crack and let them cool slowly. Over-proving can also make them collapse.
+- q: Can I make these without a bamboo steamer?
+  a: Yes. Use a wok or a large deep pot with a steaming rack (or an upside-down heatproof bowl) and a plate on top. Wrap the lid in a clean tea towel so water doesn't drip onto the tops and make them bumpy.
+- q: Can I freeze mantou? How do I reheat them?
+  a: Yes. Once completely cool, freeze them in a sealed bag for 3–4 weeks. Steam straight from frozen for 10–15 minutes and they will be soft and fluffy again.
+buyAu:
+- 'Flour: regular plain flour from Coles or Woolworths is perfect. Don''t use self-raising flour — it already has raising agents.'
+- 'Black sesame powder: hard to find in supermarkets, so try an Asian grocer. Or buy black sesame seeds (Coles and Woolworths both stock them), toast them in a dry pan and grind them in a spice or coffee grinder.'
+- 'Instant dry yeast: in the baking aisle at Coles and Woolworths, e.g. Lowan (tin) or Tandaco (sachets).'
 ---
