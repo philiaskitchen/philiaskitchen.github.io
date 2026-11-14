@@ -44,4 +44,19 @@ steps:
 tips:
   - "For a nice split top: only put the cakes in after the water is boiling, and keep the heat high with lots of steam the whole time. The sudden heat makes the batter rise fast and split open from the centre — a lucky sign, since “fa” also means “to prosper”."
   - "Choosing the sugar: use a fragrant traditional dark brown sugar (Taiwanese black sugar if you can find it). It gives the most authentic colour and caramel flavour."
+seoTitle: Brown Sugar Fa Gao Recipe – Taiwanese Steamed Cakes (No Baking Powder Needed)
+faq:
+- q: Can I make fa gao without baking powder?
+  a: Yes. This recipe mainly uses yeast to rise. Baking powder only helps the top split more nicely, so you can leave it out. Without it, make sure the water is at a full boil before the cakes go in, and don't open the lid while steaming.
+- q: Why didn't my fa gao split on top?
+  a: The most common reasons are putting them in before the water was boiling, opening the lid, or not letting the batter rise enough. Wait until the surface is full of small bubbles, steam on high heat the whole time, and fill the moulds 80–90% full.
+- q: Can I make these without a bamboo steamer?
+  a: Yes. Use a wok or a large deep pot with a steaming rack (or an upside-down heatproof bowl) and a plate on top. Wrap the lid in a clean tea towel so water doesn't drip onto the tops and make them bumpy.
+- q: Can I freeze fa gao?
+  a: Yes. Once completely cool, seal them in a freezer bag. They keep for about a month. Steam straight from frozen for 8–10 minutes until soft again.
+buyAu:
+- 'Dark brown sugar: Coles and Woolworths both sell CSR Dark Brown Sugar, which works fine. For a deeper, more traditional flavour, look for Taiwanese or Okinawan black sugar at Asian grocers.'
+- Regular (light) brown sugar is paler and milder, so your fa gao won't be as dark.
+- 'Instant dry yeast: in the baking aisle at Coles and Woolworths, e.g. Lowan (tin) or Tandaco (sachets).'
+- 'Red dates and goji berries: Woolworths has its own dried goji berries. Asian grocers have more choice of red dates (jujubes).'
 ---
