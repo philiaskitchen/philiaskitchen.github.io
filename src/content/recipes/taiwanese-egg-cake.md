@@ -66,4 +66,16 @@ fails: []
 storage:
   - 剛烤好的外皮最酥脆，沒有馬上吃完的話，放涼後表皮變軟是正常的。
   - 吃之前放進烤箱稍微回烤，就能恢復酥脆口感！
+seoTitle: 台式雞蛋糕食譜｜古早味雞蛋糕（鬆餅機也能做）
+faq:
+- q: 沒有雞蛋糕模可以做嗎？
+  a: 可以用鬆餅機（waffle maker）或小蛋糕機。鬆餅機做出來形狀不同，但口感一樣鬆軟。時間要照機器說明調整，表面金黃就好。
+- q: 為什麼放涼後外皮就不脆了？
+  a: 雞蛋糕剛做好時最酥脆，放涼後外皮回軟是正常的。吃之前用烤箱或氣炸鍋稍微烤一下，外皮就會再變脆。
+- q: 麵糊一定要冷藏嗎？
+  a: 建議要。冷藏 30–60 分鐘讓麵糊靜置，做出來的組織會比較細緻。
+buyAu:
+- 低筋麵粉（Cake flour）：澳洲超市很少寫「cake flour」。Coles 和 Woolworths 都有 Lighthouse「Biscuit, Pastry & Cake Plain Flour」，可以直接用；沒有的話，每 100 g 用 85 g 中筋麵粉（Plain flour）＋15 g 玉米澱粉（Cornflour，選 Maize 玉米做的那種）代替。
+- 注意：Self Raising Flour（自發麵粉）已經加了泡打粉，不是低筋麵粉，不要拿錯。
+- 雞蛋糕模／機：一般超市沒有，可以在網路上找「egg cake maker」或「mini cake maker」；用家裡的鬆餅機（waffle maker）也可以。
 ---
