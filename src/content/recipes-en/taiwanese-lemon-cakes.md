@@ -64,4 +64,16 @@ tips:
   - The eggs whip most easily when they are about body temperature.
   - Mix quickly once the butter goes in — over-mixing makes the cake tough.
   - For more flavour in the coating, add a little freshly grated lemon zest to the chocolate.
+seoTitle: Taiwanese Lemon Cakes Recipe (Lemon Chocolate Coated Sponge Cakes)
+faq:
+- q: What can I use instead of lemon chocolate?
+  a: Melted white chocolate with a little fresh lemon zest and a few drops of yellow food colouring tastes and looks very close. Melt it over hot water and keep it under 50°C, or it will turn thick and lumpy.
+- q: Can I make these without a lemon cake mould?
+  a: Yes — a madeleine tray, mini cupcake tin or small silicone moulds all work. Adjust the baking time to the size, and bake until golden and springy when touched.
+- q: Why did the chocolate coating crack or slide off?
+  a: This usually happens when the cakes are still warm or the chocolate is too hot. Let the cakes cool completely, then chill them for 10 minutes after coating so the chocolate sets.
+buyAu:
+- 'Cake flour: Australian supermarkets rarely label it "cake flour". Coles and Woolworths both sell Lighthouse Biscuit, Pastry & Cake Plain Flour, which works well. Or for every 100 g, use 85 g plain flour + 15 g cornflour (choose the maize kind, not wheaten).'
+- Lemon chocolate is hard to find in Australia. Use Nestlé Baker's Choice White Chocolate Melts from the baking aisle at Coles or Woolworths, with a little lemon zest and yellow food colouring.
+- 'Lemon cake mould: not sold in supermarkets. Search online for "lemon cake mould", or use a madeleine tray or mini cupcake tin.'
 ---
