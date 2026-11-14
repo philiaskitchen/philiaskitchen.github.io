@@ -3,6 +3,11 @@
 export type Trivia = { zh: { q: string; a: string }; en: { q: string; a: string }; src: { label: string; url: string } };
 
 export const TRIVIA: Record<string, Trivia> = {
+  'lemon-tart': {
+    zh: { q: '檸檬卡士達（Lemon Curd）以前是怎麼吃的？', a: '檸檬卡士達來自英國。在 19 世紀末到 20 世紀初的英國，家裡自己做的檸檬卡士達常常在下午茶時抹在麵包或司康上，用來代替果醬。因為它不像果醬那麼耐放，所以通常一次只做一小罐。' },
+    en: { q: 'How was lemon curd eaten in the past?', a: 'Lemon curd comes from England. In the late 19th and early 20th centuries, homemade lemon curd was often served with bread or scones at afternoon tea instead of jam. It doesn\'t keep as long as jam, so people usually made only a small amount at a time.' },
+    src: { label: 'Wikipedia: Fruit curd', url: 'https://en.wikipedia.org/wiki/Fruit_curd' },
+  },
   'brown-sugar-fagao': {
     zh: { q: '為什麼發糕一定要「裂開」？', a: '發糕在閩南語叫「發粿」，諧音「發財、高升」，是傳統的過年點心，也常用來拜拜或送親友。客家人把發糕上的裂痕叫做「笑」：發得越大、裂得越深，就象徵新的一年笑口常開、事事順利。' },
     en: { q: 'Why should fa gao split open on top?', a: 'In Taiwanese Hokkien, fa gao is called huat-kué, which sounds like “getting rich and moving up”. It is a traditional Lunar New Year treat, also used as an offering or a gift for family. Hakka people call the cracks on top a “smile” — the higher it rises and the deeper it splits, the more you will smile in the new year.' },
