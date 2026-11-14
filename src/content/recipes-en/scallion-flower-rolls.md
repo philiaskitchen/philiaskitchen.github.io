@@ -59,4 +59,17 @@ tips:
   - Dry the spring onion completely after washing and before chopping, so it doesn't make the dough wet.
   - Brush on the oil and add the salt and pepper first, and the spring onion last — salt draws water out of spring onion if they meet too early.
   - Wait 3 minutes after turning off the heat before opening the lid, so the rolls don't collapse or wrinkle.
+seoTitle: Scallion Flower Rolls Recipe (Hua Juan Chinese Steamed Buns)
+faq:
+- q: Why do my flower rolls get wet and stick together?
+  a: The spring onion wasn't fully dry, or the salt went on too early and pulled the water out. Dry the spring onion completely before chopping, brush on the oil, add the salt and pepper first and the spring onion last, then roll up straight away.
+- q: Can I make these without a bamboo steamer?
+  a: Yes. Use a wok or a large deep pot with a steaming rack (or an upside-down heatproof bowl) and a plate on top. Wrap the lid in a clean tea towel so water doesn't drip onto the tops and make them bumpy.
+- q: Can I make flower rolls ahead of time?
+  a: Yes. Once steamed and cooled, freezing is best (the fridge makes them dry and hard). Steam straight from frozen for 10–12 minutes.
+buyAu:
+- In Sydney (NSW), many greengrocers call spring onions "shallots". Supermarket labels usually say "Spring Onion". The small round bulbs are French shallots — not what you want here.
+- 'Ground white pepper: in the spice aisle at the supermarket. Asian grocers sell bigger, cheaper packs.'
+- 'Flour: regular plain flour is all you need — not self-raising.'
+- 'Instant dry yeast: in the baking aisle at Coles and Woolworths, e.g. Lowan (tin) or Tandaco (sachets).'
 ---
