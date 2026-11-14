@@ -64,4 +64,17 @@ tips:
   - Add 120 g of cold milk first, then more a little at a time depending on how much the dough absorbs.
   - Keep the salt and yeast apart, each covered with flour, before mixing.
   - The second prove after shaping is the key to really soft buns.
+seoTitle: Taiwanese Pork Floss Buns Recipe (Bakery-Style Rousong Bread)
+faq:
+- q: How long do pork floss buns keep?
+  a: Once filled with mayonnaise, they are best eaten the same day. In hot weather — especially an Australian summer — put them in the fridge if they won't be eaten within two hours. You can also freeze the plain baked buns and add the mayo and floss just before eating.
+- q: Can I use regular mayonnaise?
+  a: Yes, but Japanese mayonnaise like Kewpie is richer and slightly sweeter, so it tastes closer to Taiwanese bakery buns.
+- q: Can I make these without a bread machine?
+  a: Yes, this recipe is kneaded by hand. Rest the dough first, then knead in the butter in short rounds (3 minutes, rest 3 minutes, 3 more minutes) — no long kneading needed.
+buyAu:
+- 'Pork floss: big Asian grocers have the most choice. Woolworths online also lists a few (such as Wei Yi pork floss).'
+- 'Mayonnaise: Coles and Woolworths both sell Kewpie Japanese mayonnaise, which tastes closest to the spread used in Taiwanese bakeries.'
+- 'Cake flour: Australian supermarkets rarely label it "cake flour". Coles and Woolworths both sell Lighthouse Biscuit, Pastry & Cake Plain Flour, which works well. Or for every 100 g, use 85 g plain flour + 15 g cornflour (choose the maize kind, not wheaten).'
+- 'Instant dry yeast: in the baking aisle at Coles and Woolworths, e.g. Lowan (tin) or Tandaco (sachets).'
 ---
