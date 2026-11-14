@@ -85,4 +85,17 @@ tips:
   - 整形後的二次發酵是麵包極致柔軟的關鍵。
 fails: []
 storage: []
+seoTitle: 台式肉鬆麵包食譜｜麵包店的肉鬆沙拉麵包
+faq:
+- q: 肉鬆麵包可以放多久？
+  a: 抹了美乃滋的肉鬆麵包最好當天吃完。天氣熱的時候（尤其澳洲夏天），超過兩小時沒吃要放冰箱。也可以先把麵包烤好冷凍，要吃的時候再抹醬、沾肉鬆。
+- q: 可以用一般美乃滋嗎？
+  a: 可以，但日式美乃滋（例如 Kewpie）比較香濃、偏甜一點，味道更接近台灣麵包店。
+- q: 沒有麵包機可以做嗎？
+  a: 可以。這個食譜就是用手揉：先讓麵糰靜置一下，再分段揉入奶油（揉 3 分鐘、休息 3 分鐘、再揉 3 分鐘），不用揉很久。
+buyAu:
+- 肉鬆：大型亞洲超市選擇最多；Woolworths 網路商店也有少數幾款（例如 Wei Yi 肉鬆）。
+- 美乃滋：Coles、Woolworths 都有 Kewpie 日式美乃滋，比較接近台灣麵包店的沙拉醬味道。
+- 低筋麵粉（Cake flour）：澳洲超市很少寫「cake flour」。Coles 和 Woolworths 都有 Lighthouse「Biscuit, Pastry & Cake Plain Flour」，可以直接用；沒有的話，每 100 g 用 85 g 中筋麵粉（Plain flour）＋15 g 玉米澱粉（Cornflour，選 Maize 玉米做的那種）代替。
+- 速發乾酵母（Instant dry yeast）：Coles、Woolworths 的烘焙區都有，例如 Lowan 罐裝或 Tandaco 小包裝。
 ---
