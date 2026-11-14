@@ -3,6 +3,11 @@
 export type Trivia = { zh: { q: string; a: string }; en: { q: string; a: string }; src: { label: string; url: string } };
 
 export const TRIVIA: Record<string, Trivia> = {
+  'gingerbread-men': {
+    zh: { q: '第一個「薑餅人」是誰做的？', a: '最早有紀錄的人形薑餅，出現在 16 世紀英國伊莉莎白一世的宮廷。女王請人把薑餅做成重要客人的模樣，送給他們當禮物。薑餅本身更早，大約 15 世紀就有了。' },
+    en: { q: 'Who made the first gingerbread men?', a: 'The first recorded figure-shaped gingerbread biscuits were made at the court of Queen Elizabeth I of England in the 16th century. She had them made to look like some of her important guests and gave them as gifts. Gingerbread itself is even older — it dates back to the 15th century.' },
+    src: { label: 'Wikipedia: Gingerbread man', url: 'https://en.wikipedia.org/wiki/Gingerbread_man' },
+  },
   'lemon-tart': {
     zh: { q: '檸檬卡士達（Lemon Curd）以前是怎麼吃的？', a: '檸檬卡士達來自英國。在 19 世紀末到 20 世紀初的英國，家裡自己做的檸檬卡士達常常在下午茶時抹在麵包或司康上，用來代替果醬。因為它不像果醬那麼耐放，所以通常一次只做一小罐。' },
     en: { q: 'How was lemon curd eaten in the past?', a: 'Lemon curd comes from England. In the late 19th and early 20th centuries, homemade lemon curd was often served with bread or scones at afternoon tea instead of jam. It doesn\'t keep as long as jam, so people usually made only a small amount at a time.' },
