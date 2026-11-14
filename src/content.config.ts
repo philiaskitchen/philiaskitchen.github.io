@@ -43,6 +43,9 @@ const recipes = defineCollection({
     tips: z.array(z.string()).default([]),   // Philia 的小提醒
     fails: z.array(z.string()).default([]),  // 我失敗過的地方
     storage: z.array(z.string()).default([]), // 保存與加熱
+    seoTitle: z.string().default(''),        // 搜尋標題（瀏覽器分頁和 Google 搜尋結果用；空白就用 title）
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]), // 常見問題
+    buyAu: z.array(z.string()).default([]),  // 在澳洲哪裡買
   }),
 });
 
@@ -68,6 +71,9 @@ const recipesEn = defineCollection({
     tips: z.array(z.string()).default([]),
     fails: z.array(z.string()).default([]),
     storage: z.array(z.string()).default([]),
+    seoTitle: z.string().default(''),        // 搜尋標題（瀏覽器分頁和 Google 搜尋結果用；空白就用 title）
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]), // 常見問題
+    buyAu: z.array(z.string()).default([]),  // 在澳洲哪裡買
   }),
 });
 
