@@ -34,6 +34,7 @@ export const CUISINES = {
   american: { zh: '美式', en: 'American' },
   filipino: { zh: '菲律賓', en: 'Filipino' },
   australian: { zh: '澳洲', en: 'Australian' },
+  british: { zh: '英式', en: 'British' },
 } as const;
 
 /** 食譜插圖的 600px 小圖（網站建好時由 scripts/optimize.mjs 自動產生） */
@@ -52,9 +53,26 @@ export async function allRecipes(lang: Lang = 'zh'): Promise<Recipe[]> {
   return list.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
+/** 今天的日期（雪梨時間，YYYY-MM-DD），網站建置時用來判斷「預約的本週食譜」到了沒 */
+const todaySydney = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
+const ymd = (d: Date) => d.toISOString().slice(0, 10);
+
+/**
+ * 首頁「本週食譜」：
+ * 1. 平常是 featured: true 的那篇。
+ * 2. 有填 featuredFrom（預約日期）的食譜，到了那天會自動換上首頁（例如聖誕薑餅人 12/1），
+ *    並一直留著，直到之後又有比那天更新的食譜設成 featured: true。
+ * 網站每天雪梨時間 00:05 會自動重新建置一次（.github/workflows/deploy.yml），所以日期到了就會換。
+ */
 export async function featuredRecipe(lang: Lang = 'zh'): Promise<Recipe | undefined> {
   const list = await allRecipes(lang);
-  return list.find((r) => r.data.featured) ?? list[0];
+  const today = todaySydney();
+  const scheduled = list
+    .filter((r) => r.data.featuredFrom && ymd(r.data.featuredFrom) <= today)
+    .sort((a, b) => b.data.featuredFrom!.getTime() - a.data.featuredFrom!.getTime())[0];
+  const normal = list.find((r) => r.data.featured);
+  if (scheduled && (!normal || ymd(normal.data.date) < ymd(scheduled.data.featuredFrom!))) return scheduled;
+  return normal ?? list[0];
 }
 
 export const recipeUrl = (r: Recipe, lang: Lang = 'zh') => lp(lang, `/recipes/${r.id}/`);
