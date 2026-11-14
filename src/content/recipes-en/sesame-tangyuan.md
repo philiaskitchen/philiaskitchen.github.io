@@ -55,4 +55,17 @@ tips:
 storage:
   - "Freezing: if you're not cooking them right away, line them up on a plate with baking paper and freeze. Once hard, seal them in a freezer bag."
   - Cook them straight from frozen — no need to thaw, just drop them into boiling water.
+seoTitle: Black Sesame Tangyuan Recipe (Glutinous Rice Balls with Runny Filling)
+faq:
+- q: Why do my tangyuan split when I cook them?
+  a: The dough was too dry, air was trapped inside, or the water was boiling too hard. This recipe kneads a small cooked piece of dough back in, which makes the dough more stretchy and less likely to crack. After they go in, turn down to medium-low and push them gently with the back of a spoon.
+- q: Can I use butter instead of lard?
+  a: Yes. Unsalted butter gives a milky flavour, while lard tastes more traditional. Melt either one first and mix it with the sesame powder and icing sugar.
+- q: Can I freeze tangyuan?
+  a: Yes. Freeze them on a plate lined with baking paper, then move them into a freezer bag once hard. Cook them straight from frozen in boiling water — no need to thaw.
+buyAu:
+- 'Glutinous rice flour: Coles and Woolworths both stock Erawan Glutinous Rice Flour (green pack with a three-headed elephant) in the Asian food aisle. Don''t use regular rice flour — the tangyuan won''t be soft and chewy.'
+- 'Black sesame powder: try an Asian grocer, or toast black sesame seeds in a dry pan and grind them yourself.'
+- 'Lard: not always in supermarkets. Unsalted butter works instead (with a milkier flavour). Asian grocers and butchers are more likely to have lard.'
+- 'Icing sugar: choose pure icing sugar. "Icing sugar mixture" has added starch.'
 ---
