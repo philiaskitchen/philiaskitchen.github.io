@@ -55,4 +55,17 @@ tips:
   - "Cool them on a rack: freshly rolled egg rolls are still soft, so let air flow underneath. If you lay them flat on a plate, the steam underneath makes them soft again."
 storage:
   - Once completely cool (about 10–15 min), put them straight into a sealed bag or airtight jar with a food-safe desiccant pack. They stay crisp for 2–3 weeks.
+seoTitle: Taiwanese Sesame Egg Rolls Recipe (Crispy Butter Egg Rolls)
+faq:
+- q: Can I make egg rolls without an egg roll iron?
+  a: Yes, with a non-stick frying pan. Spread a very small amount of batter into a thin circle with the back of a spoon, cook over low heat until golden on both sides, then roll it up while hot. It is harder to get an even thickness, but they still taste great.
+- q: Why did my egg rolls go soft after cooling?
+  a: Usually the batter was too thick, they weren't cooked long enough, or they cooled flat on a plate (the trapped steam softens them). Press the iron evenly, cook until golden on both sides, cool on a rack, and store them as soon as they are cold.
+- q: How long do homemade egg rolls stay crisp?
+  a: Kept in an airtight jar with a food-safe desiccant pack, they stay crisp for 2–3 weeks at room temperature. Close the lid tightly in humid Australian summers.
+buyAu:
+- 'Cake flour: Australian supermarkets rarely label it "cake flour". Coles and Woolworths both sell Lighthouse Biscuit, Pastry & Cake Plain Flour, which works well. Or for every 100 g, use 85 g plain flour + 15 g cornflour (choose the maize kind, not wheaten).'
+- 'Black sesame seeds: Coles sells Coles Black Sesame Seeds, and Woolworths has brands such as Viceroy. Asian grocers also sell them already toasted, so you can skip the toasting.'
+- 'Egg roll iron: not sold in supermarkets. Look in Asian kitchenware shops or search online for "egg roll mould" or "egg roll iron".'
+- 'Food-safe desiccant packs: from Asian grocers or online. One pack in the jar keeps the rolls crisp.'
 ---
