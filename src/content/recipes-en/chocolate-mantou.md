@@ -53,4 +53,17 @@ storage:
   - "Cool completely: put the buns on a wire rack as soon as they come out, so steam doesn't make the bottoms soggy."
   - "Freezing: once cool, seal them in a zip-lock bag with the air pressed out and freeze straight away (keeps 3–4 weeks). Don't keep them in the fridge — it makes them dry and hard."
   - "Reheating: no need to thaw. Steam for 10–15 minutes and they are as soft as freshly made. In the microwave, spray the tops with a little water and heat for 40–60 seconds."
+seoTitle: Chocolate Mantou Recipe (Coconut Cocoa Steamed Buns with Lava Centre)
+faq:
+- q: How do I get a runny chocolate centre?
+  a: Wrap the chocolate right in the middle of the dough, pinch the seam closed and place it seam-side down. The centre is runniest while the buns are still warm. If they cool down, steam them again for a few minutes and the chocolate melts again.
+- q: Why is the colour of my buns patchy?
+  a: Mix the cocoa powder evenly into the flour before adding the milk, and knead until the dough is completely smooth with no streaks.
+- q: Can I freeze chocolate mantou?
+  a: Yes. Once cool, press the air out of a zip-lock bag and freeze for 3–4 weeks. Don't keep them in the fridge — it makes them dry and hard. Steam straight from frozen for 10–15 minutes.
+buyAu:
+- 'Cocoa powder: Coles and Woolworths both stock Cadbury Bournville unsweetened cocoa, the one used in this recipe.'
+- 'Cake flour: Australian supermarkets rarely label it "cake flour". Coles and Woolworths both sell Lighthouse Biscuit, Pastry & Cake Plain Flour, which works well. Or for every 100 g, use 85 g plain flour + 15 g cornflour (choose the maize kind, not wheaten).'
+- 'Coconut oil: in the oil aisle at the supermarket. Melt it until clear before using.'
+- 'Chocolate chips: Cadbury or Nestlé Baker''s Choice from the baking aisle both work.'
 ---
